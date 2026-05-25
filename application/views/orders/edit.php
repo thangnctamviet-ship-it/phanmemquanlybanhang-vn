@@ -106,11 +106,11 @@
                           </td>
                           <td><input type="text" name="qty[]" id="qty_<?php echo $x; ?>" class="form-control" required onkeyup="getTotal(<?php echo $x; ?>)" value="<?php echo $val['qty'] ?>" autocomplete="off"></td>
                           <td>
-                            <input type="text" name="rate[]" id="rate_<?php echo $x; ?>" class="form-control" disabled value="<?php echo $val['rate'] ?>" autocomplete="off">
+                            <input type="text" name="rate[]" id="rate_<?php echo $x; ?>" class="form-control" disabled value="<?php echo format_vnd($val['rate']) ?>" autocomplete="off">
                             <input type="hidden" name="rate_value[]" id="rate_value_<?php echo $x; ?>" class="form-control" value="<?php echo $val['rate'] ?>" autocomplete="off">
                           </td>
                           <td>
-                            <input type="text" name="amount[]" id="amount_<?php echo $x; ?>" class="form-control" disabled value="<?php echo $val['amount'] ?>" autocomplete="off">
+                            <input type="text" name="amount[]" id="amount_<?php echo $x; ?>" class="form-control" disabled value="<?php echo format_vnd($val['amount']) ?>" autocomplete="off">
                             <input type="hidden" name="amount_value[]" id="amount_value_<?php echo $x; ?>" class="form-control" value="<?php echo $val['amount'] ?>" autocomplete="off">
                           </td>
                           <td><button type="button" class="btn btn-default" onclick="removeRow('<?php echo $x; ?>')"><i class="fa fa-close"></i></button></td>
@@ -128,7 +128,7 @@
                   <div class="form-group">
                     <label for="gross_amount" class="col-sm-5 control-label">Tổng tiền hàng</label>
                     <div class="col-sm-7">
-                      <input type="text" class="form-control" id="gross_amount" name="gross_amount" disabled value="<?php echo $order_data['order']['gross_amount'] ?>" autocomplete="off">
+                      <input type="text" class="form-control" id="gross_amount" name="gross_amount" disabled value="<?php echo format_vnd($order_data['order']['gross_amount']) ?>" autocomplete="off">
                       <input type="hidden" class="form-control" id="gross_amount_value" name="gross_amount_value" value="<?php echo $order_data['order']['gross_amount'] ?>" autocomplete="off">
                     </div>
                   </div>
@@ -136,7 +136,7 @@
                   <div class="form-group">
                     <label for="service_charge" class="col-sm-5 control-label">Phí dịch vụ <?php echo $company_data['service_charge_value'] ?> %</label>
                     <div class="col-sm-7">
-                      <input type="text" class="form-control" id="service_charge" name="service_charge" disabled value="<?php echo $order_data['order']['service_charge'] ?>" autocomplete="off">
+                      <input type="text" class="form-control" id="service_charge" name="service_charge" disabled value="<?php echo format_vnd($order_data['order']['service_charge']) ?>" autocomplete="off">
                       <input type="hidden" class="form-control" id="service_charge_value" name="service_charge_value" value="<?php echo $order_data['order']['service_charge'] ?>" autocomplete="off">
                     </div>
                   </div>
@@ -145,7 +145,7 @@
                   <div class="form-group">
                     <label for="vat_charge" class="col-sm-5 control-label">VAT <?php echo $company_data['vat_charge_value'] ?> %</label>
                     <div class="col-sm-7">
-                      <input type="text" class="form-control" id="vat_charge" name="vat_charge" disabled value="<?php echo $order_data['order']['vat_charge'] ?>" autocomplete="off">
+                      <input type="text" class="form-control" id="vat_charge" name="vat_charge" disabled value="<?php echo format_vnd($order_data['order']['vat_charge']) ?>" autocomplete="off">
                       <input type="hidden" class="form-control" id="vat_charge_value" name="vat_charge_value" value="<?php echo $order_data['order']['vat_charge'] ?>" autocomplete="off">
                     </div>
                   </div>
@@ -159,7 +159,7 @@
                   <div class="form-group">
                     <label for="net_amount" class="col-sm-5 control-label">Thành tiền ròng</label>
                     <div class="col-sm-7">
-                      <input type="text" class="form-control" id="net_amount" name="net_amount" disabled value="<?php echo $order_data['order']['net_amount'] ?>" autocomplete="off">
+                      <input type="text" class="form-control" id="net_amount" name="net_amount" disabled value="<?php echo format_vnd($order_data['order']['net_amount']) ?>" autocomplete="off">
                       <input type="hidden" class="form-control" id="net_amount_value" name="net_amount_value" value="<?php echo $order_data['order']['net_amount'] ?>" autocomplete="off">
                     </div>
                   </div>
@@ -283,11 +283,19 @@
 
   }); // /document
 
+  function formatVND(n) {
+    if (n === '' || n === null || isNaN(n)) return '';
+    return Math.round(Number(n)).toLocaleString('vi-VN');
+  }
+  function parseVND(s) {
+    if (!s) return 0;
+    return Number(String(s).replace(/\./g, '').replace(/,/g, '.')) || 0;
+  }
+
   function getTotal(row = null) {
     if(row) {
       var total = Number($("#rate_value_"+row).val()) * Number($("#qty_"+row).val());
-      total = total.toFixed(2);
-      $("#amount_"+row).val(total);
+      $("#amount_"+row).val(formatVND(total));
       $("#amount_value_"+row).val(total);
 
       subAmount();
@@ -319,15 +327,14 @@
         success:function(response) {
           // setting the rate value into the rate input field
 
-          $("#rate_"+row_id).val(response.price);
+          $("#rate_"+row_id).val(formatVND(response.price));
           $("#rate_value_"+row_id).val(response.price);
 
           $("#qty_"+row_id).val(1);
           $("#qty_value_"+row_id).val(1);
 
           var total = Number(response.price) * 1;
-          total = total.toFixed(2);
-          $("#amount_"+row_id).val(total);
+          $("#amount_"+row_id).val(formatVND(total));
           $("#amount_value_"+row_id).val(total);
 
           subAmount();
@@ -348,62 +355,46 @@
       var count = $(tr).attr('id');
       count = count.substring(4);
 
-      totalSubAmount = Number(totalSubAmount) + Number($("#amount_"+count).val());
+      totalSubAmount = Number(totalSubAmount) + Number($("#amount_value_"+count).val());
     } // /for
 
-    totalSubAmount = totalSubAmount.toFixed(2);
-
     // sub total
-    $("#gross_amount").val(totalSubAmount);
+    $("#gross_amount").val(formatVND(totalSubAmount));
     $("#gross_amount_value").val(totalSubAmount);
 
     // vat
-    var vat = (Number($("#gross_amount").val())/100) * vat_charge;
-    vat = vat.toFixed(2);
-    $("#vat_charge").val(vat);
+    var vat = (totalSubAmount/100) * vat_charge;
+    $("#vat_charge").val(formatVND(vat));
     $("#vat_charge_value").val(vat);
 
     // service
-    var service = (Number($("#gross_amount").val())/100) * service_charge;
-    service = service.toFixed(2);
-    $("#service_charge").val(service);
+    var service = (totalSubAmount/100) * service_charge;
+    $("#service_charge").val(formatVND(service));
     $("#service_charge_value").val(service);
 
     // total amount
-    var totalAmount = (Number(totalSubAmount) + Number(vat) + Number(service));
-    totalAmount = totalAmount.toFixed(2);
-    // $("#net_amount").val(totalAmount);
-    // $("#totalAmountValue").val(totalAmount);
+    var totalAmount = (totalSubAmount + vat + service);
 
-    var discount = $("#discount").val();
-    if(discount) {
-      var grandTotal = Number(totalAmount) - Number(discount);
-      grandTotal = grandTotal.toFixed(2);
-      $("#net_amount").val(grandTotal);
-      $("#net_amount_value").val(grandTotal);
-    } else {
-      $("#net_amount").val(totalAmount);
-      $("#net_amount_value").val(totalAmount);
-
-    } // /else discount
+    var discount = parseVND($("#discount").val());
+    var grandTotal = totalAmount - discount;
+    $("#net_amount").val(formatVND(grandTotal));
+    $("#net_amount_value").val(grandTotal);
 
     var paid_amount = Number($("#paid_amount").val());
     if(paid_amount) {
-      var net_amount_value = Number($("#net_amount_value").val());
-      var remaning = net_amount_value - paid_amount;
-      $("#remaining").val(remaning.toFixed(2));
-      $("#remaining_value").val(remaning.toFixed(2));
+      var remaning = grandTotal - paid_amount;
+      $("#remaining").val(formatVND(remaning));
+      $("#remaining_value").val(remaning);
     }
 
   } // /sub total amount
 
   function paidAmount() {
-    var grandTotal = $("#net_amount_value").val();
+    var grandTotal = Number($("#net_amount_value").val());
 
     if(grandTotal) {
-      var dueAmount = Number($("#net_amount_value").val()) - Number($("#paid_amount").val());
-      dueAmount = dueAmount.toFixed(2);
-      $("#remaining").val(dueAmount);
+      var dueAmount = grandTotal - Number($("#paid_amount").val());
+      $("#remaining").val(formatVND(dueAmount));
       $("#remaining_value").val(dueAmount);
     } // /if
   } // /paid amoutn function

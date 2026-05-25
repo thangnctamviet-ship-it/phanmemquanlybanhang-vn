@@ -260,131 +260,70 @@ class Orders extends Admin_Controller
 			$order_date = date('d/m/Y', $order_data['date_time']);
 			$paid_status = ($order_data['paid_status'] == 1) ? "Đã thanh toán" : "Chưa thanh toán";
 
-			$html = '<!-- Main content -->
-			<!DOCTYPE html>
-			<html>
-			<head>
-			<meta charset="utf-8">
-			<meta http-equiv="X-UA-Compatible" content="IE=edge">
-			<title>AdminLTE 2 | Hoá đơn</title>
-			<!-- Tell the browser to be responsive to screen width -->
-			<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-			<!-- Bootstrap 3.3.7 -->
-			<link rel="stylesheet" href="'.base_url('assets/bower_components/bootstrap/dist/css/bootstrap.min.css').'">
-			<!-- Font Awesome -->
-			<link rel="stylesheet" href="'.base_url('assets/bower_components/font-awesome/css/font-awesome.min.css').'">
-			<link rel="stylesheet" href="'.base_url('assets/dist/css/AdminLTE.min.css').'">
-			</head>
-			<body onload="window.print();">
+			$company_addr = isset($company_info['address']) ? $company_info['address'] : '';
+			$company_phone = isset($company_info['phone']) ? $company_info['phone'] : '';
 
-			<div class="wrapper">
-			<section class="invoice">
-			<!-- title row -->
-			<div class="row">
-			<div class="col-xs-12">
-			<h2 class="page-header">
-			'.$company_info['company_name'].'
-			<small class="pull-right">Ngày: '.$order_date.'</small>
-			</h2>
-			</div>
-			<!-- /.col -->
-			</div>
-			<!-- info row -->
-			<div class="row invoice-info">
-
-			<div class="col-sm-4 invoice-col">
-
-			<b>Mã hoá đơn:</b> '.$order_data['bill_no'].'<br>
-			<b>Tên:</b> '.$order_data['customer_name'].'<br>
-			<b>Địa chỉ:</b> '.$order_data['customer_address'].' <br />
-			<b>Điện thoại:</b> '.$order_data['customer_phone'].'
-			</div>
-			<!-- /.col -->
-			</div>
-			<!-- /.row -->
-
-			<!-- Table row -->
-			<div class="row">
-			<div class="col-xs-12 table-responsive">
-			<table class="table table-striped">
-			<thead>
-			<tr>
-			<th>Tên sản phẩm</th>
-			<th>Giá</th>
-			<th>SL</th>
-			<th>Thành tiền</th>
-			</tr>
-			</thead>
-			<tbody>';
+			$html = '<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Hoá đơn '.$order_data['bill_no'].'</title>
+<style>
+@page { size: 80mm auto; margin: 2mm; }
+* { box-sizing: border-box; }
+body { font-family: -apple-system, "Segoe UI", Tahoma, Arial, sans-serif; font-size: 11px; line-height: 1.35; margin: 0; padding: 0; width: 76mm; color:#000; }
+.center { text-align: center; }
+.right { text-align: right; }
+.bold { font-weight: bold; }
+.company { font-size: 14px; font-weight: bold; }
+.small { font-size: 10px; }
+.title { font-size: 12px; font-weight: bold; margin: 2px 0; }
+hr { border: none; border-top: 1px dashed #000; margin: 4px 0; }
+.row { display: flex; justify-content: space-between; }
+.item-name { font-weight: bold; }
+.item-line { display: flex; justify-content: space-between; }
+.total-line { font-size: 13px; font-weight: bold; }
+.thanks { font-style: italic; margin-top: 4px; }
+table { width: 100%; border-collapse: collapse; }
+@media print { body { width: 76mm; } }
+</style>
+</head>
+<body onload="window.print();">
+<div class="center company">'.htmlspecialchars($company_info['company_name']).'</div>';
+			if ($company_addr) $html .= '<div class="center small">'.htmlspecialchars($company_addr).'</div>';
+			if ($company_phone) $html .= '<div class="center small">ĐT: '.htmlspecialchars($company_phone).'</div>';
+			$html .= '<hr>
+<div class="center title">HOÁ ĐƠN BÁN HÀNG</div>
+<div>Số: <b>'.$order_data['bill_no'].'</b></div>
+<div>Ngày: '.$order_date.'</div>';
+			if (!empty($order_data['customer_name'])) $html .= '<div>KH: '.htmlspecialchars($order_data['customer_name']).'</div>';
+			if (!empty($order_data['customer_phone'])) $html .= '<div>ĐT: '.htmlspecialchars($order_data['customer_phone']).'</div>';
+			if (!empty($order_data['customer_address'])) $html .= '<div>ĐC: '.htmlspecialchars($order_data['customer_address']).'</div>';
+			$html .= '<hr>';
 
 			foreach ($orders_items as $k => $v) {
-
 				$product_data = $this->model_products->getProductData($v['product_id']);
-
-				$html .= '<tr>
-				<td>'.$product_data['name'].'</td>
-				<td>'.$v['rate'].'</td>
-				<td>'.$v['qty'].'</td>
-				<td>'.$v['amount'].'</td>
-				</tr>';
+				$html .= '<div class="item-name">'.htmlspecialchars($product_data['name']).'</div>'
+					.'<div class="item-line"><span>'.$v['qty'].' x '.format_vnd($v['rate']).'</span><span>'.format_vnd($v['amount']).'</span></div>';
 			}
 
-			$html .= '</tbody>
-			</table>
-			</div>
-			<!-- /.col -->
-			</div>
-			<!-- /.row -->
-
-			<div class="row">
-
-			<div class="col-xs-6 pull pull-right">
-
-			<div class="table-responsive">
-			<table class="table">
-			<tr>
-			<th style="width:50%">Tổng tiền hàng:</th>
-			<td>'.$order_data['gross_amount'].'</td>
-			</tr>';
-
-			if($order_data['service_charge'] > 0) {
-				$html .= '<tr>
-				<th>Phí dịch vụ ('.$order_data['service_charge_rate'].'%)</th>
-				<td>'.$order_data['service_charge'].'</td>
-				</tr>';
+			$html .= '<hr>';
+			$html .= '<div class="row"><span>Tổng tiền hàng:</span><span>'.format_vnd($order_data['gross_amount']).'</span></div>';
+			if ($order_data['vat_charge'] > 0) {
+				$html .= '<div class="row"><span>VAT ('.$order_data['vat_charge_rate'].'%):</span><span>'.format_vnd($order_data['vat_charge']).'</span></div>';
 			}
-
-			if($order_data['vat_charge'] > 0) {
-				$html .= '<tr>
-				<th>Phí VAT ('.$order_data['vat_charge_rate'].'%)</th>
-				<td>'.$order_data['vat_charge'].'</td>
-				</tr>';
+			if ($order_data['service_charge'] > 0) {
+				$html .= '<div class="row"><span>Phí DV ('.$order_data['service_charge_rate'].'%):</span><span>'.format_vnd($order_data['service_charge']).'</span></div>';
 			}
-
-
-			$html .=' <tr>
-			<th>Giảm giá:</th>
-			<td>'.$order_data['discount'].'</td>
-			</tr>
-			<tr>
-			<th>Thành tiền ròng:</th>
-			<td>'.$order_data['net_amount'].'</td>
-			</tr>
-			<tr>
-			<th>Trạng thái thanh toán:</th>
-			<td>'.$paid_status.'</td>
-			</tr>
-			</table>
-			</div>
-			</div>
-			<!-- /.col -->
-			</div>
-			<!-- /.row -->
-			</section>
-			<!-- /.content -->
-			</div>
-		</body>
-	</html>';
+			if ($order_data['discount'] > 0) {
+				$html .= '<div class="row"><span>Giảm giá:</span><span>-'.format_vnd($order_data['discount']).'</span></div>';
+			}
+			$html .= '<hr>';
+			$html .= '<div class="row total-line"><span>THÀNH TIỀN:</span><span>'.format_vnd($order_data['net_amount']).'</span></div>';
+			$html .= '<div>Thanh toán: '.$paid_status.'</div>';
+			$html .= '<hr>';
+			$html .= '<div class="center thanks">Cảm ơn quý khách! Hẹn gặp lại.</div>';
+			$html .= '</body></html>';
 
 			echo $html;
 		}
