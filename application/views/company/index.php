@@ -5,12 +5,12 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Manage
-        <small>Company</small>
+        Quản lý
+        <small>Công ty</small>
       </h1>
       <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active">company</li>
+        <li><a href="#"><i class="fa fa-dashboard"></i> Trang chủ</a></li>
+        <li class="active">công ty</li>
       </ol>
     </section>
 
@@ -19,7 +19,7 @@
       <!-- Small boxes (Stat box) -->
       <div class="row">
         <div class="col-md-12 col-xs-12">
-          
+
           <?php if($this->session->flashdata('success')): ?>
             <div class="alert alert-success alert-dismissible" role="alert">
               <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -34,7 +34,7 @@
 
           <div class="box">
             <div class="box-header">
-              <h3 class="box-title">Manage Company Information</h3>
+              <h3 class="box-title">Quản lý thông tin công ty</h3>
             </div>
             <form role="form" action="<?php base_url('company/update') ?>" method="post">
               <div class="box-body">
@@ -42,40 +42,40 @@
                 <?php echo validation_errors(); ?>
 
                 <div class="form-group">
-                  <label for="company_name">Company Name</label>
-                  <input type="text" class="form-control" id="company_name" name="company_name" placeholder="Enter company name" value="<?php echo $company_data['company_name'] ?>" autocomplete="off">
+                  <label for="company_name">Tên công ty</label>
+                  <input type="text" class="form-control" id="company_name" name="company_name" placeholder="Nhập tên công ty" value="<?php echo $company_data['company_name'] ?>" autocomplete="off">
                 </div>
                 <div class="form-group">
-                  <label for="service_charge_value">Charge Amount (%)</label>
-                  <input type="text" class="form-control" id="service_charge_value" name="service_charge_value" placeholder="Enter charge amount %" value="<?php echo $company_data['service_charge_value'] ?>" autocomplete="off">
+                  <label for="service_charge_value">Phí dịch vụ (%)</label>
+                  <input type="text" class="form-control" id="service_charge_value" name="service_charge_value" placeholder="Nhập phần trăm phí dịch vụ" value="<?php echo $company_data['service_charge_value'] ?>" autocomplete="off">
                 </div>
                 <div class="form-group">
-                  <label for="vat_charge_value">Vat Charge (%)</label>
-                  <input type="text" class="form-control" id="vat_charge_value" name="vat_charge_value" placeholder="Enter vat charge %" value="<?php echo $company_data['vat_charge_value'] ?>" autocomplete="off">
+                  <label for="vat_charge_value">Phí VAT (%)</label>
+                  <input type="text" class="form-control" id="vat_charge_value" name="vat_charge_value" placeholder="Nhập phần trăm phí VAT" value="<?php echo $company_data['vat_charge_value'] ?>" autocomplete="off">
                 </div>
                 <div class="form-group">
-                  <label for="address">Address</label>
-                  <input type="text" class="form-control" id="address" name="address" placeholder="Enter address" value="<?php echo $company_data['address'] ?>" autocomplete="off">
+                  <label for="address">Địa chỉ</label>
+                  <input type="text" class="form-control" id="address" name="address" placeholder="Nhập địa chỉ" value="<?php echo $company_data['address'] ?>" autocomplete="off">
                 </div>
                 <div class="form-group">
-                  <label for="phone">Phone</label>
-                  <input type="text" class="form-control" id="phone" name="phone" placeholder="Enter phone" value="<?php echo $company_data['phone'] ?>" autocomplete="off">
+                  <label for="phone">Điện thoại</label>
+                  <input type="text" class="form-control" id="phone" name="phone" placeholder="Nhập điện thoại" value="<?php echo $company_data['phone'] ?>" autocomplete="off">
                 </div>
                 <div class="form-group">
-                  <label for="country">Country</label>
-                  <input type="text" class="form-control" id="country" name="country" placeholder="Enter country" value="<?php echo $company_data['country'] ?>" autocomplete="off">
+                  <label for="country">Quốc gia</label>
+                  <input type="text" class="form-control" id="country" name="country" placeholder="Nhập quốc gia" value="<?php echo $company_data['country'] ?>" autocomplete="off">
                 </div>
                 <div class="form-group">
-                  <label for="permission">Message</label>
+                  <label for="permission">Thông báo</label>
                   <textarea class="form-control" id="message" name="message">
                      <?php echo $company_data['message'] ?>
                   </textarea>
                 </div>
                 <div class="form-group">
-                  <label for="currency">Currency</label>
+                  <label for="currency">Tiền tệ</label>
                   <?php ?>
                   <select class="form-control" id="currency" name="currency">
-                    <option value="">~~SELECT~~</option>
+                    <option value="">~~CHỌN~~</option>
 
                     <?php foreach ($currency_symbols as $k => $v): ?>
                       <option value="<?php echo trim($k); ?>" <?php if($company_data['currency'] == $k) {
@@ -84,12 +84,12 @@
                     <?php endforeach ?>
                   </select>
                 </div>
-                
+
               </div>
               <!-- /.box-body -->
 
               <div class="box-footer">
-                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
               </div>
             </form>
           </div>
@@ -98,7 +98,7 @@
         <!-- col-md-12 -->
       </div>
       <!-- /.row -->
-      
+
 
     </section>
     <!-- /.content -->

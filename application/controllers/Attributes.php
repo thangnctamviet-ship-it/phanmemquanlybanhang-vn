@@ -2,7 +2,7 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Attributes extends Admin_Controller 
+class Attributes extends Admin_Controller
 {
 	public function __construct()
 	{
@@ -10,13 +10,13 @@ class Attributes extends Admin_Controller
 
 		$this->not_logged_in();
 
-		$this->data['page_title'] = 'Attributes';
+		$this->data['page_title'] = 'Thuộc tính';
 
 		$this->load->model('model_attributes');
 	}
 
-	/* 
-	* redirect to the index page 
+	/*
+	* redirect to the index page
 	*/
 	public function index()
 	{
@@ -24,13 +24,13 @@ class Attributes extends Admin_Controller
 			redirect('dashboard', 'refresh');
 		}
 
-		$this->render_template('attributes/index', $this->data);	
+		$this->render_template('attributes/index', $this->data);
 	}
 
-	/* 
-	* fetch the attribute data through attribute id 
+	/*
+	* fetch the attribute data through attribute id
 	*/
-	public function fetchAttributeDataById($id) 
+	public function fetchAttributeDataById($id)
 	{
 		if($id) {
 			$data = $this->model_attributes->getAttributeData($id);
@@ -38,8 +38,8 @@ class Attributes extends Admin_Controller
 		}
 	}
 
-	/* 
-	* gets the attribute data from data and returns the attribute 
+	/*
+	* gets the attribute data from data and returns the attribute
 	*/
 	public function fetchAttributeData()
 	{
@@ -52,12 +52,12 @@ class Attributes extends Admin_Controller
 			$count_attribute_value = $this->model_attributes->countAttributeValue($value['id']);
 
 			// button
-			$buttons = '<a href="'.base_url('attributes/addvalue/'.$value['id']).'" class="btn btn-default"><i class="fa fa-plus"></i> Add Value</a> 
+			$buttons = '<a href="'.base_url('attributes/addvalue/'.$value['id']).'" class="btn btn-default"><i class="fa fa-plus"></i> Thêm giá trị</a>
 			<button type="button" class="btn btn-default" onclick="editFunc('.$value['id'].')" data-toggle="modal" data-target="#editModal"><i class="fa fa-pencil"></i></button>
 			<button type="button" class="btn btn-default" onclick="removeFunc('.$value['id'].')" data-toggle="modal" data-target="#removeModal"><i class="fa fa-trash"></i></button>
 			';
 
-			$status = ($value['active'] == 1) ? '<span class="label label-success">Active</span>' : '<span class="label label-warning">Inactive</span>';
+			$status = ($value['active'] == 1) ? '<span class="label label-success">Hoạt động</span>' : '<span class="label label-warning">Không hoạt động</span>';
 
 			$result['data'][$key] = array(
 				$value['name'],
@@ -70,8 +70,8 @@ class Attributes extends Admin_Controller
 		echo json_encode($result);
 	}
 
-	/* 
-	* create the new attribute value 
+	/*
+	* create the new attribute value
 	*/
 	public function create()
 	{
@@ -81,39 +81,39 @@ class Attributes extends Admin_Controller
 
 		$response = array();
 
-		$this->form_validation->set_rules('attribute_name', 'Attribute name', 'trim|required');
-		$this->form_validation->set_rules('active', 'Active', 'trim|required');
+		$this->form_validation->set_rules('attribute_name', 'Tên thuộc tính', 'trim|required');
+		$this->form_validation->set_rules('active', 'Hoạt động', 'trim|required');
 
 		$this->form_validation->set_error_delimiters('<p class="text-danger">','</p>');
 
         if ($this->form_validation->run() == TRUE) {
-        	$data = array(
-        		'name' => $this->input->post('attribute_name'),
-        		'active' => $this->input->post('active'),	
-        	);
+	$data = array(
+		'name' => $this->input->post('attribute_name'),
+		'active' => $this->input->post('active'),
+	);
 
-        	$create = $this->model_attributes->create($data);
-        	if($create == true) {
-        		$response['success'] = true;
-        		$response['messages'] = 'Succesfully created';
-        	}
-        	else {
-        		$response['success'] = false;
-        		$response['messages'] = 'Error in the database while creating the brand information';			
-        	}
+	$create = $this->model_attributes->create($data);
+	if($create == true) {
+		$response['success'] = true;
+		$response['messages'] = 'Tạo thành công';
+	}
+	else {
+		$response['success'] = false;
+		$response['messages'] = 'Lỗi cơ sở dữ liệu khi tạo thông tin';
+	}
         }
         else {
-        	$response['success'] = false;
-        	foreach ($_POST as $key => $value) {
-        		$response['messages'][$key] = form_error($key);
-        	}
+	$response['success'] = false;
+	foreach ($_POST as $key => $value) {
+		$response['messages'][$key] = form_error($key);
+	}
         }
 
         echo json_encode($response);
 	}
 
-	/* 
-	* update the attribute value via attribute id 
+	/*
+	* update the attribute value via attribute id
 	*/
 	public function update($id)
 	{
@@ -124,44 +124,44 @@ class Attributes extends Admin_Controller
 		$response = array();
 
 		if($id) {
-			$this->form_validation->set_rules('edit_attribute_name', 'Attribute name', 'trim|required');
-			$this->form_validation->set_rules('edit_active', 'Active', 'trim|required');
+			$this->form_validation->set_rules('edit_attribute_name', 'Tên thuộc tính', 'trim|required');
+			$this->form_validation->set_rules('edit_active', 'Hoạt động', 'trim|required');
 
 			$this->form_validation->set_error_delimiters('<p class="text-danger">','</p>');
 
-	        if ($this->form_validation->run() == TRUE) {
-	        	$data = array(
-	        		'name' => $this->input->post('edit_attribute_name'),
-	        		'active' => $this->input->post('edit_active'),	
-	        	);
+	if ($this->form_validation->run() == TRUE) {
+		$data = array(
+			'name' => $this->input->post('edit_attribute_name'),
+			'active' => $this->input->post('edit_active'),
+		);
 
-	        	$update = $this->model_attributes->update($data, $id);
-	        	if($update == true) {
-	        		$response['success'] = true;
-	        		$response['messages'] = 'Succesfully updated';
-	        	}
-	        	else {
-	        		$response['success'] = false;
-	        		$response['messages'] = 'Error in the database while updated the brand information';			
-	        	}
-	        }
-	        else {
-	        	$response['success'] = false;
-	        	foreach ($_POST as $key => $value) {
-	        		$response['messages'][$key] = form_error($key);
-	        	}
-	        }
+		$update = $this->model_attributes->update($data, $id);
+		if($update == true) {
+			$response['success'] = true;
+			$response['messages'] = 'Cập nhật thành công';
 		}
 		else {
 			$response['success'] = false;
-    		$response['messages'] = 'Error please refresh the page again!!';
+			$response['messages'] = 'Lỗi cơ sở dữ liệu khi cập nhật thông tin';
+		}
+	}
+	else {
+		$response['success'] = false;
+		foreach ($_POST as $key => $value) {
+			$response['messages'][$key] = form_error($key);
+		}
+	}
+		}
+		else {
+			$response['success'] = false;
+		$response['messages'] = 'Đã xảy ra lỗi, vui lòng tải lại trang!!';
 		}
 
 		echo json_encode($response);
 	}
 
-	/* 
-	* remove the attribute value via attribute id 
+	/*
+	* remove the attribute value via attribute id
 	*/
 	public function remove()
 	{
@@ -176,11 +176,11 @@ class Attributes extends Admin_Controller
 			$delete = $this->model_attributes->remove($attribute_id);
 			if($delete == true) {
 				$response['success'] = true;
-				$response['messages'] = "Successfully removed";	
+				$response['messages'] = "Xoá thành công";
 			}
 			else {
 				$response['success'] = false;
-				$response['messages'] = "Error in the database while removing the brand information";
+				$response['messages'] = "Lỗi cơ sở dữ liệu khi xoá thông tin";
 			}
 		}
 		else {
@@ -193,8 +193,8 @@ class Attributes extends Admin_Controller
 
 	/* ATTRIBUTE VALUE SECTION */
 
-	/* 
-	* this function redirects to the addvalue page with the parent attribute id 
+	/*
+	* this function redirects to the addvalue page with the parent attribute id
 	*/
 	public function addvalue($attribute_id = null)
 	{
@@ -204,12 +204,12 @@ class Attributes extends Admin_Controller
 
 		$this->data['attribute_data'] = $this->model_attributes->getAttributeData($attribute_id);
 
-		$this->render_template('attributes/addvalue', $this->data);	
+		$this->render_template('attributes/addvalue', $this->data);
 	}
 
 
-	/* 
-	* fetch the attribute value based on the attribute parent id 
+	/*
+	* fetch the attribute value based on the attribute parent id
 	*/
 	public function fetchAttributeValueData($attribute_parent_id)
 	{
@@ -234,10 +234,10 @@ class Attributes extends Admin_Controller
 		echo json_encode($result);
 	}
 
-	/* 
-	* fetch the attribute value by the attritute value id  
+	/*
+	* fetch the attribute value by the attritute value id
 	*/
-	public function fetchAttributeValueById($id) 
+	public function fetchAttributeValueById($id)
 	{
 		if($id) {
 			$data = $this->model_attributes->getAttributeValueById($id);
@@ -245,47 +245,47 @@ class Attributes extends Admin_Controller
 		}
 	}
 
-	/* 
-	* this function only creates the value 
-	*/ 
+	/*
+	* this function only creates the value
+	*/
 	public function createValue()
 	{
 		$response = array();
 
-		$this->form_validation->set_rules('attribute_value_name', 'Attribute value', 'trim|required');
+		$this->form_validation->set_rules('attribute_value_name', 'Giá trị thuộc tính', 'trim|required');
 
 		$this->form_validation->set_error_delimiters('<p class="text-danger">','</p>');
 
         if ($this->form_validation->run() == TRUE) {
-        	$attribute_parent_id = $this->input->post('attribute_parent_id');
+	$attribute_parent_id = $this->input->post('attribute_parent_id');
 
-        	$data = array(
-        		'value' => $this->input->post('attribute_value_name'),
-        		'attribute_parent_id' => $attribute_parent_id
-        	);
+	$data = array(
+		'value' => $this->input->post('attribute_value_name'),
+		'attribute_parent_id' => $attribute_parent_id
+	);
 
-        	$create = $this->model_attributes->createValue($data);
-        	if($create == true) {
-        		$response['success'] = true;
-        		$response['messages'] = 'Succesfully created';
-        	}
-        	else {
-        		$response['success'] = false;
-        		$response['messages'] = 'Error in the database while creating the brand information';			
-        	}
+	$create = $this->model_attributes->createValue($data);
+	if($create == true) {
+		$response['success'] = true;
+		$response['messages'] = 'Tạo thành công';
+	}
+	else {
+		$response['success'] = false;
+		$response['messages'] = 'Lỗi cơ sở dữ liệu khi tạo thông tin';
+	}
         }
         else {
-        	$response['success'] = false;
-        	foreach ($_POST as $key => $value) {
-        		$response['messages'][$key] = form_error($key);
-        	}
+	$response['success'] = false;
+	foreach ($_POST as $key => $value) {
+		$response['messages'][$key] = form_error($key);
+	}
         }
 
         echo json_encode($response);
 	}
 
-	/* 
-	* It updates the attribute value based on the attribute value id 
+	/*
+	* It updates the attribute value based on the attribute value id
 	*/
 	public function updateValue($id)
 	{
@@ -293,44 +293,44 @@ class Attributes extends Admin_Controller
 		$response = array();
 
 		if($id) {
-			$this->form_validation->set_rules('edit_attribute_value_name', 'Attribute value', 'trim|required');
+			$this->form_validation->set_rules('edit_attribute_value_name', 'Giá trị thuộc tính', 'trim|required');
 
 			$this->form_validation->set_error_delimiters('<p class="text-danger">','</p>');
 
-	        if ($this->form_validation->run() == TRUE) {
-	        	$attribute_parent_id = $this->input->post('attribute_parent_id');
-	        	$data = array(
-	        		'value' => $this->input->post('edit_attribute_value_name'),
-		    		'attribute_parent_id' => $attribute_parent_id
-	        	);
+	if ($this->form_validation->run() == TRUE) {
+		$attribute_parent_id = $this->input->post('attribute_parent_id');
+		$data = array(
+			'value' => $this->input->post('edit_attribute_value_name'),
+				'attribute_parent_id' => $attribute_parent_id
+		);
 
-	        	$update = $this->model_attributes->updateValue($data, $id);
-	        	if($update == true) {
-	        		$response['success'] = true;
-	        		$response['messages'] = 'Succesfully updated';
-	        	}
-	        	else {
-	        		$response['success'] = false;
-	        		$response['messages'] = 'Error in the database while updated the brand information';			
-	        	}
-	        }
-	        else {
-	        	$response['success'] = false;
-	        	foreach ($_POST as $key => $value) {
-	        		$response['messages'][$key] = form_error($key);
-	        	}
-	        }
+		$update = $this->model_attributes->updateValue($data, $id);
+		if($update == true) {
+			$response['success'] = true;
+			$response['messages'] = 'Cập nhật thành công';
 		}
 		else {
 			$response['success'] = false;
-    		$response['messages'] = 'Error please refresh the page again!!';
+			$response['messages'] = 'Lỗi cơ sở dữ liệu khi cập nhật thông tin';
+		}
+	}
+	else {
+		$response['success'] = false;
+		foreach ($_POST as $key => $value) {
+			$response['messages'][$key] = form_error($key);
+		}
+	}
+		}
+		else {
+			$response['success'] = false;
+		$response['messages'] = 'Đã xảy ra lỗi, vui lòng tải lại trang!!';
 		}
 
 		echo json_encode($response);
 	}
 
-	/* 
-	* it removes the attribute value id based on the attribute value id 
+	/*
+	* it removes the attribute value id based on the attribute value id
 	*/
 	public function removeValue()
 	{
@@ -342,11 +342,11 @@ class Attributes extends Admin_Controller
 			$delete = $this->model_attributes->removeValue($attribute_value_id);
 			if($delete == true) {
 				$response['success'] = true;
-				$response['messages'] = "Successfully removed";	
+				$response['messages'] = "Xoá thành công";
 			}
 			else {
 				$response['success'] = false;
-				$response['messages'] = "Error in the database while removing the brand information";
+				$response['messages'] = "Lỗi cơ sở dữ liệu khi xoá thông tin";
 			}
 		}
 		else {

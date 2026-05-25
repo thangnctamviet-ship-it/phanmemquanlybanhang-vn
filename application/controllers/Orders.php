@@ -2,7 +2,7 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Orders extends Admin_Controller 
+class Orders extends Admin_Controller
 {
 	public function __construct()
 	{
@@ -10,14 +10,14 @@ class Orders extends Admin_Controller
 
 		$this->not_logged_in();
 
-		$this->data['page_title'] = 'Orders';
+		$this->data['page_title'] = 'Đơn hàng';
 
 		$this->load->model('model_orders');
 		$this->load->model('model_products');
 		$this->load->model('model_company');
 	}
 
-	/* 
+	/*
 	* It only redirects to the manage order page
 	*/
 	public function index()
@@ -26,12 +26,12 @@ class Orders extends Admin_Controller
             redirect('dashboard', 'refresh');
         }
 
-		$this->data['page_title'] = 'Manage Orders';
-		$this->render_template('orders/index', $this->data);		
+		$this->data['page_title'] = 'Quản lý đơn hàng';
+		$this->render_template('orders/index', $this->data);
 	}
 
 	/*
-	* Fetches the orders data from the orders table 
+	* Fetches the orders data from the orders table
 	* this function is called from the datatable ajax function
 	*/
 	public function fetchOrdersData()
@@ -64,10 +64,10 @@ class Orders extends Admin_Controller
 			}
 
 			if($value['paid_status'] == 1) {
-				$paid_status = '<span class="label label-success">Paid</span>';	
+				$paid_status = '<span class="label label-success">Đã thanh toán</span>';
 			}
 			else {
-				$paid_status = '<span class="label label-warning">Not Paid</span>';
+				$paid_status = '<span class="label label-warning">Chưa thanh toán</span>';
 			}
 
 			$result['data'][$key] = array(
@@ -87,7 +87,7 @@ class Orders extends Admin_Controller
 
 	/*
 	* If the validation is not valid, then it redirects to the create page.
-	* If the validation for each input field is valid then it inserts the data into the database 
+	* If the validation for each input field is valid then it inserts the data into the database
 	* and it stores the operation message into the session flashdata and display on the manage group page
 	*/
 	public function create()
@@ -96,40 +96,40 @@ class Orders extends Admin_Controller
             redirect('dashboard', 'refresh');
         }
 
-		$this->data['page_title'] = 'Add Order';
+		$this->data['page_title'] = 'Thêm đơn hàng';
 
-		$this->form_validation->set_rules('product[]', 'Product name', 'trim|required');
-		
-	
-        if ($this->form_validation->run() == TRUE) {        	
-        	
-        	$order_id = $this->model_orders->create();
-        	
-        	if($order_id) {
-        		$this->session->set_flashdata('success', 'Successfully created');
-        		redirect('orders/update/'.$order_id, 'refresh');
-        	}
-        	else {
-        		$this->session->set_flashdata('errors', 'Error occurred!!');
-        		redirect('orders/create/', 'refresh');
-        	}
+		$this->form_validation->set_rules('product[]', 'Tên sản phẩm', 'trim|required');
+
+
+        if ($this->form_validation->run() == TRUE) {
+
+	$order_id = $this->model_orders->create();
+
+	if($order_id) {
+		$this->session->set_flashdata('success', 'Tạo thành công');
+		redirect('orders/update/'.$order_id, 'refresh');
+	}
+	else {
+		$this->session->set_flashdata('errors', 'Đã xảy ra lỗi!!');
+		redirect('orders/create/', 'refresh');
+	}
         }
         else {
             // false case
-        	$company = $this->model_company->getCompanyData(1);
-        	$this->data['company_data'] = $company;
-        	$this->data['is_vat_enabled'] = ($company['vat_charge_value'] > 0) ? true : false;
-        	$this->data['is_service_enabled'] = ($company['service_charge_value'] > 0) ? true : false;
+	$company = $this->model_company->getCompanyData(1);
+	$this->data['company_data'] = $company;
+	$this->data['is_vat_enabled'] = ($company['vat_charge_value'] > 0) ? true : false;
+	$this->data['is_service_enabled'] = ($company['service_charge_value'] > 0) ? true : false;
 
-        	$this->data['products'] = $this->model_products->getActiveProductData();      	
+	$this->data['products'] = $this->model_products->getActiveProductData();
 
             $this->render_template('orders/create', $this->data);
-        }	
+        }
 	}
 
 	/*
 	* It gets the product id passed from the ajax method.
-	* It checks retrieves the particular product data from the product id 
+	* It checks retrieves the particular product data from the product id
 	* and return the data into the json format.
 	*/
 	public function getProductValueById()
@@ -142,7 +142,7 @@ class Orders extends Admin_Controller
 	}
 
 	/*
-	* It gets the all the active product inforamtion from the product table 
+	* It gets the all the active product inforamtion from the product table
 	* This function is used in the order page, for the product selection in the table
 	* The response is return on the json format.
 	*/
@@ -153,8 +153,8 @@ class Orders extends Admin_Controller
 	}
 
 	/*
-	* If the validation is not valid, then it redirects to the edit orders page 
-	* If the validation is successfully then it updates the data into the database 
+	* If the validation is not valid, then it redirects to the edit orders page
+	* If the validation is successfully then it updates the data into the database
 	* and it stores the operation message into the session flashdata and display on the manage group page
 	*/
 	public function update($id)
@@ -167,44 +167,44 @@ class Orders extends Admin_Controller
 			redirect('dashboard', 'refresh');
 		}
 
-		$this->data['page_title'] = 'Update Order';
+		$this->data['page_title'] = 'Cập nhật đơn hàng';
 
-		$this->form_validation->set_rules('product[]', 'Product name', 'trim|required');
-		
-	
-        if ($this->form_validation->run() == TRUE) {        	
-        	
-        	$update = $this->model_orders->update($id);
-        	
-        	if($update == true) {
-        		$this->session->set_flashdata('success', 'Successfully updated');
-        		redirect('orders/update/'.$id, 'refresh');
-        	}
-        	else {
-        		$this->session->set_flashdata('errors', 'Error occurred!!');
-        		redirect('orders/update/'.$id, 'refresh');
-        	}
+		$this->form_validation->set_rules('product[]', 'Tên sản phẩm', 'trim|required');
+
+
+        if ($this->form_validation->run() == TRUE) {
+
+	$update = $this->model_orders->update($id);
+
+	if($update == true) {
+		$this->session->set_flashdata('success', 'Cập nhật thành công');
+		redirect('orders/update/'.$id, 'refresh');
+	}
+	else {
+		$this->session->set_flashdata('errors', 'Đã xảy ra lỗi!!');
+		redirect('orders/update/'.$id, 'refresh');
+	}
         }
         else {
             // false case
-        	$company = $this->model_company->getCompanyData(1);
-        	$this->data['company_data'] = $company;
-        	$this->data['is_vat_enabled'] = ($company['vat_charge_value'] > 0) ? true : false;
-        	$this->data['is_service_enabled'] = ($company['service_charge_value'] > 0) ? true : false;
+	$company = $this->model_company->getCompanyData(1);
+	$this->data['company_data'] = $company;
+	$this->data['is_vat_enabled'] = ($company['vat_charge_value'] > 0) ? true : false;
+	$this->data['is_service_enabled'] = ($company['service_charge_value'] > 0) ? true : false;
 
-        	$result = array();
-        	$orders_data = $this->model_orders->getOrdersData($id);
+	$result = array();
+	$orders_data = $this->model_orders->getOrdersData($id);
 
-    		$result['order'] = $orders_data;
-    		$orders_item = $this->model_orders->getOrdersItemData($orders_data['id']);
+		$result['order'] = $orders_data;
+		$orders_item = $this->model_orders->getOrdersItemData($orders_data['id']);
 
-    		foreach($orders_item as $k => $v) {
-    			$result['order_item'][] = $v;
-    		}
+		foreach($orders_item as $k => $v) {
+			$result['order_item'][] = $v;
+		}
 
-    		$this->data['order_data'] = $result;
+		$this->data['order_data'] = $result;
 
-        	$this->data['products'] = $this->model_products->getActiveProductData();      	
+	$this->data['products'] = $this->model_products->getActiveProductData();
 
             $this->render_template('orders/edit', $this->data);
         }
@@ -227,11 +227,11 @@ class Orders extends Admin_Controller
             $delete = $this->model_orders->remove($order_id);
             if($delete == true) {
                 $response['success'] = true;
-                $response['messages'] = "Successfully removed"; 
+                $response['messages'] = "Xoá thành công";
             }
             else {
                 $response['success'] = false;
-                $response['messages'] = "Error in the database while removing the product information";
+                $response['messages'] = "Lỗi cơ sở dữ liệu khi xoá thông tin sản phẩm";
             }
         }
         else {
@@ -239,154 +239,154 @@ class Orders extends Admin_Controller
             $response['messages'] = "Refersh the page again!!";
         }
 
-        echo json_encode($response); 
+        echo json_encode($response);
 	}
 
 	/*
-	* It gets the product id and fetch the order data. 
-	* The order print logic is done here 
+	* It gets the product id and fetch the order data.
+	* The order print logic is done here
 	*/
 	public function printDiv($id)
 	{
 		if(!in_array('viewOrder', $this->permission)) {
             redirect('dashboard', 'refresh');
         }
-        
+
 		if($id) {
 			$order_data = $this->model_orders->getOrdersData($id);
 			$orders_items = $this->model_orders->getOrdersItemData($id);
 			$company_info = $this->model_company->getCompanyData(1);
 
 			$order_date = date('d/m/Y', $order_data['date_time']);
-			$paid_status = ($order_data['paid_status'] == 1) ? "Paid" : "Unpaid";
+			$paid_status = ($order_data['paid_status'] == 1) ? "Đã thanh toán" : "Chưa thanh toán";
 
 			$html = '<!-- Main content -->
 			<!DOCTYPE html>
 			<html>
 			<head>
-			  <meta charset="utf-8">
-			  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-			  <title>AdminLTE 2 | Invoice</title>
-			  <!-- Tell the browser to be responsive to screen width -->
-			  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-			  <!-- Bootstrap 3.3.7 -->
-			  <link rel="stylesheet" href="'.base_url('assets/bower_components/bootstrap/dist/css/bootstrap.min.css').'">
-			  <!-- Font Awesome -->
-			  <link rel="stylesheet" href="'.base_url('assets/bower_components/font-awesome/css/font-awesome.min.css').'">
-			  <link rel="stylesheet" href="'.base_url('assets/dist/css/AdminLTE.min.css').'">
+			<meta charset="utf-8">
+			<meta http-equiv="X-UA-Compatible" content="IE=edge">
+			<title>AdminLTE 2 | Hoá đơn</title>
+			<!-- Tell the browser to be responsive to screen width -->
+			<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+			<!-- Bootstrap 3.3.7 -->
+			<link rel="stylesheet" href="'.base_url('assets/bower_components/bootstrap/dist/css/bootstrap.min.css').'">
+			<!-- Font Awesome -->
+			<link rel="stylesheet" href="'.base_url('assets/bower_components/font-awesome/css/font-awesome.min.css').'">
+			<link rel="stylesheet" href="'.base_url('assets/dist/css/AdminLTE.min.css').'">
 			</head>
 			<body onload="window.print();">
-			
+
 			<div class="wrapper">
-			  <section class="invoice">
-			    <!-- title row -->
-			    <div class="row">
-			      <div class="col-xs-12">
-			        <h2 class="page-header">
-			          '.$company_info['company_name'].'
-			          <small class="pull-right">Date: '.$order_date.'</small>
-			        </h2>
-			      </div>
-			      <!-- /.col -->
-			    </div>
-			    <!-- info row -->
-			    <div class="row invoice-info">
-			      
-			      <div class="col-sm-4 invoice-col">
-			        
-			        <b>Bill ID:</b> '.$order_data['bill_no'].'<br>
-			        <b>Name:</b> '.$order_data['customer_name'].'<br>
-			        <b>Address:</b> '.$order_data['customer_address'].' <br />
-			        <b>Phone:</b> '.$order_data['customer_phone'].'
-			      </div>
-			      <!-- /.col -->
-			    </div>
-			    <!-- /.row -->
+			<section class="invoice">
+			<!-- title row -->
+			<div class="row">
+			<div class="col-xs-12">
+			<h2 class="page-header">
+			'.$company_info['company_name'].'
+			<small class="pull-right">Ngày: '.$order_date.'</small>
+			</h2>
+			</div>
+			<!-- /.col -->
+			</div>
+			<!-- info row -->
+			<div class="row invoice-info">
 
-			    <!-- Table row -->
-			    <div class="row">
-			      <div class="col-xs-12 table-responsive">
-			        <table class="table table-striped">
-			          <thead>
-			          <tr>
-			            <th>Product name</th>
-			            <th>Price</th>
-			            <th>Qty</th>
-			            <th>Amount</th>
-			          </tr>
-			          </thead>
-			          <tbody>'; 
+			<div class="col-sm-4 invoice-col">
 
-			          foreach ($orders_items as $k => $v) {
+			<b>Mã hoá đơn:</b> '.$order_data['bill_no'].'<br>
+			<b>Tên:</b> '.$order_data['customer_name'].'<br>
+			<b>Địa chỉ:</b> '.$order_data['customer_address'].' <br />
+			<b>Điện thoại:</b> '.$order_data['customer_phone'].'
+			</div>
+			<!-- /.col -->
+			</div>
+			<!-- /.row -->
 
-			          	$product_data = $this->model_products->getProductData($v['product_id']); 
-			          	
-			          	$html .= '<tr>
-				            <td>'.$product_data['name'].'</td>
-				            <td>'.$v['rate'].'</td>
-				            <td>'.$v['qty'].'</td>
-				            <td>'.$v['amount'].'</td>
-			          	</tr>';
-			          }
-			          
-			          $html .= '</tbody>
-			        </table>
-			      </div>
-			      <!-- /.col -->
-			    </div>
-			    <!-- /.row -->
+			<!-- Table row -->
+			<div class="row">
+			<div class="col-xs-12 table-responsive">
+			<table class="table table-striped">
+			<thead>
+			<tr>
+			<th>Tên sản phẩm</th>
+			<th>Giá</th>
+			<th>SL</th>
+			<th>Thành tiền</th>
+			</tr>
+			</thead>
+			<tbody>';
 
-			    <div class="row">
-			      
-			      <div class="col-xs-6 pull pull-right">
+			foreach ($orders_items as $k => $v) {
 
-			        <div class="table-responsive">
-			          <table class="table">
-			            <tr>
-			              <th style="width:50%">Gross Amount:</th>
-			              <td>'.$order_data['gross_amount'].'</td>
-			            </tr>';
+				$product_data = $this->model_products->getProductData($v['product_id']);
 
-			            if($order_data['service_charge'] > 0) {
-			            	$html .= '<tr>
-				              <th>Service Charge ('.$order_data['service_charge_rate'].'%)</th>
-				              <td>'.$order_data['service_charge'].'</td>
-				            </tr>';
-			            }
+				$html .= '<tr>
+				<td>'.$product_data['name'].'</td>
+				<td>'.$v['rate'].'</td>
+				<td>'.$v['qty'].'</td>
+				<td>'.$v['amount'].'</td>
+				</tr>';
+			}
 
-			            if($order_data['vat_charge'] > 0) {
-			            	$html .= '<tr>
-				              <th>Vat Charge ('.$order_data['vat_charge_rate'].'%)</th>
-				              <td>'.$order_data['vat_charge'].'</td>
-				            </tr>';
-			            }
-			            
-			            
-			            $html .=' <tr>
-			              <th>Discount:</th>
-			              <td>'.$order_data['discount'].'</td>
-			            </tr>
-			            <tr>
-			              <th>Net Amount:</th>
-			              <td>'.$order_data['net_amount'].'</td>
-			            </tr>
-			            <tr>
-			              <th>Paid Status:</th>
-			              <td>'.$paid_status.'</td>
-			            </tr>
-			          </table>
-			        </div>
-			      </div>
-			      <!-- /.col -->
-			    </div>
-			    <!-- /.row -->
-			  </section>
-			  <!-- /.content -->
+			$html .= '</tbody>
+			</table>
+			</div>
+			<!-- /.col -->
+			</div>
+			<!-- /.row -->
+
+			<div class="row">
+
+			<div class="col-xs-6 pull pull-right">
+
+			<div class="table-responsive">
+			<table class="table">
+			<tr>
+			<th style="width:50%">Tổng tiền hàng:</th>
+			<td>'.$order_data['gross_amount'].'</td>
+			</tr>';
+
+			if($order_data['service_charge'] > 0) {
+				$html .= '<tr>
+				<th>Phí dịch vụ ('.$order_data['service_charge_rate'].'%)</th>
+				<td>'.$order_data['service_charge'].'</td>
+				</tr>';
+			}
+
+			if($order_data['vat_charge'] > 0) {
+				$html .= '<tr>
+				<th>Phí VAT ('.$order_data['vat_charge_rate'].'%)</th>
+				<td>'.$order_data['vat_charge'].'</td>
+				</tr>';
+			}
+
+
+			$html .=' <tr>
+			<th>Giảm giá:</th>
+			<td>'.$order_data['discount'].'</td>
+			</tr>
+			<tr>
+			<th>Thành tiền ròng:</th>
+			<td>'.$order_data['net_amount'].'</td>
+			</tr>
+			<tr>
+			<th>Trạng thái thanh toán:</th>
+			<td>'.$paid_status.'</td>
+			</tr>
+			</table>
+			</div>
+			</div>
+			<!-- /.col -->
+			</div>
+			<!-- /.row -->
+			</section>
+			<!-- /.content -->
 			</div>
 		</body>
 	</html>';
 
-			  echo $html;
+			echo $html;
 		}
 	}
 

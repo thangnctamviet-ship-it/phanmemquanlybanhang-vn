@@ -85,7 +85,7 @@ switch (ENVIRONMENT)
 
 	default:
 		header('HTTP/1.1 503 Service Unavailable.', TRUE, 503);
-		echo 'The application environment is not set correctly.';
+		echo 'Môi trường ứng dụng chưa được thiết lập đúng.';
 		exit(1); // EXIT_ERROR
 }
 
@@ -214,7 +214,7 @@ switch (ENVIRONMENT)
 	if ( ! is_dir($system_path))
 	{
 		header('HTTP/1.1 503 Service Unavailable.', TRUE, 503);
-		echo 'Your system folder path does not appear to be set correctly. Please open the following file and correct this: '.pathinfo(__FILE__, PATHINFO_BASENAME);
+		echo 'Đường dẫn thư mục system có vẻ chưa được thiết lập đúng. Vui lòng mở file sau và sửa lại: '.pathinfo(__FILE__, PATHINFO_BASENAME);
 		exit(3); // EXIT_CONFIG
 	}
 
@@ -262,7 +262,7 @@ switch (ENVIRONMENT)
 	else
 	{
 		header('HTTP/1.1 503 Service Unavailable.', TRUE, 503);
-		echo 'Your application folder path does not appear to be set correctly. Please open the following file and correct this: '.SELF;
+		echo 'Đường dẫn thư mục application có vẻ chưa được thiết lập đúng. Vui lòng mở file sau và sửa lại: '.SELF;
 		exit(3); // EXIT_CONFIG
 	}
 
@@ -299,7 +299,7 @@ switch (ENVIRONMENT)
 	else
 	{
 		header('HTTP/1.1 503 Service Unavailable.', TRUE, 503);
-		echo 'Your view folder path does not appear to be set correctly. Please open the following file and correct this: '.SELF;
+		echo 'Đường dẫn thư mục view có vẻ chưa được thiết lập đúng. Vui lòng mở file sau và sửa lại: '.SELF;
 		exit(3); // EXIT_CONFIG
 	}
 

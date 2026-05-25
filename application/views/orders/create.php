@@ -5,12 +5,12 @@
   <!-- Content Header (Page header) -->
   <section class="content-header">
     <h1>
-      Manage
-      <small>Orders</small>
+      Quản lý
+      <small>Đơn hàng</small>
     </h1>
     <ol class="breadcrumb">
-      <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-      <li class="active">Orders</li>
+      <li><a href="#"><i class="fa fa-dashboard"></i> Trang chủ</a></li>
+      <li class="active">Đơn hàng</li>
     </ol>
   </section>
 
@@ -37,7 +37,7 @@
 
         <div class="box">
           <div class="box-header">
-            <h3 class="box-title">Add Order</h3>
+            <h3 class="box-title">Thêm đơn hàng</h3>
           </div>
           <!-- /.box-header -->
           <form role="form" action="<?php base_url('orders/create') ?>" method="post" class="form-horizontal">
@@ -46,45 +46,45 @@
                 <?php echo validation_errors(); ?>
 
                 <div class="form-group">
-                  <label for="gross_amount" class="col-sm-12 control-label">Date: <?php echo date('Y-m-d') ?></label>
+                  <label for="gross_amount" class="col-sm-12 control-label">Ngày: <?php echo date('Y-m-d') ?></label>
                 </div>
                 <div class="form-group">
-                  <label for="gross_amount" class="col-sm-12 control-label">Date: <?php echo date('h:i a') ?></label>
+                  <label for="gross_amount" class="col-sm-12 control-label">Ngày: <?php echo date('h:i a') ?></label>
                 </div>
 
                 <div class="col-md-4 col-xs-12 pull pull-left">
 
                   <div class="form-group">
-                    <label for="gross_amount" class="col-sm-5 control-label" style="text-align:left;">Customer Name</label>
+                    <label for="gross_amount" class="col-sm-5 control-label" style="text-align:left;">Tên khách hàng</label>
                     <div class="col-sm-7">
-                      <input type="text" class="form-control" id="customer_name" name="customer_name" placeholder="Enter Customer Name" autocomplete="off" />
+                      <input type="text" class="form-control" id="customer_name" name="customer_name" placeholder="Nhập tên khách hàng" autocomplete="off" />
                     </div>
                   </div>
 
                   <div class="form-group">
-                    <label for="gross_amount" class="col-sm-5 control-label" style="text-align:left;">Customer Address</label>
+                    <label for="gross_amount" class="col-sm-5 control-label" style="text-align:left;">Địa chỉ khách hàng</label>
                     <div class="col-sm-7">
-                      <input type="text" class="form-control" id="customer_address" name="customer_address" placeholder="Enter Customer Address" autocomplete="off">
+                      <input type="text" class="form-control" id="customer_address" name="customer_address" placeholder="Nhập địa chỉ khách hàng" autocomplete="off">
                     </div>
                   </div>
 
                   <div class="form-group">
-                    <label for="gross_amount" class="col-sm-5 control-label" style="text-align:left;">Customer Phone</label>
+                    <label for="gross_amount" class="col-sm-5 control-label" style="text-align:left;">Điện thoại khách hàng</label>
                     <div class="col-sm-7">
-                      <input type="text" class="form-control" id="customer_phone" name="customer_phone" placeholder="Enter Customer Phone" autocomplete="off">
+                      <input type="text" class="form-control" id="customer_phone" name="customer_phone" placeholder="Nhập điện thoại khách hàng" autocomplete="off">
                     </div>
                   </div>
                 </div>
-                
-                
+
+
                 <br /> <br/>
                 <table class="table table-bordered" id="product_info_table">
                   <thead>
                     <tr>
-                      <th style="width:50%">Product</th>
-                      <th style="width:10%">Qty</th>
-                      <th style="width:10%">Rate</th>
-                      <th style="width:20%">Amount</th>
+                      <th style="width:50%">Sản phẩm</th>
+                      <th style="width:10%">SL</th>
+                      <th style="width:10%">Đơn giá</th>
+                      <th style="width:20%">Thành tiền</th>
                       <th style="width:10%"><button type="button" id="add_row" class="btn btn-default"><i class="fa fa-plus"></i></button></th>
                     </tr>
                   </thead>
@@ -118,7 +118,7 @@
                 <div class="col-md-6 col-xs-12 pull pull-right">
 
                   <div class="form-group">
-                    <label for="gross_amount" class="col-sm-5 control-label">Gross Amount</label>
+                    <label for="gross_amount" class="col-sm-5 control-label">Tổng tiền hàng</label>
                     <div class="col-sm-7">
                       <input type="text" class="form-control" id="gross_amount" name="gross_amount" disabled autocomplete="off">
                       <input type="hidden" class="form-control" id="gross_amount_value" name="gross_amount_value" autocomplete="off">
@@ -126,7 +126,7 @@
                   </div>
                   <?php if($is_service_enabled == true): ?>
                   <div class="form-group">
-                    <label for="service_charge" class="col-sm-5 control-label">S-Charge <?php echo $company_data['service_charge_value'] ?> %</label>
+                    <label for="service_charge" class="col-sm-5 control-label">Phí dịch vụ <?php echo $company_data['service_charge_value'] ?> %</label>
                     <div class="col-sm-7">
                       <input type="text" class="form-control" id="service_charge" name="service_charge" disabled autocomplete="off">
                       <input type="hidden" class="form-control" id="service_charge_value" name="service_charge_value" autocomplete="off">
@@ -135,7 +135,7 @@
                   <?php endif; ?>
                   <?php if($is_vat_enabled == true): ?>
                   <div class="form-group">
-                    <label for="vat_charge" class="col-sm-5 control-label">Vat <?php echo $company_data['vat_charge_value'] ?> %</label>
+                    <label for="vat_charge" class="col-sm-5 control-label">VAT <?php echo $company_data['vat_charge_value'] ?> %</label>
                     <div class="col-sm-7">
                       <input type="text" class="form-control" id="vat_charge" name="vat_charge" disabled autocomplete="off">
                       <input type="hidden" class="form-control" id="vat_charge_value" name="vat_charge_value" autocomplete="off">
@@ -143,13 +143,13 @@
                   </div>
                   <?php endif; ?>
                   <div class="form-group">
-                    <label for="discount" class="col-sm-5 control-label">Discount</label>
+                    <label for="discount" class="col-sm-5 control-label">Giảm giá</label>
                     <div class="col-sm-7">
-                      <input type="text" class="form-control" id="discount" name="discount" placeholder="Discount" onkeyup="subAmount()" autocomplete="off">
+                      <input type="text" class="form-control" id="discount" name="discount" placeholder="Giảm giá" onkeyup="subAmount()" autocomplete="off">
                     </div>
                   </div>
                   <div class="form-group">
-                    <label for="net_amount" class="col-sm-5 control-label">Net Amount</label>
+                    <label for="net_amount" class="col-sm-5 control-label">Thành tiền ròng</label>
                     <div class="col-sm-7">
                       <input type="text" class="form-control" id="net_amount" name="net_amount" disabled autocomplete="off">
                       <input type="hidden" class="form-control" id="net_amount_value" name="net_amount_value" autocomplete="off">
@@ -163,8 +163,8 @@
               <div class="box-footer">
                 <input type="hidden" name="service_charge_rate" value="<?php echo $company_data['service_charge_value'] ?>" autocomplete="off">
                 <input type="hidden" name="vat_charge_rate" value="<?php echo $company_data['vat_charge_value'] ?>" autocomplete="off">
-                <button type="submit" class="btn btn-primary">Create Order</button>
-                <a href="<?php echo base_url('orders/') ?>" class="btn btn-warning">Back</a>
+                <button type="submit" class="btn btn-primary">Tạo đơn hàng</button>
+                <a href="<?php echo base_url('orders/') ?>" class="btn btn-warning">Quay lại</a>
               </div>
             </form>
           <!-- /.box-body -->
@@ -174,7 +174,7 @@
       <!-- col-md-12 -->
     </div>
     <!-- /.row -->
-    
+
 
   </section>
   <!-- /.content -->
@@ -190,13 +190,13 @@
 
     $("#mainOrdersNav").addClass('active');
     $("#addOrderNav").addClass('active');
-    
-    var btnCust = '<button type="button" class="btn btn-secondary" title="Add picture tags" ' + 
+
+    var btnCust = '<button type="button" class="btn btn-secondary" title="Thêm thẻ hình ảnh" ' +
         'onclick="alert(\'Call your custom code here.\')">' +
         '<i class="glyphicon glyphicon-tag"></i>' +
-        '</button>'; 
-  
-    // Add new row in the table 
+        '</button>';
+
+    // Add new row in the table
     $("#add_row").unbind('click').bind('click', function() {
       var table = $("#product_info_table");
       var count_table_tbody_tr = $("#product_info_table tbody tr").length;
@@ -207,18 +207,18 @@
           type: 'post',
           dataType: 'json',
           success:function(response) {
-            
+
               // console.log(reponse.x);
                var html = '<tr id="row_'+row_id+'">'+
-                   '<td>'+ 
+                   '<td>'+
                     '<select class="form-control select_group product" data-row-id="'+row_id+'" id="product_'+row_id+'" name="product[]" style="width:100%;" onchange="getProductData('+row_id+')">'+
                         '<option value=""></option>';
                         $.each(response, function(index, value) {
-                          html += '<option value="'+value.id+'">'+value.name+'</option>';             
+                          html += '<option value="'+value.id+'">'+value.name+'</option>';
                         });
-                        
+
                       html += '</select>'+
-                    '</td>'+ 
+                    '</td>'+
                     '<td><input type="number" name="qty[]" id="qty_'+row_id+'" class="form-control" onkeyup="getTotal('+row_id+')"></td>'+
                     '<td><input type="text" name="rate[]" id="rate_'+row_id+'" class="form-control" disabled><input type="hidden" name="rate_value[]" id="rate_value_'+row_id+'" class="form-control"></td>'+
                     '<td><input type="text" name="amount[]" id="amount_'+row_id+'" class="form-control" disabled><input type="hidden" name="amount_value[]" id="amount_value_'+row_id+'" class="form-control"></td>'+
@@ -226,7 +226,7 @@
                     '</tr>';
 
                 if(count_table_tbody_tr >= 1) {
-                $("#product_info_table tbody tr:last").after(html);  
+                $("#product_info_table tbody tr:last").after(html);
               }
               else {
                 $("#product_info_table tbody").html(html);
@@ -248,7 +248,7 @@
       total = total.toFixed(2);
       $("#amount_"+row).val(total);
       $("#amount_value_"+row).val(total);
-      
+
       subAmount();
 
     } else {
@@ -259,12 +259,12 @@
   // get the product information from the server
   function getProductData(row_id)
   {
-    var product_id = $("#product_"+row_id).val();    
+    var product_id = $("#product_"+row_id).val();
     if(product_id == "") {
       $("#rate_"+row_id).val("");
       $("#rate_value_"+row_id).val("");
 
-      $("#qty_"+row_id).val("");           
+      $("#qty_"+row_id).val("");
 
       $("#amount_"+row_id).val("");
       $("#amount_value_"+row_id).val("");
@@ -277,7 +277,7 @@
         dataType: 'json',
         success:function(response) {
           // setting the rate value into the rate input field
-          
+
           $("#rate_"+row_id).val(response.price);
           $("#rate_value_"+row_id).val(response.price);
 
@@ -288,10 +288,10 @@
           total = total.toFixed(2);
           $("#amount_"+row_id).val(total);
           $("#amount_value_"+row_id).val(total);
-          
+
           subAmount();
         } // /success
-      }); // /ajax function to fetch the product data 
+      }); // /ajax function to fetch the product data
     }
   }
 
@@ -327,7 +327,7 @@
     service = service.toFixed(2);
     $("#service_charge").val(service);
     $("#service_charge_value").val(service);
-    
+
     // total amount
     var totalAmount = (Number(totalSubAmount) + Number(vat) + Number(service));
     totalAmount = totalAmount.toFixed(2);
@@ -343,8 +343,8 @@
     } else {
       $("#net_amount").val(totalAmount);
       $("#net_amount_value").val(totalAmount);
-      
-    } // /else discount 
+
+    } // /else discount
 
   } // /sub total amount
 

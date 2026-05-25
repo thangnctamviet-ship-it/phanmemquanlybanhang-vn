@@ -1,15 +1,15 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
 
-A PHP Error was encountered
+Đã gặp lỗi PHP
 
-Severity:    <?php echo $severity, "\n"; ?>
-Message:     <?php echo $message, "\n"; ?>
-Filename:    <?php echo $filepath, "\n"; ?>
-Line Number: <?php echo $line; ?>
+Mức độ:    <?php echo $severity, "\n"; ?>
+Thông báo:     <?php echo $message, "\n"; ?>
+Tên file:    <?php echo $filepath, "\n"; ?>
+Số dòng: <?php echo $line; ?>
 
 <?php if (defined('SHOW_DEBUG_BACKTRACE') && SHOW_DEBUG_BACKTRACE === TRUE): ?>
 
-Backtrace:
+Dấu vết lỗi:
 <?php	foreach (debug_backtrace() as $error): ?>
 <?php		if (isset($error['file']) && strpos($error['file'], realpath(BASEPATH)) !== 0): ?>
 	File: <?php echo $error['file'], "\n"; ?>

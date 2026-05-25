@@ -2,7 +2,7 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Products extends Admin_Controller 
+class Products extends Admin_Controller
 {
 	public function __construct()
 	{
@@ -10,7 +10,7 @@ class Products extends Admin_Controller
 
 		$this->not_logged_in();
 
-		$this->data['page_title'] = 'Products';
+		$this->data['page_title'] = 'Sản phẩm';
 
 		$this->load->model('model_products');
 		$this->load->model('model_brands');
@@ -19,7 +19,7 @@ class Products extends Admin_Controller
 		$this->load->model('model_attributes');
 	}
 
-    /* 
+    /*
     * It only redirects to the manage product page
     */
 	public function index()
@@ -28,11 +28,11 @@ class Products extends Admin_Controller
             redirect('dashboard', 'refresh');
         }
 
-		$this->render_template('products/index', $this->data);	
+		$this->render_template('products/index', $this->data);
 	}
 
     /*
-    * It Fetches the products data from the product table 
+    * It Fetches the products data from the product table
     * this function is called from the datatable ajax function
     */
 	public function fetchProductData()
@@ -47,23 +47,23 @@ class Products extends Admin_Controller
 			// button
             $buttons = '';
             if(in_array('updateProduct', $this->permission)) {
-    			$buttons .= '<a href="'.base_url('products/update/'.$value['id']).'" class="btn btn-default"><i class="fa fa-pencil"></i></a>';
+			$buttons .= '<a href="'.base_url('products/update/'.$value['id']).'" class="btn btn-default"><i class="fa fa-pencil"></i></a>';
             }
 
-            if(in_array('deleteProduct', $this->permission)) { 
-    			$buttons .= ' <button type="button" class="btn btn-default" onclick="removeFunc('.$value['id'].')" data-toggle="modal" data-target="#removeModal"><i class="fa fa-trash"></i></button>';
+            if(in_array('deleteProduct', $this->permission)) {
+			$buttons .= ' <button type="button" class="btn btn-default" onclick="removeFunc('.$value['id'].')" data-toggle="modal" data-target="#removeModal"><i class="fa fa-trash"></i></button>';
             }
-			
+
 
 			$img = '<img src="'.base_url($value['image']).'" alt="'.$value['name'].'" class="img-circle" width="50" height="50" />';
 
-            $availability = ($value['availability'] == 1) ? '<span class="label label-success">Active</span>' : '<span class="label label-warning">Inactive</span>';
+            $availability = ($value['availability'] == 1) ? '<span class="label label-success">Hoạt động</span>' : '<span class="label label-warning">Không hoạt động</span>';
 
             $qty_status = '';
             if($value['qty'] <= 10) {
-                $qty_status = '<span class="label label-warning">Low !</span>';
+                $qty_status = '<span class="label label-warning">Sắp hết !</span>';
             } else if($value['qty'] <= 0) {
-                $qty_status = '<span class="label label-danger">Out of stock !</span>';
+                $qty_status = '<span class="label label-danger">Hết hàng !</span>';
             }
 
 
@@ -80,11 +80,11 @@ class Products extends Admin_Controller
 		} // /foreach
 
 		echo json_encode($result);
-	}	
+	}
 
     /*
     * If the validation is not valid, then it redirects to the create page.
-    * If the validation for each input field is valid then it inserts the data into the database 
+    * If the validation for each input field is valid then it inserts the data into the database
     * and it stores the operation message into the session flashdata and display on the manage product page
     */
 	public function create()
@@ -93,64 +93,64 @@ class Products extends Admin_Controller
             redirect('dashboard', 'refresh');
         }
 
-		$this->form_validation->set_rules('product_name', 'Product name', 'trim|required');
+		$this->form_validation->set_rules('product_name', 'Tên sản phẩm', 'trim|required');
 		$this->form_validation->set_rules('sku', 'SKU', 'trim|required');
-		$this->form_validation->set_rules('price', 'Price', 'trim|required');
-		$this->form_validation->set_rules('qty', 'Qty', 'trim|required');
-        $this->form_validation->set_rules('store', 'Store', 'trim|required');
-		$this->form_validation->set_rules('availability', 'Availability', 'trim|required');
-		
-	
+		$this->form_validation->set_rules('price', 'Giá', 'trim|required');
+		$this->form_validation->set_rules('qty', 'SL', 'trim|required');
+        $this->form_validation->set_rules('store', 'Cửa hàng', 'trim|required');
+		$this->form_validation->set_rules('availability', 'Tình trạng', 'trim|required');
+
+
         if ($this->form_validation->run() == TRUE) {
             // true case
-        	$upload_image = $this->upload_image();
+	$upload_image = $this->upload_image();
 
-        	$data = array(
-        		'name' => $this->input->post('product_name'),
-        		'sku' => $this->input->post('sku'),
-        		'price' => $this->input->post('price'),
-        		'qty' => $this->input->post('qty'),
-        		'image' => $upload_image,
-        		'description' => $this->input->post('description'),
-        		'attribute_value_id' => json_encode($this->input->post('attributes_value_id')),
-        		'brand_id' => json_encode($this->input->post('brands')),
-        		'category_id' => json_encode($this->input->post('category')),
+	$data = array(
+		'name' => $this->input->post('product_name'),
+		'sku' => $this->input->post('sku'),
+		'price' => $this->input->post('price'),
+		'qty' => $this->input->post('qty'),
+		'image' => $upload_image,
+		'description' => $this->input->post('description'),
+		'attribute_value_id' => json_encode($this->input->post('attributes_value_id')),
+		'brand_id' => json_encode($this->input->post('brands')),
+		'category_id' => json_encode($this->input->post('category')),
                 'store_id' => $this->input->post('store'),
-        		'availability' => $this->input->post('availability'),
-        	);
+		'availability' => $this->input->post('availability'),
+	);
 
-        	$create = $this->model_products->create($data);
-        	if($create == true) {
-        		$this->session->set_flashdata('success', 'Successfully created');
-        		redirect('products/', 'refresh');
-        	}
-        	else {
-        		$this->session->set_flashdata('errors', 'Error occurred!!');
-        		redirect('products/create', 'refresh');
-        	}
+	$create = $this->model_products->create($data);
+	if($create == true) {
+		$this->session->set_flashdata('success', 'Tạo thành công');
+		redirect('products/', 'refresh');
+	}
+	else {
+		$this->session->set_flashdata('errors', 'Đã xảy ra lỗi!!');
+		redirect('products/create', 'refresh');
+	}
         }
         else {
             // false case
 
-        	// attributes 
-        	$attribute_data = $this->model_attributes->getActiveAttributeData();
+	// attributes
+	$attribute_data = $this->model_attributes->getActiveAttributeData();
 
-        	$attributes_final_data = array();
-        	foreach ($attribute_data as $k => $v) {
-        		$attributes_final_data[$k]['attribute_data'] = $v;
+	$attributes_final_data = array();
+	foreach ($attribute_data as $k => $v) {
+		$attributes_final_data[$k]['attribute_data'] = $v;
 
-        		$value = $this->model_attributes->getAttributeValueData($v['id']);
+		$value = $this->model_attributes->getAttributeValueData($v['id']);
 
-        		$attributes_final_data[$k]['attribute_value'] = $value;
-        	}
+		$attributes_final_data[$k]['attribute_value'] = $value;
+	}
 
-        	$this->data['attributes'] = $attributes_final_data;
-			$this->data['brands'] = $this->model_brands->getActiveBrands();        	
-			$this->data['category'] = $this->model_category->getActiveCategroy();        	
-			$this->data['stores'] = $this->model_stores->getActiveStore();        	
+	$this->data['attributes'] = $attributes_final_data;
+			$this->data['brands'] = $this->model_brands->getActiveBrands();
+			$this->data['category'] = $this->model_category->getActiveCategroy();
+			$this->data['stores'] = $this->model_stores->getActiveStore();
 
             $this->render_template('products/create', $this->data);
-        }	
+        }
 	}
 
     /*
@@ -159,7 +159,7 @@ class Products extends Admin_Controller
     */
 	public function upload_image()
     {
-    	// assets/images/product_image
+	// assets/images/product_image
         $config['upload_path'] = 'assets/images/product_image';
         $config['file_name'] =  uniqid();
         $config['allowed_types'] = 'gif|jpg|png';
@@ -179,19 +179,19 @@ class Products extends Admin_Controller
             $data = array('upload_data' => $this->upload->data());
             $type = explode('.', $_FILES['product_image']['name']);
             $type = $type[count($type) - 1];
-            
+
             $path = $config['upload_path'].'/'.$config['file_name'].'.'.$type;
-            return ($data == true) ? $path : false;            
+            return ($data == true) ? $path : false;
         }
     }
 
     /*
-    * If the validation is not valid, then it redirects to the edit product page 
-    * If the validation is successfully then it updates the data into the database 
+    * If the validation is not valid, then it redirects to the edit product page
+    * If the validation is successfully then it updates the data into the database
     * and it stores the operation message into the session flashdata and display on the manage product page
     */
 	public function update($product_id)
-	{      
+	{
         if(!in_array('updateProduct', $this->permission)) {
             redirect('dashboard', 'refresh');
         }
@@ -200,16 +200,16 @@ class Products extends Admin_Controller
             redirect('dashboard', 'refresh');
         }
 
-        $this->form_validation->set_rules('product_name', 'Product name', 'trim|required');
+        $this->form_validation->set_rules('product_name', 'Tên sản phẩm', 'trim|required');
         $this->form_validation->set_rules('sku', 'SKU', 'trim|required');
-        $this->form_validation->set_rules('price', 'Price', 'trim|required');
-        $this->form_validation->set_rules('qty', 'Qty', 'trim|required');
-        $this->form_validation->set_rules('store', 'Store', 'trim|required');
-        $this->form_validation->set_rules('availability', 'Availability', 'trim|required');
+        $this->form_validation->set_rules('price', 'Giá', 'trim|required');
+        $this->form_validation->set_rules('qty', 'SL', 'trim|required');
+        $this->form_validation->set_rules('store', 'Cửa hàng', 'trim|required');
+        $this->form_validation->set_rules('availability', 'Tình trạng', 'trim|required');
 
         if ($this->form_validation->run() == TRUE) {
             // true case
-            
+
             $data = array(
                 'name' => $this->input->post('product_name'),
                 'sku' => $this->input->post('sku'),
@@ -223,26 +223,26 @@ class Products extends Admin_Controller
                 'availability' => $this->input->post('availability'),
             );
 
-            
+
             if($_FILES['product_image']['size'] > 0) {
                 $upload_image = $this->upload_image();
                 $upload_image = array('image' => $upload_image);
-                
+
                 $this->model_products->update($upload_image, $product_id);
             }
 
             $update = $this->model_products->update($data, $product_id);
             if($update == true) {
-                $this->session->set_flashdata('success', 'Successfully updated');
+                $this->session->set_flashdata('success', 'Cập nhật thành công');
                 redirect('products/', 'refresh');
             }
             else {
-                $this->session->set_flashdata('errors', 'Error occurred!!');
+                $this->session->set_flashdata('errors', 'Đã xảy ra lỗi!!');
                 redirect('products/update/'.$product_id, 'refresh');
             }
         }
         else {
-            // attributes 
+            // attributes
             $attribute_data = $this->model_attributes->getActiveAttributeData();
 
             $attributes_final_data = array();
@@ -253,17 +253,17 @@ class Products extends Admin_Controller
 
                 $attributes_final_data[$k]['attribute_value'] = $value;
             }
-            
+
             // false case
             $this->data['attributes'] = $attributes_final_data;
-            $this->data['brands'] = $this->model_brands->getActiveBrands();         
-            $this->data['category'] = $this->model_category->getActiveCategroy();           
-            $this->data['stores'] = $this->model_stores->getActiveStore();          
+            $this->data['brands'] = $this->model_brands->getActiveBrands();
+            $this->data['category'] = $this->model_category->getActiveCategroy();
+            $this->data['stores'] = $this->model_stores->getActiveStore();
 
             $product_data = $this->model_products->getProductData($product_id);
             $this->data['product_data'] = $product_data;
-            $this->render_template('products/edit', $this->data); 
-        }   
+            $this->render_template('products/edit', $this->data);
+        }
 	}
 
     /*
@@ -275,7 +275,7 @@ class Products extends Admin_Controller
         if(!in_array('deleteProduct', $this->permission)) {
             redirect('dashboard', 'refresh');
         }
-        
+
         $product_id = $this->input->post('product_id');
 
         $response = array();
@@ -283,11 +283,11 @@ class Products extends Admin_Controller
             $delete = $this->model_products->remove($product_id);
             if($delete == true) {
                 $response['success'] = true;
-                $response['messages'] = "Successfully removed"; 
+                $response['messages'] = "Xoá thành công";
             }
             else {
                 $response['success'] = false;
-                $response['messages'] = "Error in the database while removing the product information";
+                $response['messages'] = "Lỗi cơ sở dữ liệu khi xoá thông tin sản phẩm";
             }
         }
         else {

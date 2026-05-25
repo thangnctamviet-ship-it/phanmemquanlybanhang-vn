@@ -5,12 +5,12 @@
   <!-- Content Header (Page header) -->
   <section class="content-header">
     <h1>
-      Manage
-      <small>Orders</small>
+      Quản lý
+      <small>Đơn hàng</small>
     </h1>
     <ol class="breadcrumb">
-      <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-      <li class="active">Orders</li>
+      <li><a href="#"><i class="fa fa-dashboard"></i> Trang chủ</a></li>
+      <li class="active">Đơn hàng</li>
     </ol>
   </section>
 
@@ -35,28 +35,28 @@
         <?php endif; ?>
 
         <?php if(in_array('createOrder', $user_permission)): ?>
-          <a href="<?php echo base_url('orders/create') ?>" class="btn btn-primary">Add Order</a>
+          <a href="<?php echo base_url('orders/create') ?>" class="btn btn-primary">Thêm đơn hàng</a>
           <br /> <br />
         <?php endif; ?>
 
         <div class="box">
           <div class="box-header">
-            <h3 class="box-title">Manage Orders</h3>
+            <h3 class="box-title">Quản lý đơn hàng</h3>
           </div>
           <!-- /.box-header -->
           <div class="box-body">
             <table id="manageTable" class="table table-bordered table-striped">
               <thead>
               <tr>
-                <th>Bill no</th>
-                <th>Customer Name</th>
-                <th>Customer Phone</th>
-                <th>Date Time</th>
-                <th>Total Products</th>
-                <th>Total Amount</th>
-                <th>Paid status</th>
+                <th>Số hoá đơn</th>
+                <th>Tên khách hàng</th>
+                <th>Điện thoại khách hàng</th>
+                <th>Ngày giờ</th>
+                <th>Tổng sản phẩm</th>
+                <th>Tổng tiền</th>
+                <th>Trạng thái thanh toán</th>
                 <?php if(in_array('updateOrder', $user_permission) || in_array('viewOrder', $user_permission) || in_array('deleteOrder', $user_permission)): ?>
-                  <th>Action</th>
+                  <th>Thao tác</th>
                 <?php endif; ?>
               </tr>
               </thead>
@@ -70,7 +70,7 @@
       <!-- col-md-12 -->
     </div>
     <!-- /.row -->
-    
+
 
   </section>
   <!-- /.content -->
@@ -84,16 +84,16 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">Remove Order</h4>
+        <h4 class="modal-title">Xoá đơn hàng</h4>
       </div>
 
       <form role="form" action="<?php echo base_url('orders/remove') ?>" method="post" id="removeForm">
         <div class="modal-body">
-          <p>Do you really want to remove?</p>
+          <p>Bạn có chắc muốn xoá không?</p>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary">Save changes</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+          <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
         </div>
       </form>
 
@@ -114,7 +114,7 @@ $(document).ready(function() {
   $("#mainOrdersNav").addClass('active');
   $("#manageOrdersNav").addClass('active');
 
-  // initialize the datatable 
+  // initialize the datatable
   manageTable = $('#manageTable').DataTable({
     'ajax': base_url + 'orders/fetchOrdersData',
     'order': []
@@ -122,7 +122,7 @@ $(document).ready(function() {
 
 });
 
-// remove functions 
+// remove functions
 function removeFunc(id)
 {
   if(id) {
@@ -136,11 +136,11 @@ function removeFunc(id)
       $.ajax({
         url: form.attr('action'),
         type: form.attr('method'),
-        data: { order_id:id }, 
+        data: { order_id:id },
         dataType: 'json',
         success:function(response) {
 
-          manageTable.ajax.reload(null, false); 
+          manageTable.ajax.reload(null, false);
 
           if(response.success === true) {
             $("#messages").html('<div class="alert alert-success alert-dismissible" role="alert">'+
@@ -156,10 +156,10 @@ function removeFunc(id)
             $("#messages").html('<div class="alert alert-warning alert-dismissible" role="alert">'+
               '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+
               '<strong> <span class="glyphicon glyphicon-exclamation-sign"></span> </strong>'+response.messages+
-            '</div>'); 
+            '</div>');
           }
         }
-      }); 
+      });
 
       return false;
     });

@@ -4,7 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Welcome to CodeIgniter</title>
+	<title>Chào mừng đến với CodeIgniter</title>
 
 	<style type="text/css">
 
@@ -68,21 +68,21 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <body>
 
 <div id="container">
-	<h1>Welcome to CodeIgniter!</h1>
+	<h1>Chào mừng đến với CodeIgniter!</h1>
 
 	<div id="body">
-		<p>The page you are looking at is being generated dynamically by CodeIgniter.</p>
+		<p>Trang bạn đang xem được CodeIgniter tạo động.</p>
 
-		<p>If you would like to edit this page you'll find it located at:</p>
+		<p>Nếu bạn muốn chỉnh sửa trang này, tệp nằm tại:</p>
 		<code>application/views/welcome_message.php</code>
 
-		<p>The corresponding controller for this page is found at:</p>
+		<p>Bộ điều khiển tương ứng cho trang này nằm tại:</p>
 		<code>application/controllers/Welcome.php</code>
 
-		<p>If you are exploring CodeIgniter for the very first time, you should start by reading the <a href="user_guide/">User Guide</a>.</p>
+		<p>Nếu đây là lần đầu bạn tìm hiểu CodeIgniter, hãy bắt đầu bằng cách đọc <a href="user_guide/">Hướng dẫn sử dụng</a>.</p>
 	</div>
 
-	<p class="footer">Page rendered in <strong>{elapsed_time}</strong> seconds. <?php echo  (ENVIRONMENT === 'development') ?  'CodeIgniter Version <strong>' . CI_VERSION . '</strong>' : '' ?></p>
+	<p class="footer">Trang được tạo trong <strong>{elapsed_time}</strong> giây. <?php echo  (ENVIRONMENT === 'development') ?  'Phiên bản CodeIgniter <strong>' . CI_VERSION . '</strong>' : '' ?></p>
 </div>
 
 </body>

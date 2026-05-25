@@ -5,12 +5,12 @@
   <!-- Content Header (Page header) -->
   <section class="content-header">
     <h1>
-      Manage
-      <small>Attributes</small>
+      Quản lý
+      <small>Thuộc tính</small>
     </h1>
     <ol class="breadcrumb">
-      <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-      <li class="active">Attributes</li>
+      <li><a href="#"><i class="fa fa-dashboard"></i> Trang chủ</a></li>
+      <li class="active">Thuộc tính</li>
     </ol>
   </section>
 
@@ -35,24 +35,24 @@
         <?php endif; ?>
 
         <?php //if(in_array('createGroup', $user_permission)): ?>
-          <button class="btn btn-primary" data-toggle="modal" data-target="#addModal">Add Attribute</button>
+          <button class="btn btn-primary" data-toggle="modal" data-target="#addModal">Thêm thuộc tính</button>
           <br /> <br />
         <?php //endif; ?>
 
         <div class="box">
           <div class="box-header">
-            <h3 class="box-title">Manage Attributes</h3>
+            <h3 class="box-title">Quản lý thuộc tính</h3>
           </div>
           <!-- /.box-header -->
           <div class="box-body">
             <table id="manageTable" class="table table-bordered table-striped">
               <thead>
               <tr>
-                <th>Attribute Name</th>
-                <th>Total value</th>
-                <th>Status</th>
+                <th>Tên thuộc tính</th>
+                <th>Tổng giá trị</th>
+                <th>Trạng thái</th>
                 <?php //if(in_array('updateGroup', $user_permission) || in_array('deleteGroup', $user_permission)): ?>
-                  <th>Action</th>
+                  <th>Thao tác</th>
                 <?php //endif; ?>
               </tr>
               </thead>
@@ -66,7 +66,7 @@
       <!-- col-md-12 -->
     </div>
     <!-- /.row -->
-    
+
 
   </section>
   <!-- /.content -->
@@ -80,7 +80,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">Add Attribute</h4>
+        <h4 class="modal-title">Thêm thuộc tính</h4>
       </div>
 
       <form role="form" action="<?php echo base_url('attributes/create') ?>" method="post" id="createForm">
@@ -88,21 +88,21 @@
         <div class="modal-body">
 
           <div class="form-group">
-            <label for="brand_name">Attribute Name</label>
-            <input type="text" class="form-control" id="attribute_name" name="attribute_name" placeholder="Enter attribute name" autocomplete="off">
+            <label for="brand_name">Tên thuộc tính</label>
+            <input type="text" class="form-control" id="attribute_name" name="attribute_name" placeholder="Nhập tên thuộc tính" autocomplete="off">
           </div>
           <div class="form-group">
-            <label for="active">Status</label>
+            <label for="active">Trạng thái</label>
             <select class="form-control" id="active" name="active">
-              <option value="1">Active</option>
-              <option value="2">Inactive</option>
+              <option value="1">Hoạt động</option>
+              <option value="2">Không hoạt động</option>
             </select>
           </div>
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary">Save changes</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+          <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
         </div>
 
       </form>
@@ -118,7 +118,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">Edit Store</h4>
+        <h4 class="modal-title">Sửa cửa hàng</h4>
       </div>
 
       <form role="form" action="<?php echo base_url('attributes/update') ?>" method="post" id="updateForm">
@@ -127,21 +127,21 @@
           <div id="messages"></div>
 
           <div class="form-group">
-            <label for="edit_brand_name">Attribute Name</label>
-            <input type="text" class="form-control" id="edit_attribute_name" name="edit_attribute_name" placeholder="Enter attribute name" autocomplete="off">
+            <label for="edit_brand_name">Tên thuộc tính</label>
+            <input type="text" class="form-control" id="edit_attribute_name" name="edit_attribute_name" placeholder="Nhập tên thuộc tính" autocomplete="off">
           </div>
           <div class="form-group">
-            <label for="edit_active">Status</label>
+            <label for="edit_active">Trạng thái</label>
             <select class="form-control" id="edit_active" name="edit_active">
-              <option value="1">Active</option>
-              <option value="2">Inactive</option>
+              <option value="1">Hoạt động</option>
+              <option value="2">Không hoạt động</option>
             </select>
           </div>
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary">Save changes</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+          <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
         </div>
 
       </form>
@@ -157,16 +157,16 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">Remove Attribute</h4>
+        <h4 class="modal-title">Xoá thuộc tính</h4>
       </div>
 
       <form role="form" action="<?php echo base_url('attributes/remove') ?>" method="post" id="removeForm">
         <div class="modal-body">
-          <p>Do you really want to remove?</p>
+          <p>Bạn có chắc muốn xoá không?</p>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary">Save changes</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+          <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
         </div>
       </form>
 
@@ -183,17 +183,17 @@ var base_url = "<?php echo base_url(); ?>";
 
 $(document).ready(function() {
 
-  
+
 
   $("#attributeNav").addClass('active');
 
-  // initialize the datatable 
+  // initialize the datatable
   manageTable = $('#manageTable').DataTable({
     'ajax': base_url + 'attributes/fetchAttributeData',
     'order': []
   });
 
-  // submit the create from 
+  // submit the create from
   $("#createForm").unbind('submit').on('submit', function() {
     var form = $(this);
 
@@ -207,7 +207,7 @@ $(document).ready(function() {
       dataType: 'json',
       success:function(response) {
 
-        manageTable.ajax.reload(null, false); 
+        manageTable.ajax.reload(null, false);
 
         if(response.success === true) {
           $("#messages").html('<div class="alert alert-success alert-dismissible" role="alert">'+
@@ -233,7 +233,7 @@ $(document).ready(function() {
               .removeClass('has-error')
               .removeClass('has-success')
               .addClass(value.length > 0 ? 'has-error' : 'has-success');
-              
+
               id.after(value);
 
             });
@@ -245,7 +245,7 @@ $(document).ready(function() {
           }
         }
       }
-    }); 
+    });
 
     return false;
   });
@@ -254,7 +254,7 @@ $(document).ready(function() {
 
 // edit function
 function editFunc(id)
-{ 
+{
   $.ajax({
     url: 'fetchAttributeDataById/'+id,
     type: 'post',
@@ -264,7 +264,7 @@ function editFunc(id)
       $("#edit_attribute_name").val(response.name);
       $("#edit_active").val(response.active);
 
-      // submit the edit from 
+      // submit the edit from
       $("#updateForm").unbind('submit').bind('submit', function() {
         var form = $(this);
 
@@ -278,7 +278,7 @@ function editFunc(id)
           dataType: 'json',
           success:function(response) {
 
-            manageTable.ajax.reload(null, false); 
+            manageTable.ajax.reload(null, false);
 
             if(response.success === true) {
               $("#messages").html('<div class="alert alert-success alert-dismissible" role="alert">'+
@@ -289,7 +289,7 @@ function editFunc(id)
 
               // hide the modal
               $("#editModal").modal('hide');
-              // reset the form 
+              // reset the form
               $("#updateForm .form-group").removeClass('has-error').removeClass('has-success');
 
             } else {
@@ -302,7 +302,7 @@ function editFunc(id)
                   .removeClass('has-error')
                   .removeClass('has-success')
                   .addClass(value.length > 0 ? 'has-error' : 'has-success');
-                  
+
                   id.after(value);
 
                 });
@@ -314,7 +314,7 @@ function editFunc(id)
               }
             }
           }
-        }); 
+        });
 
         return false;
       });
@@ -323,7 +323,7 @@ function editFunc(id)
   });
 }
 
-// remove functions 
+// remove functions
 function removeFunc(id)
 {
   if(id) {
@@ -337,11 +337,11 @@ function removeFunc(id)
       $.ajax({
         url: form.attr('action'),
         type: form.attr('method'),
-        data: { attribute_id:id }, 
+        data: { attribute_id:id },
         dataType: 'json',
         success:function(response) {
 
-          manageTable.ajax.reload(null, false); 
+          manageTable.ajax.reload(null, false);
 
           if(response.success === true) {
             $("#messages").html('<div class="alert alert-success alert-dismissible" role="alert">'+
@@ -357,10 +357,10 @@ function removeFunc(id)
             $("#messages").html('<div class="alert alert-warning alert-dismissible" role="alert">'+
               '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+
               '<strong> <span class="glyphicon glyphicon-exclamation-sign"></span> </strong>'+response.messages+
-            '</div>'); 
+            '</div>');
           }
         }
-      }); 
+      });
 
       return false;
     });

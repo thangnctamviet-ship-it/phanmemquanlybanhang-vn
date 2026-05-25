@@ -5,12 +5,12 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        User
-        <small>Profile</small>
+        Người dùng
+        <small>Hồ sơ</small>
       </h1>
       <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active">Profile</li>
+        <li><a href="#"><i class="fa fa-dashboard"></i> Trang chủ</a></li>
+        <li class="active">Hồ sơ</li>
       </ol>
     </section>
 
@@ -22,13 +22,13 @@
 
           <div class="box">
             <div class="box-header">
-              <h3 class="box-title">Profile XXX</h3>
+              <h3 class="box-title">Hồ sơ</h3>
             </div>
             <!-- /.box-header -->
             <div class="box-body">
               <table class="table table-bordered table-condensed table-hovered">
                 <tr>
-                  <th>Username</th>
+                  <th>Tên đăng nhập</th>
                   <td><?php echo $user_data['username']; ?></td>
                 </tr>
                 <tr>
@@ -36,23 +36,23 @@
                   <td><?php echo $user_data['email']; ?></td>
                 </tr>
                 <tr>
-                  <th>First Name</th>
+                  <th>Tên</th>
                   <td><?php echo $user_data['firstname']; ?></td>
                 </tr>
                 <tr>
-                  <th>Last Name</th>
+                  <th>Họ</th>
                   <td><?php echo $user_data['lastname']; ?></td>
                 </tr>
                 <tr>
-                  <th>Gender</th>
-                  <td><?php echo ($user_data['gender'] == 1) ? 'Male' : 'Gender'; ?></td>
+                  <th>Giới tính</th>
+                  <td><?php echo ($user_data['gender'] == 1) ? 'Nam' : 'Giới tính'; ?></td>
                 </tr>
                 <tr>
-                  <th>Phone</th>
+                  <th>Điện thoại</th>
                   <td><?php echo $user_data['phone']; ?></td>
                 </tr>
                 <tr>
-                  <th>Group</th>
+                  <th>Nhóm</th>
                   <td><span class="label label-info"><?php echo $user_group['group_name']; ?></span></td>
                 </tr>
               </table>
@@ -64,11 +64,11 @@
         <!-- col-md-12 -->
       </div>
       <!-- /.row -->
-      
+
 
     </section>
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
 
- 
+

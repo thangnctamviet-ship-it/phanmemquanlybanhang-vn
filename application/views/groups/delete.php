@@ -5,13 +5,13 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Manage
-        <small>Groups</small>
+        Quản lý
+        <small>Nhóm</small>
       </h1>
       <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li><a href="<?php echo base_url('groups/') ?>">Groups</a></li>
-        <li class="active">Delete</li>
+        <li><a href="#"><i class="fa fa-dashboard"></i> Trang chủ</a></li>
+        <li><a href="<?php echo base_url('groups/') ?>">Nhóm</a></li>
+        <li class="active">Xoá</li>
       </ol>
     </section>
 
@@ -20,7 +20,7 @@
       <!-- Small boxes (Stat box) -->
       <div class="row">
         <div class="col-md-12 col-xs-12">
-          
+
           <?php if($this->session->flashdata('success')): ?>
             <div class="alert alert-success alert-dismissible" role="alert">
               <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -33,18 +33,18 @@
             </div>
           <?php endif; ?>
 
-          <h1>Do you really want to remove ?</h1>
+          <h1>Bạn có chắc muốn xoá không?</h1>
 
           <form action="<?php echo base_url('groups/delete/'.$id) ?>" method="post">
             <input type="submit" class="btn btn-primary" name="confirm" value="Confirm">
-            <a href="<?php echo base_url('groups') ?>" class="btn btn-warning">Cancel</a>
+            <a href="<?php echo base_url('groups') ?>" class="btn btn-warning">Huỷ</a>
           </form>
 
         </div>
         <!-- col-md-12 -->
       </div>
       <!-- /.row -->
-      
+
 
     </section>
     <!-- /.content -->

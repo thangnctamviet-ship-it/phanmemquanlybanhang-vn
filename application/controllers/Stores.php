@@ -2,7 +2,7 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Stores extends Admin_Controller 
+class Stores extends Admin_Controller
 {
 	public function __construct()
 	{
@@ -10,12 +10,12 @@ class Stores extends Admin_Controller
 
 		$this->not_logged_in();
 
-		$this->data['page_title'] = 'Stores';
+		$this->data['page_title'] = 'Cửa hàng';
 
 		$this->load->model('model_stores');
 	}
 
-	/* 
+	/*
     * It only redirects to the manage stores page
     */
 	public function index()
@@ -24,14 +24,14 @@ class Stores extends Admin_Controller
 			redirect('dashboard', 'refresh');
 		}
 
-		$this->render_template('stores/index', $this->data);	
+		$this->render_template('stores/index', $this->data);
 	}
 
 	/*
 	* It retrieve the specific store information via a store id
 	* and returns the data in json format.
 	*/
-	public function fetchStoresDataById($id) 
+	public function fetchStoresDataById($id)
 	{
 		if($id) {
 			$data = $this->model_stores->getStoresData($id);
@@ -40,7 +40,7 @@ class Stores extends Admin_Controller
 	}
 
 	/*
-	* It retrieves all the store data from the database 
+	* It retrieves all the store data from the database
 	* This function is called from the datatable ajax function
 	* The data is return based on the json format.
 	*/
@@ -63,7 +63,7 @@ class Stores extends Admin_Controller
 				$buttons .= ' <button type="button" class="btn btn-default" onclick="removeFunc('.$value['id'].')" data-toggle="modal" data-target="#removeModal"><i class="fa fa-trash"></i></button>';
 			}
 
-			$status = ($value['active'] == 1) ? '<span class="label label-success">Active</span>' : '<span class="label label-warning">Inactive</span>';
+			$status = ($value['active'] == 1) ? '<span class="label label-success">Hoạt động</span>' : '<span class="label label-warning">Không hoạt động</span>';
 
 			$result['data'][$key] = array(
 				$value['name'],
@@ -77,7 +77,7 @@ class Stores extends Admin_Controller
 
 	/*
     * If the validation is not valid, then it provides the validation error on the json format
-    * If the validation for each input is valid then it inserts the data into the database and 
+    * If the validation for each input is valid then it inserts the data into the database and
     returns the appropriate message in the json format.
     */
 	public function create()
@@ -88,40 +88,40 @@ class Stores extends Admin_Controller
 
 		$response = array();
 
-		$this->form_validation->set_rules('store_name', 'Store name', 'trim|required');
-		$this->form_validation->set_rules('active', 'Active', 'trim|required');
+		$this->form_validation->set_rules('store_name', 'Cửa hàng name', 'trim|required');
+		$this->form_validation->set_rules('active', 'Hoạt động', 'trim|required');
 
 		$this->form_validation->set_error_delimiters('<p class="text-danger">','</p>');
 
         if ($this->form_validation->run() == TRUE) {
-        	$data = array(
-        		'name' => $this->input->post('store_name'),
-        		'active' => $this->input->post('active'),	
-        	);
+	$data = array(
+		'name' => $this->input->post('store_name'),
+		'active' => $this->input->post('active'),
+	);
 
-        	$create = $this->model_stores->create($data);
-        	if($create == true) {
-        		$response['success'] = true;
-        		$response['messages'] = 'Succesfully created';
-        	}
-        	else {
-        		$response['success'] = false;
-        		$response['messages'] = 'Error in the database while creating the brand information';			
-        	}
+	$create = $this->model_stores->create($data);
+	if($create == true) {
+		$response['success'] = true;
+		$response['messages'] = 'Tạo thành công';
+	}
+	else {
+		$response['success'] = false;
+		$response['messages'] = 'Lỗi cơ sở dữ liệu khi tạo thông tin';
+	}
         }
         else {
-        	$response['success'] = false;
-        	foreach ($_POST as $key => $value) {
-        		$response['messages'][$key] = form_error($key);
-        	}
+	$response['success'] = false;
+	foreach ($_POST as $key => $value) {
+		$response['messages'][$key] = form_error($key);
+	}
         }
 
         echo json_encode($response);
-	}	
+	}
 
 	/*
     * If the validation is not valid, then it provides the validation error on the json format
-    * If the validation for each input is valid then it updates the data into the database and 
+    * If the validation for each input is valid then it updates the data into the database and
     returns a n appropriate message in the json format.
     */
 	public function update($id)
@@ -133,46 +133,46 @@ class Stores extends Admin_Controller
 		$response = array();
 
 		if($id) {
-			$this->form_validation->set_rules('edit_store_name', 'Store name', 'trim|required');
-			$this->form_validation->set_rules('edit_active', 'Active', 'trim|required');
+			$this->form_validation->set_rules('edit_store_name', 'Cửa hàng name', 'trim|required');
+			$this->form_validation->set_rules('edit_active', 'Hoạt động', 'trim|required');
 
 			$this->form_validation->set_error_delimiters('<p class="text-danger">','</p>');
 
-	        if ($this->form_validation->run() == TRUE) {
-	        	$data = array(
-	        		'name' => $this->input->post('edit_store_name'),
-	        		'active' => $this->input->post('edit_active'),	
-	        	);
+	if ($this->form_validation->run() == TRUE) {
+		$data = array(
+			'name' => $this->input->post('edit_store_name'),
+			'active' => $this->input->post('edit_active'),
+		);
 
-	        	$update = $this->model_stores->update($data, $id);
-	        	if($update == true) {
-	        		$response['success'] = true;
-	        		$response['messages'] = 'Succesfully updated';
-	        	}
-	        	else {
-	        		$response['success'] = false;
-	        		$response['messages'] = 'Error in the database while updated the brand information';			
-	        	}
-	        }
-	        else {
-	        	$response['success'] = false;
-	        	foreach ($_POST as $key => $value) {
-	        		$response['messages'][$key] = form_error($key);
-	        	}
-	        }
+		$update = $this->model_stores->update($data, $id);
+		if($update == true) {
+			$response['success'] = true;
+			$response['messages'] = 'Cập nhật thành công';
 		}
 		else {
 			$response['success'] = false;
-    		$response['messages'] = 'Error please refresh the page again!!';
+			$response['messages'] = 'Lỗi cơ sở dữ liệu khi cập nhật thông tin';
+		}
+	}
+	else {
+		$response['success'] = false;
+		foreach ($_POST as $key => $value) {
+			$response['messages'][$key] = form_error($key);
+		}
+	}
+		}
+		else {
+			$response['success'] = false;
+		$response['messages'] = 'Đã xảy ra lỗi, vui lòng tải lại trang!!';
 		}
 
 		echo json_encode($response);
 	}
 
 	/*
-	* If checks if the store id is provided on the function, if not then an appropriate message 
+	* If checks if the store id is provided on the function, if not then an appropriate message
 	is return on the json format
-    * If the validation is valid then it removes the data into the database and returns an appropriate 
+    * If the validation is valid then it removes the data into the database and returns an appropriate
     message in the json format.
     */
 	public function remove()
@@ -180,7 +180,7 @@ class Stores extends Admin_Controller
 		if(!in_array('deleteStore', $this->permission)) {
 			redirect('dashboard', 'refresh');
 		}
-		
+
 		$store_id = $this->input->post('store_id');
 
 		$response = array();
@@ -188,11 +188,11 @@ class Stores extends Admin_Controller
 			$delete = $this->model_stores->remove($store_id);
 			if($delete == true) {
 				$response['success'] = true;
-				$response['messages'] = "Successfully removed";	
+				$response['messages'] = "Xoá thành công";
 			}
 			else {
 				$response['success'] = false;
-				$response['messages'] = "Error in the database while removing the brand information";
+				$response['messages'] = "Lỗi cơ sở dữ liệu khi xoá thông tin";
 			}
 		}
 		else {

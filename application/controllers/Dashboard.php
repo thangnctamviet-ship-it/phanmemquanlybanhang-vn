@@ -1,6 +1,6 @@
-<?php 
+<?php
 
-class Dashboard extends Admin_Controller 
+class Dashboard extends Admin_Controller
 {
 	public function __construct()
 	{
@@ -8,15 +8,15 @@ class Dashboard extends Admin_Controller
 
 		$this->not_logged_in();
 
-		$this->data['page_title'] = 'Dashboard';
-		
+		$this->data['page_title'] = 'Bảng điều khiển';
+
 		$this->load->model('model_products');
 		$this->load->model('model_orders');
 		$this->load->model('model_users');
 		$this->load->model('model_stores');
 	}
 
-	/* 
+	/*
 	* It only redirects to the manage category page
 	* It passes the total product, total paid orders, total users, and total stores information
 	into the frontend.

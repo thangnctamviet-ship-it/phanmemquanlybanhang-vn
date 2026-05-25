@@ -5,12 +5,12 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Manage
-        <small>Users</small>
+        Quản lý
+        <small>Người dùng</small>
       </h1>
       <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active">Users</li>
+        <li><a href="#"><i class="fa fa-dashboard"></i> Trang chủ</a></li>
+        <li class="active">Người dùng</li>
       </ol>
     </section>
 
@@ -31,35 +31,35 @@
               <?php echo $this->session->flashdata('error'); ?>
             </div>
           <?php endif; ?>
-          
+
           <?php if(in_array('createUser', $user_permission)): ?>
-            <a href="<?php echo base_url('users/create') ?>" class="btn btn-primary">Add User</a>
+            <a href="<?php echo base_url('users/create') ?>" class="btn btn-primary">Thêm người dùng</a>
             <br /> <br />
           <?php endif; ?>
 
 
           <div class="box">
             <div class="box-header">
-              <h3 class="box-title">Manage Users</h3>
+              <h3 class="box-title">Quản lý người dùng</h3>
             </div>
             <!-- /.box-header -->
             <div class="box-body">
               <table id="userTable" class="table table-bordered table-striped">
                 <thead>
                 <tr>
-                  <th>Username</th>
+                  <th>Tên đăng nhập</th>
                   <th>Email</th>
-                  <th>Name</th>
-                  <th>Phone</th>
-                  <th>Group</th>
+                  <th>Tên</th>
+                  <th>Điện thoại</th>
+                  <th>Nhóm</th>
 
                   <?php if(in_array('updateUser', $user_permission) || in_array('deleteUser', $user_permission)): ?>
-                  <th>Action</th>
+                  <th>Thao tác</th>
                   <?php endif; ?>
                 </tr>
                 </thead>
                 <tbody>
-                  <?php if($user_data): ?>                  
+                  <?php if($user_data): ?>
                     <?php foreach ($user_data as $k => $v): ?>
                       <tr>
                         <td><?php echo $v['user_info']['username']; ?></td>
@@ -92,7 +92,7 @@
         <!-- col-md-12 -->
       </div>
       <!-- /.row -->
-      
+
 
     </section>
     <!-- /.content -->

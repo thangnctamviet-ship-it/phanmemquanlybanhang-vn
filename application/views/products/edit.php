@@ -5,12 +5,12 @@
   <!-- Content Header (Page header) -->
   <section class="content-header">
     <h1>
-      Manage
-      <small>Products</small>
+      Quản lý
+      <small>Sản phẩm</small>
     </h1>
     <ol class="breadcrumb">
-      <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-      <li class="active">Products</li>
+      <li><a href="#"><i class="fa fa-dashboard"></i> Trang chủ</a></li>
+      <li class="active">Sản phẩm</li>
     </ol>
   </section>
 
@@ -37,7 +37,7 @@
 
         <div class="box">
           <div class="box-header">
-            <h3 class="box-title">Edit Product</h3>
+            <h3 class="box-title">Sửa sản phẩm</h3>
           </div>
           <!-- /.box-header -->
           <form role="form" action="<?php base_url('users/update') ?>" method="post" enctype="multipart/form-data">
@@ -46,12 +46,12 @@
                 <?php echo validation_errors(); ?>
 
                 <div class="form-group">
-                  <label>Image Preview: </label>
+                  <label>Xem trước hình ảnh: </label>
                   <img src="<?php echo base_url() . $product_data['image'] ?>" width="150" height="150" class="img-circle">
                 </div>
 
                 <div class="form-group">
-                  <label for="product_image">Update Image</label>
+                  <label for="product_image">Cập nhật hình ảnh</label>
                   <div class="kv-avatar">
                       <div class="file-loading">
                           <input id="product_image" name="product_image" type="file">
@@ -60,29 +60,28 @@
                 </div>
 
                 <div class="form-group">
-                  <label for="product_name">Product name</label>
-                  <input type="text" class="form-control" id="product_name" name="product_name" placeholder="Enter product name" value="<?php echo $product_data['name']; ?>"  autocomplete="off"/>
+                  <label for="product_name">Tên sản phẩm</label>
+                  <input type="text" class="form-control" id="product_name" name="product_name" placeholder="Nhập tên sản phẩm" value="<?php echo $product_data['name']; ?>"  autocomplete="off"/>
                 </div>
 
                 <div class="form-group">
                   <label for="sku">SKU</label>
-                  <input type="text" class="form-control" id="sku" name="sku" placeholder="Enter sku" value="<?php echo $product_data['sku']; ?>" autocomplete="off" />
+                  <input type="text" class="form-control" id="sku" name="sku" placeholder="Nhập SKU" value="<?php echo $product_data['sku']; ?>" autocomplete="off" />
                 </div>
 
                 <div class="form-group">
-                  <label for="price">Price</label>
-                  <input type="text" class="form-control" id="price" name="price" placeholder="Enter price" value="<?php echo $product_data['price']; ?>" autocomplete="off" />
+                  <label for="price">Giá</label>
+                  <input type="text" class="form-control" id="price" name="price" placeholder="Nhập giá" value="<?php echo $product_data['price']; ?>" autocomplete="off" />
                 </div>
 
                 <div class="form-group">
-                  <label for="qty">Qty</label>
-                  <input type="text" class="form-control" id="qty" name="qty" placeholder="Enter Qty" value="<?php echo $product_data['qty']; ?>" autocomplete="off" />
+                  <label for="qty">SL</label>
+                  <input type="text" class="form-control" id="qty" name="qty" placeholder="Nhập số lượng" value="<?php echo $product_data['qty']; ?>" autocomplete="off" />
                 </div>
 
                 <div class="form-group">
-                  <label for="description">Description</label>
-                  <textarea type="text" class="form-control" id="description" name="description" placeholder="Enter 
-                  description" autocomplete="off">
+                  <label for="description">Mô tả</label>
+                  <textarea type="text" class="form-control" id="description" name="description" placeholder="Nhập mô tả" autocomplete="off">
                     <?php echo $product_data['description']; ?>
                   </textarea>
                 </div>
@@ -97,12 +96,12 @@
                           <option value="<?php echo $v2['id'] ?>" <?php if(in_array($v2['id'], $attribute_id)) { echo "selected"; } ?>><?php echo $v2['value'] ?></option>
                         <?php endforeach ?>
                       </select>
-                    </div>    
+                    </div>
                   <?php endforeach ?>
                 <?php endif; ?>
 
                 <div class="form-group">
-                  <label for="brands">Brands</label>
+                  <label for="brands">Thương hiệu</label>
                   <?php $brand_data = json_decode($product_data['brand_id']); ?>
                   <select class="form-control select_group" id="brands" name="brands[]" multiple="multiple">
                     <?php foreach ($brands as $k => $v): ?>
@@ -112,7 +111,7 @@
                 </div>
 
                 <div class="form-group">
-                  <label for="category">Category</label>
+                  <label for="category">Danh mục</label>
                   <?php $category_data = json_decode($product_data['category_id']); ?>
                   <select class="form-control select_group" id="category" name="category[]" multiple="multiple">
                     <?php foreach ($category as $k => $v): ?>
@@ -122,7 +121,7 @@
                 </div>
 
                 <div class="form-group">
-                  <label for="store">Store</label>
+                  <label for="store">Cửa hàng</label>
                   <select class="form-control select_group" id="store" name="store">
                     <?php foreach ($stores as $k => $v): ?>
                       <option value="<?php echo $v['id'] ?>" <?php if($product_data['store_id'] == $v['id']) { echo "selected='selected'"; } ?> ><?php echo $v['name'] ?></option>
@@ -131,10 +130,10 @@
                 </div>
 
                 <div class="form-group">
-                  <label for="store">Availability</label>
+                  <label for="store">Tình trạng</label>
                   <select class="form-control" id="availability" name="availability">
-                    <option value="1" <?php if($product_data['availability'] == 1) { echo "selected='selected'"; } ?>>Yes</option>
-                    <option value="2" <?php if($product_data['availability'] != 1) { echo "selected='selected'"; } ?>>No</option>
+                    <option value="1" <?php if($product_data['availability'] == 1) { echo "selected='selected'"; } ?>>Có</option>
+                    <option value="2" <?php if($product_data['availability'] != 1) { echo "selected='selected'"; } ?>>Không</option>
                   </select>
                 </div>
 
@@ -144,8 +143,8 @@
               <!-- /.box-body -->
 
               <div class="box-footer">
-                <button type="submit" class="btn btn-primary">Save Changes</button>
-                <a href="<?php echo base_url('users/') ?>" class="btn btn-warning">Back</a>
+                <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                <a href="<?php echo base_url('users/') ?>" class="btn btn-warning">Quay lại</a>
               </div>
             </form>
           <!-- /.box-body -->
@@ -155,7 +154,7 @@
       <!-- col-md-12 -->
     </div>
     <!-- /.row -->
-    
+
 
   </section>
   <!-- /.content -->
@@ -163,28 +162,28 @@
 <!-- /.content-wrapper -->
 
 <script type="text/javascript">
-  
+
   $(document).ready(function() {
     $(".select_group").select2();
     $("#description").wysihtml5();
 
     $("#mainProductNav").addClass('active');
     $("#manageProductNav").addClass('active');
-    
-    var btnCust = '<button type="button" class="btn btn-secondary" title="Add picture tags" ' + 
+
+    var btnCust = '<button type="button" class="btn btn-secondary" title="Thêm thẻ hình ảnh" ' +
         'onclick="alert(\'Call your custom code here.\')">' +
         '<i class="glyphicon glyphicon-tag"></i>' +
-        '</button>'; 
+        '</button>';
     $("#product_image").fileinput({
         overwriteInitial: true,
         maxFileSize: 1500,
-        showClose: false,
+        showĐóng: false,
         showCaption: false,
         browseLabel: '',
         removeLabel: '',
         browseIcon: '<i class="glyphicon glyphicon-folder-open"></i>',
         removeIcon: '<i class="glyphicon glyphicon-remove"></i>',
-        removeTitle: 'Cancel or reset changes',
+        removeTitle: 'Huỷ hoặc đặt lại thay đổi',
         elErrorContainer: '#kv-avatar-errors-1',
         msgErrorClass: 'alert alert-block alert-danger',
         // defaultPreviewContent: '<img src="/uploads/default_avatar_male.jpg" alt="Your Avatar">',
