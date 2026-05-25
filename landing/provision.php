@@ -1,5 +1,6 @@
 <?php
 require __DIR__.'/includes/db.php';
+require __DIR__.'/includes/mailer.php';
 $page_title = 'Đang khởi tạo cửa hàng...';
 
 $shop = trim($_POST['shop_name'] ?? '');
@@ -63,7 +64,28 @@ if (!$json || ($json['status'] ?? '') !== 'ok') {
 $pdo->prepare("UPDATE tenants SET status='trial' WHERE id=?")->execute([$tenant_id]);
 
 $env = env_load();
-$tenant_url = $json['url'] ?? ('http://'.$sub.'.'.($env['LOCAL_BASE_DOMAIN'] ?? 'localhost:8080'));
+$tenant_url = 'https://'.$sub.'.'.($env['BASE_DOMAIN'] ?? 'quanlybanhang.shop');
+if (($env['MODE'] ?? 'local') === 'local') {
+    $tenant_url = $json['url'] ?? ('http://'.$sub.'.'.($env['LOCAL_BASE_DOMAIN'] ?? 'localhost:8080'));
+}
+
+$customer_body = '<p>Xin chào,</p>'
+    . '<p>Cửa hàng <strong>'.htmlspecialchars($shop, ENT_QUOTES, 'UTF-8').'</strong> đã được khởi tạo.</p>'
+    . '<p>URL: <a href="'.htmlspecialchars($tenant_url, ENT_QUOTES, 'UTF-8').'">'.htmlspecialchars($tenant_url, ENT_QUOTES, 'UTF-8').'</a></p>'
+    . '<p>Email đăng nhập: <strong>'.htmlspecialchars($email, ENT_QUOTES, 'UTF-8').'</strong><br>Username: <strong>admin</strong></p>'
+    . '<p>Vui lòng đổi mật khẩu sau lần đăng nhập đầu tiên. Nếu quên mật khẩu, liên hệ chủ hệ thống để được reset.</p>';
+send_mail($email, 'Cửa hàng của bạn đã sẵn sàng', $customer_body);
+
+if (!empty($env['OWNER_EMAIL'])) {
+    $owner_body = '<p>Có đăng ký mới:</p>'
+        . '<ul>'
+        . '<li>Cửa hàng: '.htmlspecialchars($shop, ENT_QUOTES, 'UTF-8').'</li>'
+        . '<li>Subdomain: '.htmlspecialchars($sub, ENT_QUOTES, 'UTF-8').'</li>'
+        . '<li>Email: '.htmlspecialchars($email, ENT_QUOTES, 'UTF-8').'</li>'
+        . '<li>URL: <a href="'.htmlspecialchars($tenant_url, ENT_QUOTES, 'UTF-8').'">'.htmlspecialchars($tenant_url, ENT_QUOTES, 'UTF-8').'</a></li>'
+        . '</ul>';
+    send_mail($env['OWNER_EMAIL'], 'Đăng ký tenant mới: '.$sub, $owner_body);
+}
 
 include __DIR__.'/includes/header.php';
 ?>

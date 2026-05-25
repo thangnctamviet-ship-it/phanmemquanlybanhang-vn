@@ -16,8 +16,8 @@ class MY_Controller extends CI_Controller
 		if (file_exists($lic_file)) {
 			require_once $lic_file;
 			$host = $_SERVER['HTTP_HOST'] ?? '';
-			$sub  = License::parseSubdomain($host);
-			$this->license = new License($sub);
+			$sub  = TenantLicense::parseSubdomain($host);
+			$this->license = new TenantLicense($sub);
 		}
 	}
 }

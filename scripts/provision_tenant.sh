@@ -2,7 +2,7 @@
 # provision_tenant.sh <subdomain> <shop_name> <email> <admin_password>
 # Tạo 1 tenant mới (DB + folder + admin user).
 # MODE=local: dùng docker exec vào pmqlbh_db + symlink code.
-# MODE=cpanel: gọi cPanel API (sẽ implement Phase 2).
+# MODE=cpanel: gọi cPanel API để tạo DB/user/subdomain.
 
 set -euo pipefail
 
@@ -87,18 +87,24 @@ SQL
     log "Đã seed company + admin user"
 
 elif [[ "$MODE" == "cpanel" ]]; then
+    DB_NAME="${CPANEL_USER}_tenant_${SUBDOMAIN}"
+    DB_USER="${CPANEL_USER}_t_${SUBDOMAIN}"
     log "Tạo DB qua cPanel API: $DB_NAME"
-    cpanel_create_db "$DB_NAME"
+    cpanel_create_database "$DB_NAME"
     cpanel_create_db_user "$DB_USER" "$DB_PASS"
-    cpanel_grant_db "$DB_USER" "$DB_NAME"
-    log "TODO: import schema qua cPanel (Phase 2)"
+    cpanel_grant_db_user "$DB_NAME" "$DB_USER"
+    if [[ -z "${CPANEL_REMOTE_DB_HOST:-}" ]]; then
+        log "Không có CPANEL_REMOTE_DB_HOST; hãy import stock.sql thủ công vào ${DB_NAME} qua phpMyAdmin/cPanel."
+    else
+        log "CPANEL_REMOTE_DB_HOST=${CPANEL_REMOTE_DB_HOST}; import schema có thể chạy từ host này nếu MySQL cho phép remote."
+    fi
 fi
 
 # ---------- 2. Tạo folder tenant + symlink code ----------
 TENANT_DIR="$ROOT_DIR/tenants/$SUBDOMAIN"
 mkdir -p "$TENANT_DIR"
 
-if [[ "$MODE" == "local" ]]; then
+if [[ "$MODE" == "local" || "$MODE" == "cpanel" ]]; then
     log "Tạo symlink code vào $TENANT_DIR"
     # symlink các folder/file cốt lõi, NHƯNG copy folder application/config
     for item in application assets system index.php .htaccess composer.json composer.lock tenant-shared; do
@@ -121,11 +127,20 @@ if [[ "$MODE" == "local" ]]; then
     # Sửa database.php
     CFG="$TENANT_DIR/application/config/database.php"
     sed -i.bak "s/'database' => 'stock'/'database' => '${DB_NAME}'/" "$CFG"
+    if [[ "$MODE" == "cpanel" ]]; then
+        DB_HOST="${CPANEL_REMOTE_DB_HOST:-localhost}"
+        sed -i.bak "s/'hostname' => 'db'/'hostname' => '${DB_HOST}'/" "$CFG"
+        sed -i.bak "s/'username' => 'root'/'username' => '${DB_USER}'/" "$CFG"
+        sed -i.bak "s/'password' => 'root'/'password' => '${DB_PASS}'/" "$CFG"
+    fi
     rm -f "$CFG.bak"
     log "Đã cập nhật database.php: database=${DB_NAME}"
 
+    if [[ "$MODE" == "cpanel" ]]; then
+        log "Tạo subdomain qua cPanel UAPI"
+        cpanel_create_subdomain "$SUBDOMAIN" "${CPANEL_DOMAIN:-quanlybanhang.shop}" "tenants/${SUBDOMAIN}"
+    fi
 elif [[ "$MODE" == "cpanel" ]]; then
-    log "TODO: tạo subdomain qua cPanel UAPI"
     cpanel_create_subdomain "$SUBDOMAIN" "${CPANEL_DOMAIN:-quanlybanhang.shop}" "tenants/${SUBDOMAIN}"
 fi
 

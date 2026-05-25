@@ -101,6 +101,14 @@ Original Sourcecode from CodeFolder - [﻿https://codersfolder.com/2018/02/stock
 CodeIgniter - Web Framework
 AdminLTE - Theme
 
+## SaaS cron
+
+Cron kiểm tra tenant hết hạn:
+
+```cron
+0 9 * * * /usr/bin/php /path/to/cron_check_expired.php
+```
+
 <!-- eraser-additional-content -->
 ## Diagrams
 <!-- eraser-additional-files -->

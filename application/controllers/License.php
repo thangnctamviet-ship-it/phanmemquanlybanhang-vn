@@ -30,7 +30,7 @@ class License extends Admin_Controller
         // Lưu pending payment vào master DB
         $sub = $this->license ? $this->license->getSubdomain() : null;
         $tenant = $this->license ? $this->license->getTenant() : null;
-        $env = \License::loadEnv();
+        $env = TenantLicense::loadEnv();
         $ref = '';
         if ($tenant) {
             try {
@@ -49,6 +49,7 @@ class License extends Admin_Controller
             'name' => $env['BANK_NAME'] ?? '',
             'account' => $env['BANK_ACCOUNT'] ?? '',
             'holder' => $env['BANK_HOLDER'] ?? '',
+            'owner_email' => $env['OWNER_EMAIL'] ?? '',
         ];
         $this->render_template('license/payment', $this->data);
     }

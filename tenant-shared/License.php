@@ -1,9 +1,9 @@
 <?php
 /**
- * License - kiểm tra license tenant từ Master DB
- * Sử dụng: $lic = new License($subdomain);
+ * TenantLicense - kiểm tra license tenant từ Master DB
+ * Sử dụng: $lic = new TenantLicense($subdomain);
  */
-class License {
+class TenantLicense {
     private $tenant = null;
     private $subdomain;
 

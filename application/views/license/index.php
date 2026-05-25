@@ -17,7 +17,7 @@
         <?php if($p[4]): ?><span class="label label-success"><?= $p[4] ?></span><?php endif; ?>
         <form method="POST" action="<?= site_url('license/buy') ?>" style="margin-top:10px;">
           <input type="hidden" name="plan" value="<?= $p[0] ?>">
-          <button class="btn btn-primary btn-block">Chọn gói này</button>
+          <button class="btn btn-primary btn-block">Chọn gói + Xác nhận</button>
         </form>
       </div></div>
     </div>

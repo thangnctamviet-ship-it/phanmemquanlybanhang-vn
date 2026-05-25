@@ -153,6 +153,7 @@
 
         <?php endif; ?>
         <!-- user permission info -->
+        <li><a href="<?php echo base_url('account') ?>"><i class="fa fa-credit-card"></i> <span>Tài khoản</span></a></li>
         <li><a href="<?php echo base_url('auth/logout') ?>"><i class="glyphicon glyphicon-log-out"></i> <span>Đăng xuất</span></a></li>
 
       </ul>

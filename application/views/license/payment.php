@@ -8,6 +8,7 @@
       <li><strong>Chủ tài khoản:</strong> <?= htmlspecialchars($bank['holder']) ?></li>
       <li><strong>Số tiền:</strong> <?= number_format($info['amount']) ?> ₫</li>
       <li><strong>Nội dung CK:</strong> <code style="font-size:16px;background:#fff3cd;padding:4px 8px;"><?= htmlspecialchars($ref) ?></code></li>
+      <?php if(!empty($bank['owner_email'])): ?><li><strong>Email xác nhận:</strong> <?= htmlspecialchars($bank['owner_email']) ?></li><?php endif; ?>
     </ul>
     <p>Sau khi chuyển khoản, admin sẽ xác nhận trong vòng 24h. Tài khoản sẽ tự động được gia hạn.</p>
     <a href="<?= site_url('dashboard') ?>" class="btn btn-default">← Về dashboard</a>

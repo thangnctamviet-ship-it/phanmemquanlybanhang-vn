@@ -1,23 +1,32 @@
-<?php $page_title='Thanh toán'; include __DIR__.'/includes/layout.php';
+<?php $page_title='Thanh toán'; include __DIR__.'/includes/layout.php'; require_once __DIR__.'/../landing/includes/mailer.php';
 $pdo = master_pdo();
 $msg='';
 if ($_SERVER['REQUEST_METHOD']==='POST') {
     $id = (int)$_POST['id'];
     $action = $_POST['action'];
-    $p = $pdo->query("SELECT * FROM payments WHERE id=$id")->fetch(PDO::FETCH_ASSOC);
+    $stmt = $pdo->prepare("SELECT p.*, t.subdomain, t.owner_email, t.expires_at FROM payments p JOIN tenants t ON t.id=p.tenant_id WHERE p.id=?");
+    $stmt->execute([$id]);
+    $p = $stmt->fetch(PDO::FETCH_ASSOC);
     if ($p) {
         if ($action==='confirm') {
             $pdo->beginTransaction();
             $pdo->prepare("UPDATE payments SET status='confirmed', confirmed_at=NOW() WHERE id=?")->execute([$id]);
-            if ($p['months_added']>0) {
-                $pdo->prepare("UPDATE tenants SET expires_at=DATE_ADD(GREATEST(expires_at,NOW()), INTERVAL ? MONTH), status='active', plan=? WHERE id=?")
-                    ->execute([$p['months_added'], $p['plan'], $p['tenant_id']]);
-            }
-            if ($p['branches_added']>0) {
-                $pdo->prepare("UPDATE tenants SET paid_branches=paid_branches+? WHERE id=?")->execute([$p['branches_added'],$p['tenant_id']]);
-            }
+            $months = (int)$p['months_added'];
+            $branches = (int)$p['branches_added'];
+            $pdo->prepare("UPDATE tenants SET expires_at=DATE_ADD(GREATEST(expires_at,NOW()), INTERVAL {$months} MONTH), paid_branches=paid_branches+?, status='active', plan=? WHERE id=?")
+                ->execute([$branches, $p['plan'], $p['tenant_id']]);
             $pdo->commit();
             $msg = "Đã xác nhận thanh toán #$id";
+            $stmt = $pdo->prepare("SELECT expires_at, paid_branches FROM tenants WHERE id=?");
+            $stmt->execute([$p['tenant_id']]);
+            $tenant_after = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($tenant_after) {
+                $body = '<p>Thanh toán của bạn đã được xác nhận.</p>'
+                    . '<p>Tenant: <strong>'.htmlspecialchars($p['subdomain'], ENT_QUOTES, 'UTF-8').'</strong></p>'
+                    . '<p>Hạn mới: <strong>'.htmlspecialchars($tenant_after['expires_at'], ENT_QUOTES, 'UTF-8').'</strong><br>'
+                    . 'Số chi nhánh: <strong>'.(int)$tenant_after['paid_branches'].'</strong></p>';
+                send_mail($p['owner_email'], 'Đã xác nhận thanh toán', $body);
+            }
         } elseif ($action==='reject') {
             $pdo->prepare("UPDATE payments SET status='rejected' WHERE id=?")->execute([$id]);
             $msg="Đã từ chối #$id";
