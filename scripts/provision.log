@@ -1,0 +1,12 @@
+[2026-05-26 00:07:05] === Provision: testshop1 (Test Shop 1) MODE=local ===
+[2026-05-26 00:07:05] Tạo DB local: tenant_testshop1
+[2026-05-26 00:07:05] Import stock.sql vào tenant_testshop1
+[2026-05-26 00:07:06] Xoá dữ liệu mẫu (chỉ giữ DDL + groups)
+[2026-05-26 00:07:21] === Provision: testshop1 (Test Shop 1) MODE=local ===
+[2026-05-26 00:07:21] Tạo DB local: tenant_testshop1
+[2026-05-26 00:07:21] Import stock.sql vào tenant_testshop1
+[2026-05-26 00:07:22] Xoá dữ liệu mẫu (chỉ giữ DDL + groups)
+[2026-05-26 00:07:23] Đã seed company + admin user
+[2026-05-26 00:07:23] Tạo symlink code vào /Users/macbook/.openclaw/workspace-main/InventorySystem/tenants/testshop1
+[2026-05-26 00:07:23] Đã cập nhật database.php: database=tenant_testshop1
+[2026-05-26 00:07:23] === DONE: testshop1 ===

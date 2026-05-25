@@ -2,9 +2,23 @@
 
 class MY_Controller extends CI_Controller
 {
+	public $license = null;
+
 	public function __construct()
 	{
 		parent::__construct();
+		$this->_init_license();
+	}
+
+	protected function _init_license()
+	{
+		$lic_file = FCPATH . 'tenant-shared/License.php';
+		if (file_exists($lic_file)) {
+			require_once $lic_file;
+			$host = $_SERVER['HTTP_HOST'] ?? '';
+			$sub  = License::parseSubdomain($host);
+			$this->license = new License($sub);
+		}
 	}
 }
 

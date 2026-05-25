@@ -96,6 +96,11 @@ class Orders extends Admin_Controller
             redirect('dashboard', 'refresh');
         }
 
+		if ($this->license && !$this->license->canCreateOrder()) {
+			$this->session->set_flashdata('errors', 'Tài khoản đã hết hạn dùng thử. Vui lòng gia hạn để tiếp tục tạo đơn hàng.');
+			redirect('dashboard', 'refresh');
+		}
+
 		$this->data['page_title'] = 'Thêm đơn hàng';
 
 		$this->form_validation->set_rules('product[]', 'Tên sản phẩm', 'trim|required');

@@ -1,0 +1,65 @@
+<?php $page_title='Thanh toán'; include __DIR__.'/includes/layout.php';
+$pdo = master_pdo();
+$msg='';
+if ($_SERVER['REQUEST_METHOD']==='POST') {
+    $id = (int)$_POST['id'];
+    $action = $_POST['action'];
+    $p = $pdo->query("SELECT * FROM payments WHERE id=$id")->fetch(PDO::FETCH_ASSOC);
+    if ($p) {
+        if ($action==='confirm') {
+            $pdo->beginTransaction();
+            $pdo->prepare("UPDATE payments SET status='confirmed', confirmed_at=NOW() WHERE id=?")->execute([$id]);
+            if ($p['months_added']>0) {
+                $pdo->prepare("UPDATE tenants SET expires_at=DATE_ADD(GREATEST(expires_at,NOW()), INTERVAL ? MONTH), status='active', plan=? WHERE id=?")
+                    ->execute([$p['months_added'], $p['plan'], $p['tenant_id']]);
+            }
+            if ($p['branches_added']>0) {
+                $pdo->prepare("UPDATE tenants SET paid_branches=paid_branches+? WHERE id=?")->execute([$p['branches_added'],$p['tenant_id']]);
+            }
+            $pdo->commit();
+            $msg = "Đã xác nhận thanh toán #$id";
+        } elseif ($action==='reject') {
+            $pdo->prepare("UPDATE payments SET status='rejected' WHERE id=?")->execute([$id]);
+            $msg="Đã từ chối #$id";
+        }
+    }
+}
+$rows = $pdo->query("SELECT p.*, t.subdomain FROM payments p JOIN tenants t ON t.id=p.tenant_id ORDER BY p.id DESC")->fetchAll(PDO::FETCH_ASSOC);
+?>
+<h1 class="text-2xl font-bold mb-4">Thanh toán</h1>
+<?php if($msg): ?><div class="bg-emerald-50 text-emerald-700 p-3 rounded mb-4"><?= $msg ?></div><?php endif; ?>
+<div class="bg-white rounded-xl shadow overflow-x-auto">
+<table class="w-full text-sm">
+<thead class="bg-slate-50"><tr>
+<th class="p-2">#</th><th class="p-2 text-left">Tenant</th><th class="p-2">Plan</th><th class="p-2">Số tiền</th>
+<th class="p-2">+Tháng</th><th class="p-2">+CN</th><th class="p-2">Bank ref</th><th class="p-2">Status</th><th class="p-2">Ngày</th><th></th>
+</tr></thead><tbody>
+<?php foreach($rows as $r): ?>
+<tr class="border-t">
+<td class="p-2 text-center"><?= $r['id'] ?></td>
+<td class="p-2 font-mono"><?= htmlspecialchars($r['subdomain']) ?></td>
+<td class="p-2 text-center"><?= $r['plan'] ?></td>
+<td class="p-2 text-right"><?= number_format($r['amount']) ?>₫</td>
+<td class="p-2 text-center"><?= $r['months_added'] ?></td>
+<td class="p-2 text-center"><?= $r['branches_added'] ?></td>
+<td class="p-2 text-xs"><?= htmlspecialchars($r['bank_ref'] ?? '') ?></td>
+<td class="p-2 text-center"><span class="px-2 py-1 rounded text-xs <?= $r['status']==='pending'?'bg-amber-100 text-amber-700':($r['status']==='confirmed'?'bg-emerald-100 text-emerald-700':'bg-slate-200') ?>"><?= $r['status'] ?></span></td>
+<td class="p-2 text-xs"><?= $r['created_at'] ?></td>
+<td class="p-2 space-x-1">
+  <?php if($r['status']==='pending'): ?>
+  <form method="POST" class="inline-block">
+    <input type="hidden" name="id" value="<?= $r['id'] ?>"><input type="hidden" name="action" value="confirm">
+    <button class="bg-emerald-600 text-white px-2 py-1 rounded text-xs">Xác nhận</button>
+  </form>
+  <form method="POST" class="inline-block">
+    <input type="hidden" name="id" value="<?= $r['id'] ?>"><input type="hidden" name="action" value="reject">
+    <button class="bg-red-600 text-white px-2 py-1 rounded text-xs">Từ chối</button>
+  </form>
+  <?php endif; ?>
+</td>
+</tr>
+<?php endforeach; if (!$rows): ?>
+<tr><td colspan="10" class="p-6 text-center text-slate-500">Chưa có thanh toán nào</td></tr>
+<?php endif; ?>
+</tbody></table></div>
+</main></body></html>

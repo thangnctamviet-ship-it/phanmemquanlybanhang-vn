@@ -2,6 +2,30 @@
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
+    <?php
+      $CI =& get_instance();
+      if (!empty($CI->license) && $CI->license->hasTenant()):
+        $t = $CI->license->getTenant();
+        $days = $CI->license->daysLeft();
+        $expired = $CI->license->isExpired();
+        $trial = $CI->license->isTrial();
+    ?>
+      <?php if ($expired): ?>
+        <div style="background:#fee2e2;border-left:4px solid #dc2626;padding:12px;margin:10px;border-radius:6px;">
+          <strong>⚠️ Bản dùng thử đã kết thúc.</strong> Tính năng tạo đơn hàng/chi nhánh mới đã bị khoá.
+          <a href="<?= site_url('license') ?>" class="btn btn-danger btn-sm" style="margin-left:10px;">Gia hạn ngay</a>
+        </div>
+      <?php elseif ($trial): ?>
+        <div style="background:#fef3c7;border-left:4px solid #f59e0b;padding:12px;margin:10px;border-radius:6px;">
+          <strong>🎁 Bạn đang dùng thử.</strong> Còn <strong><?= $days ?></strong> ngày.
+          <a href="<?= site_url('license') ?>" class="btn btn-warning btn-sm" style="margin-left:10px;">Nâng cấp ngay</a>
+        </div>
+      <?php else: ?>
+        <div style="background:#d1fae5;border-left:4px solid #059669;padding:8px 12px;margin:10px;border-radius:6px;font-size:13px;color:#065f46;">
+          ✓ Gói <strong><?= htmlspecialchars($t['plan']) ?></strong>, hết hạn <?= $t['expires_at'] ?> (còn <?= $days ?> ngày)
+        </div>
+      <?php endif; ?>
+    <?php endif; ?>
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
