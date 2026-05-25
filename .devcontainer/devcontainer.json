@@ -1,0 +1,23 @@
+{
+  "name": "Phần mềm quản lý bán hàng",
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "web",
+  "workspaceFolder": "/var/www/html",
+  "forwardPorts": [8080, 8081, 3307],
+  "portsAttributes": {
+    "8080": { "label": "Ứng dụng (Web)", "onAutoForward": "openPreview" },
+    "8081": { "label": "phpMyAdmin" },
+    "3307": { "label": "MySQL" }
+  },
+  "postCreateCommand": "echo '✅ Container sẵn sàng. Mở port 8080 để truy cập ứng dụng.'",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "bmewburn.vscode-intelephense-client",
+        "xdebug.php-debug",
+        "esbenp.prettier-vscode"
+      ]
+    }
+  },
+  "remoteUser": "root"
+}
