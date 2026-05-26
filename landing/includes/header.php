@@ -16,6 +16,7 @@
     <div class="space-x-4 text-sm">
       <a href="/landing/" class="hover:text-indigo-600">Trang chủ</a>
       <a href="/landing/pricing.php" class="hover:text-indigo-600">Bảng giá</a>
+      <a href="/landing/login.php" class="hover:text-indigo-600 font-medium">Đăng nhập</a>
       <a href="/landing/register.php" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">Dùng thử miễn phí</a>
     </div>
   </div>
