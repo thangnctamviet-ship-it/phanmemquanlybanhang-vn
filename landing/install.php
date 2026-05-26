@@ -1,8 +1,8 @@
-<?php $page_title = 'Tải app - Quản lý bán hàng'; include 'includes/header.php'; ?>
+<?php $page_title = 'Tải app - Quản Lý Bán Hàng'; include 'includes/header.php'; ?>
 
 <section class="max-w-5xl mx-auto px-4 py-12">
   <div class="text-center mb-10">
-    <h1 class="text-3xl md:text-4xl font-bold text-slate-900">📱 Cài app Quản lý bán hàng</h1>
+    <h1 class="text-3xl md:text-4xl font-bold text-slate-900">📱 Cài app Quản Lý Bán Hàng</h1>
     <p class="text-slate-600 mt-3">Dùng trực tiếp trên điện thoại như một ứng dụng thật. Hoạt động ngay cả khi mạng chập chờn.</p>
   </div>
 

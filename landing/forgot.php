@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     . '<p>Username đăng nhập: <code>admin</code> hoặc <code>'.htmlspecialchars($email).'</code></p>'
                     . '<p style="color:#dc2626;"><strong>Lưu ý bảo mật:</strong> Vui lòng đăng nhập và đổi mật khẩu ngay sau khi nhận được email này.</p>'
                     . '<p>Nếu bạn KHÔNG yêu cầu khôi phục, hãy đăng nhập đổi mật khẩu ngay và liên hệ <a href="mailto:hotroquanlybanhang.shop@gmail.com">hotroquanlybanhang.shop@gmail.com</a></p>';
-                send_mail($email, 'Khôi phục tài khoản - Quản lý bán hàng', $body);
+                send_mail($email, 'Khôi phục tài khoản - Quản Lý Bán Hàng', $body);
                 $message = 'Đã gửi thông tin khôi phục đến <strong>'.htmlspecialchars($email).'</strong>. Vui lòng kiểm tra hộp thư (kể cả Spam) trong vài phút tới.';
             }
         } catch (Exception $e) {

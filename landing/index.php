@@ -3,7 +3,7 @@
 <section class="bg-white">
   <div class="max-w-6xl mx-auto px-4 py-16 grid md:grid-cols-2 gap-10 items-center">
     <div>
-      <h1 class="text-4xl md:text-5xl font-bold text-slate-900 mb-4">Quản lý bán hàng</h1>
+      <h1 class="text-4xl md:text-5xl font-bold text-slate-900 mb-4">Quản Lý Bán Hàng</h1>
       <p class="text-lg text-slate-600 mb-8">Phần mềm SaaS cho cửa hàng Việt: bán hàng, kho, đơn hàng, chi nhánh và báo cáo trong một hệ thống riêng cho từng cửa hàng.</p>
       <div class="flex flex-wrap gap-3">
         <a href="register.php" class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700">Dùng thử miễn phí 7 ngày</a>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title><?= $page_title ?? 'Quản lý bán hàng - SaaS' ?></title>
+<title><?= $page_title ?? 'Quản Lý Bán Hàng - SaaS' ?></title>
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#4f46e5">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -20,7 +20,7 @@
 <nav class="bg-white border-b sticky top-0 z-50">
   <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
     <a href="/landing/" class="text-lg md:text-xl font-bold text-indigo-600 flex items-center gap-1">
-      <span>🛒</span><span>Quản lý bán hàng</span>
+      <span>🛒</span><span>Quản Lý Bán Hàng</span>
     </a>
     <!-- Desktop menu -->
     <div class="hidden md:flex items-center space-x-4 text-sm">

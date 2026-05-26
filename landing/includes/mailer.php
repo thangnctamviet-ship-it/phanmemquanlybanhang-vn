@@ -6,7 +6,7 @@ function mailer_env_load() {
     $env = file_exists($path) ? (parse_ini_file($path) ?: []) : [];
     $env += [
         'OWNER_EMAIL' => '',
-        'SMTP_FROM_NAME' => 'Quản lý bán hàng',
+        'SMTP_FROM_NAME' => 'Quản Lý Bán Hàng',
     ];
     return $env;
 }
@@ -77,7 +77,7 @@ function smtp_send_mail($to, $subject, $body_html, array $headers, array $env, $
 function send_mail($to, $subject, $body_html, $from_name = null) {
     $env = mailer_env_load();
     $from_email = $env['OWNER_EMAIL'] ?: ('no-reply@' . ($env['BASE_DOMAIN'] ?? 'quanlybanhang.shop'));
-    $name = $from_name ?: ($env['SMTP_FROM_NAME'] ?? 'Quản lý bán hàng');
+    $name = $from_name ?: ($env['SMTP_FROM_NAME'] ?? 'Quản Lý Bán Hàng');
     $encoded_name = '=?UTF-8?B?' . base64_encode($name) . '?=';
     $encoded_subject = '=?UTF-8?B?' . base64_encode($subject) . '?=';
     $headers = [
