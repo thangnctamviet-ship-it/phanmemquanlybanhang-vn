@@ -118,6 +118,7 @@ function provision_tenant_cpanel(array $opts): array {
         foreach (provision_split_sql($schema) as $stmt) {
             $pdo->exec($stmt);
         }
+        $pdo->exec('SET AUTOCOMMIT=1');
 
         $pdo->exec('SET FOREIGN_KEY_CHECKS=0');
         foreach (['products', 'orders', 'orders_item', 'attributes', 'attribute_value', 'brands', 'categories', 'stores', 'users', 'user_group', 'company'] as $table) {
