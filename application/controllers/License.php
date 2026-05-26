@@ -36,8 +36,25 @@ class License extends Admin_Controller
             try {
                 $pdo = new PDO("mysql:host={$env['MASTER_DB_HOST']};dbname={$env['MASTER_DB_NAME']};charset=utf8mb4",
                     $env['MASTER_DB_USER'], $env['MASTER_DB_PASS']);
-                $ref = $sub.' '.$plan;
+                $ref = $sub.' '.$ref_suffix;
                 $pdo->prepare("INSERT INTO payments (tenant_id,plan,amount,months_added,branches_added,bank_ref,status) VALUES (?,?,?,?,?,?,'pending')")
+                    ->execute([$tenant['id'],$plan_save,$info['amount'],$info['months'],$info['branches'],$ref]);
+            } catch (Exception $e) {}
+        }
+
+        $this->data['plan'] = $plan;
+        $this->data['info'] = $info;
+        $this->data['ref']  = $ref ?: ($sub.' '.$plan);
+        $this->data['bank'] = [
+            'name' => $env['BANK_NAME'] ?? '',
+            'account' => $env['BANK_ACCOUNT'] ?? '',
+            'holder' => $env['BANK_HOLDER'] ?? '',
+            'owner_email' => $env['OWNER_EMAIL'] ?? '',
+        ];
+        $this->render_template('license/payment', $this->data);
+    }
+}
+lan,amount,months_added,branches_added,bank_ref,status) VALUES (?,?,?,?,?,?,'pending')")
                     ->execute([$tenant['id'],$plan,$info['amount'],$info['months'],$info['branches'],$ref]);
             } catch (Exception $e) {}
         }
