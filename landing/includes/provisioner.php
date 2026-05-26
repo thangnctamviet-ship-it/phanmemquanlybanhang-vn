@@ -152,6 +152,8 @@ function provision_tenant_cpanel(array $opts): array {
         // .htaccess riêng cho tenant (KHÔNG symlink về root - root htaccess rewrite về landing)
         file_put_contents($dir . '/.htaccess',
             "RewriteEngine On\n"
+            ."RewriteCond %{HTTPS} !=on\n"
+            ."RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]\n\n"
             ."RewriteCond %{REQUEST_FILENAME} !-f\n"
             ."RewriteCond %{REQUEST_FILENAME} !-d\n"
             ."RewriteRule ^(.*)$ index.php/$1 [L,QSA]\n");
