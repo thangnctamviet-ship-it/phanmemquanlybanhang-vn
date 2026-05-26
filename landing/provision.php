@@ -2,6 +2,7 @@
 require __DIR__.'/includes/db.php';
 require __DIR__.'/includes/mailer.php';
 $page_title = 'Đang khởi tạo cửa hàng...';
+$env = env_load();
 
 $shop = trim($_POST['shop_name'] ?? '');
 $sub  = strtolower(trim($_POST['subdomain'] ?? ''));
@@ -35,35 +36,52 @@ try {
     fail('Lỗi DB chủ: '.$e->getMessage());
 }
 
-// LƯU Ý: cần script chạy được bash + docker exec. Trên cPanel cần SSH key đặc quyền.
-$root = dirname(__DIR__);
-$script = "$root/scripts/provision_tenant.sh";
-$cmd = sprintf('bash %s %s %s %s %s 2>&1',
-    escapeshellarg($script),
-    escapeshellarg($sub),
-    escapeshellarg($shop),
-    escapeshellarg($email),
-    escapeshellarg($pass)
-);
-$output = shell_exec($cmd);
+if (($env['MODE'] ?? 'local') === 'cpanel') {
+    try {
+        require __DIR__.'/includes/provisioner.php';
+        $json = provision_tenant_cpanel([
+            'subdomain' => $sub,
+            'shop_name' => $shop,
+            'email' => $email,
+            'password' => $pass,
+            'phone' => $phone,
+        ]);
+        $pdo->prepare("UPDATE tenants SET status='trial', db_name=?, db_user=?, db_pass=? WHERE id=?")
+            ->execute([$json['db_name'], $json['db_user'], $json['db_pass'] ?? '', $tenant_id]);
+    } catch (Exception $e) {
+        $pdo->prepare("DELETE FROM tenants WHERE id=?")->execute([$tenant_id]);
+        fail('Không thể khởi tạo tenant: '.$e->getMessage());
+    }
+} else {
+    // LƯU Ý: cần script chạy được bash + docker exec. Trên cPanel dùng nhánh PHP ở trên.
+    $root = dirname(__DIR__);
+    $script = "$root/scripts/provision_tenant.sh";
+    $cmd = sprintf('bash %s %s %s %s %s 2>&1',
+        escapeshellarg($script),
+        escapeshellarg($sub),
+        escapeshellarg($shop),
+        escapeshellarg($email),
+        escapeshellarg($pass)
+    );
+    $output = shell_exec($cmd);
 
-// Parse JSON output từ provision script (lấy dòng JSON cuối)
-$json = null;
-foreach (array_reverse(explode("\n", trim((string)$output))) as $line) {
-    $line = trim($line);
-    if ($line && $line[0] === '{') { $json = json_decode($line, true); break; }
+    // Parse JSON output từ provision script (lấy dòng JSON cuối)
+    $json = null;
+    foreach (array_reverse(explode("\n", trim((string)$output))) as $line) {
+        $line = trim($line);
+        if ($line && $line[0] === '{') { $json = json_decode($line, true); break; }
+    }
+
+    if (!$json || ($json['status'] ?? '') !== 'ok') {
+        // Rollback tenant record
+        $pdo->prepare("UPDATE tenants SET status='suspended' WHERE id=?")->execute([$tenant_id]);
+        fail("Không thể khởi tạo tenant. Output:\n" . substr((string)$output, 0, 2000));
+    }
+
+    // Update status → trial
+    $pdo->prepare("UPDATE tenants SET status='trial' WHERE id=?")->execute([$tenant_id]);
 }
 
-if (!$json || ($json['status'] ?? '') !== 'ok') {
-    // Rollback tenant record
-    $pdo->prepare("UPDATE tenants SET status='suspended' WHERE id=?")->execute([$tenant_id]);
-    fail("Không thể khởi tạo tenant. Output:\n" . substr((string)$output, 0, 2000));
-}
-
-// Update status → trial
-$pdo->prepare("UPDATE tenants SET status='trial' WHERE id=?")->execute([$tenant_id]);
-
-$env = env_load();
 $tenant_url = 'https://'.$sub.'.'.($env['BASE_DOMAIN'] ?? 'quanlybanhang.shop');
 if (($env['MODE'] ?? 'local') === 'local') {
     $tenant_url = $json['url'] ?? ('http://'.$sub.'.'.($env['LOCAL_BASE_DOMAIN'] ?? 'localhost:8080'));

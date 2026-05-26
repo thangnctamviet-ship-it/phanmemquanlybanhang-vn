@@ -18,6 +18,13 @@ class MY_Controller extends CI_Controller
 			$host = $_SERVER['HTTP_HOST'] ?? '';
 			$sub  = TenantLicense::parseSubdomain($host);
 			$this->license = new TenantLicense($sub);
+			$env = TenantLicense::loadEnv();
+			if ($sub !== null && !$this->license->hasTenant()) {
+				show_error('Cửa hàng không tồn tại', 404);
+			}
+			if ($this->license->hasTenant() && $this->license->isSuspended()) {
+				redirect('https://'.($env['BASE_DOMAIN'] ?? 'quanlybanhang.shop').'/landing/?msg=suspended');
+			}
 		}
 	}
 }

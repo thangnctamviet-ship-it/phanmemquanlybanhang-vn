@@ -72,10 +72,14 @@ class TenantLicense {
     /** Trích subdomain từ HTTP_HOST */
     public static function parseSubdomain($host) {
         if (!$host) return null;
-        $host = preg_replace('/:\d+$/', '', $host);
+        $env = self::loadEnv();
+        $host = strtolower(preg_replace('/:\d+$/', '', trim($host)));
+        $base = strtolower(preg_replace('/:\d+$/', '', $env['BASE_DOMAIN'] ?? 'quanlybanhang.shop'));
+        if ($host === $base || $host === 'www.' . $base) return null;
+        if ($base && substr($host, -strlen('.' . $base)) !== '.' . $base) return null;
         $parts = explode('.', $host);
         // Bỏ qua các host không phải tenant
-        $reserved = ['www','admin','localhost','quanlybanhang','127','0'];
+        $reserved = ['www','admin','api','mail','ftp','blog','shop','store','app','dev','staging','test','support','help','localhost','quanlybanhang','127','0'];
         if (count($parts) < 2) return null;
         $sub = $parts[0];
         if (in_array($sub, $reserved)) return null;

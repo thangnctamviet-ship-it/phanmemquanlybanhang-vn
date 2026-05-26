@@ -20,6 +20,33 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
     } elseif ($action==='activate') {
         $pdo->prepare("UPDATE tenants SET status='active' WHERE id=?")->execute([$id]);
         $msg = "Đã kích hoạt";
+    } elseif ($action==='delete') {
+        $tenant = $pdo->prepare("SELECT * FROM tenants WHERE id=? LIMIT 1");
+        $tenant->execute([$id]);
+        $tenant = $tenant->fetch(PDO::FETCH_ASSOC);
+        if ($tenant) {
+            $env = env_load();
+            $url = 'https://' . ($env['BASE_DOMAIN'] ?? 'quanlybanhang.shop') . '/landing/deprovision.php';
+            $token = substr($env['OWNER_PASSWORD_HASH'] ?? '', 0, 16);
+            $ch = curl_init($url);
+            curl_setopt_array($ch, [
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_TIMEOUT => 120,
+                CURLOPT_POST => true,
+                CURLOPT_POSTFIELDS => http_build_query(['subdomain' => $tenant['subdomain']]),
+                CURLOPT_HTTPHEADER => ['X-Admin-Token: ' . $token],
+            ]);
+            $body = curl_exec($ch);
+            $err = curl_error($ch);
+            $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+            $json = json_decode((string)$body, true);
+            if ($err || $code < 200 || $code >= 300 || ($json['status'] ?? '') !== 'ok') {
+                $msg = 'Lỗi xoá hoàn toàn: ' . htmlspecialchars($err ?: ($json['message'] ?? $body), ENT_QUOTES, 'UTF-8');
+            } else {
+                $msg = 'Đã xoá hoàn toàn tenant ' . htmlspecialchars($tenant['subdomain'], ENT_QUOTES, 'UTF-8');
+            }
+        }
     } elseif ($action==='reset_password') {
         // Reset password trong DB tenant
         $tenant = $pdo->query("SELECT * FROM tenants WHERE id=$id")->fetch(PDO::FETCH_ASSOC);
@@ -79,6 +106,11 @@ $tenants = $pdo->query("SELECT * FROM tenants ORDER BY id DESC")->fetchAll(PDO::
       <input type="hidden" name="id" value="<?= $t['id'] ?>">
       <input type="hidden" name="action" value="<?= $t['status']==='suspended'?'activate':'suspend' ?>">
       <button class="bg-slate-700 text-white px-2 py-1 rounded text-xs"><?= $t['status']==='suspended'?'Bật':'Khoá' ?></button>
+    </form>
+    <form method="POST" class="inline-block" action="tenants.php?action=delete&id=<?= (int)$t['id'] ?>" onsubmit="return confirm('Xoá hoàn toàn tenant này? DB, user, subdomain và thư mục tenant sẽ bị xoá.')">
+      <input type="hidden" name="id" value="<?= $t['id'] ?>">
+      <input type="hidden" name="action" value="delete">
+      <button class="bg-red-700 text-white px-2 py-1 rounded text-xs">Xoá hoàn toàn</button>
     </form>
   </td>
 </tr>
