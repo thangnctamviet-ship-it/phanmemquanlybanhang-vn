@@ -44,9 +44,25 @@
   <div class="max-w-6xl mx-auto px-4 py-14">
     <h2 class="text-2xl font-bold text-center mb-8">Bảng giá</h2>
     <div class="grid md:grid-cols-3 gap-6">
-      <div class="bg-white border rounded-lg p-6"><h3 class="font-semibold text-xl">Gói tháng</h3><div class="text-3xl font-bold text-indigo-600 mt-2">120.000đ</div><p class="text-slate-500">1 tháng</p></div>
-      <div class="bg-white border-2 border-indigo-500 rounded-lg p-6"><h3 class="font-semibold text-xl">Gói 6 tháng</h3><div class="text-3xl font-bold text-indigo-600 mt-2">600.000đ</div><p class="text-emerald-600">Tiết kiệm 17%</p></div>
-      <div class="bg-white border rounded-lg p-6"><h3 class="font-semibold text-xl">Gói năm</h3><div class="text-3xl font-bold text-indigo-600 mt-2">1.100.000đ</div><p class="text-emerald-600">Tiết kiệm 24%</p></div>
+      <div class="bg-white border rounded-lg p-6 flex flex-col">
+        <h3 class="font-semibold text-xl">Gói tháng</h3>
+        <div class="text-3xl font-bold text-indigo-600 mt-2">120.000đ</div>
+        <p class="text-slate-500 mb-4">1 tháng</p>
+        <a href="register.php?plan=monthly" class="mt-auto inline-block text-center bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded">Đăng ký ngay</a>
+      </div>
+      <div class="bg-white border-2 border-indigo-500 rounded-lg p-6 flex flex-col relative">
+        <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-indigo-600 text-white text-xs px-3 py-1 rounded-full">Phổ biến</span>
+        <h3 class="font-semibold text-xl">Gói 6 tháng</h3>
+        <div class="text-3xl font-bold text-indigo-600 mt-2">600.000đ</div>
+        <p class="text-emerald-600 mb-4">Tiết kiệm 17%</p>
+        <a href="register.php?plan=semiannual" class="mt-auto inline-block text-center bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded">Đăng ký ngay</a>
+      </div>
+      <div class="bg-white border rounded-lg p-6 flex flex-col">
+        <h3 class="font-semibold text-xl">Gói năm</h3>
+        <div class="text-3xl font-bold text-indigo-600 mt-2">1.100.000đ</div>
+        <p class="text-emerald-600 mb-4">Tiết kiệm 24%</p>
+        <a href="register.php?plan=annual" class="mt-auto inline-block text-center bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded">Đăng ký ngay</a>
+      </div>
     </div>
   </div>
 </section>
