@@ -144,11 +144,17 @@ function provision_tenant_cpanel(array $opts): array {
             @chmod($dir . '/' . $path, 0775);
         }
 
-        foreach (['index.php', 'system', 'assets', '.htaccess', 'tenant-shared'] as $item) {
+        foreach (['index.php', 'system', 'assets', 'tenant-shared'] as $item) {
             if (file_exists($root . '/' . $item)) {
                 provision_symlink('../../' . $item, $dir . '/' . $item);
             }
         }
+        // .htaccess riêng cho tenant (KHÔNG symlink về root - root htaccess rewrite về landing)
+        file_put_contents($dir . '/.htaccess',
+            "RewriteEngine On\n"
+            ."RewriteCond %{REQUEST_FILENAME} !-f\n"
+            ."RewriteCond %{REQUEST_FILENAME} !-d\n"
+            ."RewriteRule ^(.*)$ index.php/$1 [L,QSA]\n");
         foreach (['controllers', 'models', 'views', 'core', 'helpers', 'hooks', 'libraries', 'third_party', 'language'] as $item) {
             if (file_exists($root . '/application/' . $item)) {
                 provision_symlink('../../../application/' . $item, $dir . '/application/' . $item);
