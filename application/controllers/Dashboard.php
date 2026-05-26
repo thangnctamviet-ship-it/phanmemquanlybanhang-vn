@@ -23,6 +23,10 @@ class Dashboard extends Admin_Controller
 	*/
 	public function index()
 	{
+		if (empty($_COOKIE['qlbh_onboarded']) && $this->session->userdata('logged_in')) {
+			redirect('onboarding/step1');
+			return;
+		}
 		$this->data['total_products'] = $this->model_products->countTotalProducts();
 		$this->data['total_paid_orders'] = $this->model_orders->countTotalPaidOrders();
 		$this->data['total_users'] = $this->model_users->countTotalUsers();

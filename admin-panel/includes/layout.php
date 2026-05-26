@@ -7,6 +7,7 @@
   <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
     <div class="font-bold">🛠 Admin · Quản lý bán hàng</div>
     <div class="space-x-4 text-sm">
+      <a href="index.php" class="hover:text-indigo-300">Dashboard</a>
       <a href="tenants.php" class="hover:text-indigo-300">Tenants</a>
       <a href="payments.php" class="hover:text-indigo-300">Thanh toán</a>
       <a href="logout.php" class="hover:text-red-300">Đăng xuất</a>
