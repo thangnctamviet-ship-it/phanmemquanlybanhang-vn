@@ -33,12 +33,12 @@
 </section>
 <script>
 function slugifyVN(str) {
+  // Style hiện đại: liền tù tì, không dash (Sapo/KiotViet/Shopify/Slack style)
+  // VD: "Bao Cao Su Rẻ Đẹp" -> "baocaosuredep"
   str = str.toLowerCase();
-  str = str.normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  str = str.normalize('NFD').replace(/[\u0300-\u036f]/g,'');  // bỏ dấu
   str = str.replace(/đ/g,'d').replace(/Đ/g,'d');
-  str = str.replace(/[^a-z0-9\s-]/g,'').trim();
-  str = str.replace(/\s+/g,'-').replace(/-+/g,'-');
-  str = str.replace(/^-+|-+$/g,'');
+  str = str.replace(/[^a-z0-9]/g,'');  // bỏ tất cả ký tự không phải chữ/số (kể cả space, dash)
   return str.slice(0,30);
 }
 const shopName = document.getElementById('shop_name');
