@@ -144,7 +144,11 @@ function provision_tenant_cpanel(array $opts): array {
             @chmod($dir . '/' . $path, 0775);
         }
 
-        foreach (['index.php', 'system', 'assets', 'tenant-shared'] as $item) {
+        // index.php: COPY thay vì symlink (symlink dễ bị edit nhầm vào file root, gây fatal)
+        if (file_exists($root . '/index.php')) {
+            copy($root . '/index.php', $dir . '/index.php');
+        }
+        foreach (['system', 'assets', 'tenant-shared'] as $item) {
             if (file_exists($root . '/' . $item)) {
                 provision_symlink('../../' . $item, $dir . '/' . $item);
             }
