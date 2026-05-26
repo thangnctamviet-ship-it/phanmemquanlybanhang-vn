@@ -17,15 +17,32 @@
 <style>body{font-family:'Inter',sans-serif}</style>
 </head>
 <body class="bg-slate-50 text-slate-800">
-<nav class="bg-white border-b">
+<nav class="bg-white border-b sticky top-0 z-50">
   <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-    <a href="/landing/" class="text-xl font-bold text-indigo-600">🛒 Quản lý bán hàng</a>
-    <div class="space-x-4 text-sm">
+    <a href="/landing/" class="text-lg md:text-xl font-bold text-indigo-600 flex items-center gap-1">
+      <span>🛒</span><span>Quản lý bán hàng</span>
+    </a>
+    <!-- Desktop menu -->
+    <div class="hidden md:flex items-center space-x-4 text-sm">
       <a href="/landing/" class="hover:text-indigo-600">Trang chủ</a>
       <a href="/landing/pricing.php" class="hover:text-indigo-600">Bảng giá</a>
       <a href="/landing/install.php" class="hover:text-indigo-600">📱 Tải app</a>
       <a href="/landing/login.php" class="hover:text-indigo-600 font-medium">Đăng nhập</a>
       <a href="/landing/register.php" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">Dùng thử miễn phí</a>
+    </div>
+    <!-- Mobile burger -->
+    <button id="mobileMenuBtn" class="md:hidden p-2 -mr-2 text-slate-700" onclick="document.getElementById('mobileMenu').classList.toggle('hidden')" aria-label="Menu">
+      <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
+  </div>
+  <!-- Mobile menu (drop-down) -->
+  <div id="mobileMenu" class="hidden md:hidden border-t bg-white">
+    <div class="px-4 py-3 space-y-1">
+      <a href="/landing/" class="block py-2 text-slate-700 hover:text-indigo-600">Trang chủ</a>
+      <a href="/landing/pricing.php" class="block py-2 text-slate-700 hover:text-indigo-600">Bảng giá</a>
+      <a href="/landing/install.php" class="block py-2 text-slate-700 hover:text-indigo-600">📱 Tải app</a>
+      <a href="/landing/login.php" class="block py-2 text-slate-700 hover:text-indigo-600 font-medium">Đăng nhập</a>
+      <a href="/landing/register.php" class="block py-2.5 mt-2 text-center bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium">Dùng thử miễn phí</a>
     </div>
   </div>
 </nav>
