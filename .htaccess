@@ -1,6 +1,18 @@
-RewriteEngine on
-DirectoryIndex index.php
-RewriteCond $1 !^(index\.php|resources|robots\.txt)
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.php/$1 [L,QSA]     
+RewriteEngine On
+
+# Force HTTPS
+RewriteCond %{HTTPS} !=on
+RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+
+# Trang chủ → landing
+RewriteRule ^$ landing/ [L]
+
+# Cho phép landing, admin-panel, assets, scripts (file thật)
+RewriteRule ^landing(/.*)?$ - [L]
+RewriteRule ^admin-panel(/.*)?$ - [L]
+RewriteRule ^assets(/.*)?$ - [L]
+RewriteRule ^favicon\.ico$ - [L]
+RewriteRule ^robots\.txt$ - [L]
+
+# Tất cả route khác → landing
+RewriteRule ^ landing/ [L]
