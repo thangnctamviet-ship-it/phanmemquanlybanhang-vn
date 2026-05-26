@@ -28,9 +28,47 @@
       <label class="block text-sm font-medium mb-1">Số điện thoại</label>
       <input name="phone" class="w-full border rounded-lg px-3 py-2">
     </div>
-    <button type="submit" id="submitBtn" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700">Tạo cửa hàng của tôi</button>
+    <button type="submit" id="submitBtn" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed">Tạo cửa hàng của tôi</button>
   </form>
+
+  <!-- Loading overlay khi đang provision (mất 20-30s) -->
+  <div id="provisionOverlay" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center px-4">
+    <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full text-center">
+      <div class="mx-auto w-16 h-16 mb-5 relative">
+        <div class="absolute inset-0 rounded-full border-4 border-indigo-100"></div>
+        <div class="absolute inset-0 rounded-full border-4 border-indigo-600 border-t-transparent animate-spin"></div>
+      </div>
+      <h2 class="text-xl font-bold text-slate-900 mb-2">Đang khởi tạo cửa hàng của bạn...</h2>
+      <p class="text-sm text-slate-500 mb-6">Vui lòng đợi 20–30 giây. Đừng tắt trình duyệt nhé!</p>
+      <ul class="text-left space-y-2 text-sm">
+        <li id="stepDb" class="flex items-center gap-2 text-slate-400"><span class="step-icon">⏳</span> Tạo cơ sở dữ liệu riêng</li>
+        <li id="stepSchema" class="flex items-center gap-2 text-slate-400"><span class="step-icon">⏳</span> Cài đặt cấu trúc dữ liệu</li>
+        <li id="stepSubdomain" class="flex items-center gap-2 text-slate-400"><span class="step-icon">⏳</span> Tạo địa chỉ cửa hàng (subdomain)</li>
+        <li id="stepDeploy" class="flex items-center gap-2 text-slate-400"><span class="step-icon">⏳</span> Triển khai phần mềm</li>
+        <li id="stepFinal" class="flex items-center gap-2 text-slate-400"><span class="step-icon">⏳</span> Hoàn tất & gửi email</li>
+      </ul>
+    </div>
+  </div>
 </section>
+
+<script>
+document.getElementById('regForm').addEventListener('submit', function(e){
+  document.getElementById('submitBtn').disabled = true;
+  document.getElementById('submitBtn').textContent = 'Đang xử lý...';
+  document.getElementById('provisionOverlay').classList.remove('hidden');
+  // Tiến trình UI mô phỏng (provision thật chạy ở server, ta chỉ hiển thị tiến độ ước lượng)
+  var steps = ['stepDb','stepSchema','stepSubdomain','stepDeploy','stepFinal'];
+  var delays = [3000, 7000, 13000, 20000, 27000];
+  steps.forEach(function(id, i){
+    setTimeout(function(){
+      var el = document.getElementById(id);
+      el.classList.remove('text-slate-400');
+      el.classList.add('text-emerald-600','font-medium');
+      el.querySelector('.step-icon').textContent = '✓';
+    }, delays[i]);
+  });
+});
+</script>
 <script>
 function slugifyVN(str) {
   // Style hiện đại: liền tù tì, không dash (Sapo/KiotViet/Shopify/Slack style)
