@@ -31,14 +31,14 @@ function provision_split_sql($sql) {
 
 function provision_rrmdir($dir) {
     if (!$dir || !file_exists($dir)) return;
+    if (is_link($dir) || is_file($dir)) {
+        @unlink($dir);
+        return;
+    }
     $real = realpath($dir);
     $root = realpath(dirname(__DIR__, 2) . '/tenants');
     if ($root && $real && strpos($real, $root . DIRECTORY_SEPARATOR) !== 0) {
         throw new RuntimeException('Refusing to delete outside tenants directory: ' . $dir);
-    }
-    if (is_link($dir) || is_file($dir)) {
-        @unlink($dir);
-        return;
     }
     foreach (scandir($dir) ?: [] as $item) {
         if ($item === '.' || $item === '..') continue;
