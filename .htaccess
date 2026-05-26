@@ -17,5 +17,12 @@ RewriteRule ^sw\.js$ - [L]
 RewriteRule ^favicon\.ico$ - [L]
 RewriteRule ^robots\.txt$ - [L]
 
+# Sitemap động
+RewriteRule ^sitemap\.xml$ landing/sitemap_dynamic.php [L]
+
+# Blog pretty URLs
+RewriteRule ^blog/?$ landing/blog/index.php [L]
+RewriteRule ^blog/([a-z0-9-]+)/?$ landing/blog/post.php?slug=$1 [L,QSA]
+
 # Tất cả route khác → landing
 RewriteRule ^ landing/ [L]

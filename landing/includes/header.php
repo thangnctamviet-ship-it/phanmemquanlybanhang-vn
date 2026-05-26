@@ -40,6 +40,7 @@
     <div class="px-4 py-3 space-y-1">
       <a href="/landing/" class="block py-2 text-slate-700 hover:text-indigo-600">Trang chủ</a>
       <a href="/landing/pricing.php" class="block py-2 text-slate-700 hover:text-indigo-600">Bảng giá</a>
+      <a href="/blog/" class="block py-2 text-slate-700 hover:text-indigo-600">Blog</a>
       <a href="/landing/install.php" class="block py-2 text-slate-700 hover:text-indigo-600">📱 Tải app</a>
       <a href="/landing/login.php" class="block py-2 text-slate-700 hover:text-indigo-600 font-medium">Đăng nhập</a>
       <a href="/landing/register.php" class="block py-2.5 mt-2 text-center bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium">Dùng thử miễn phí</a>

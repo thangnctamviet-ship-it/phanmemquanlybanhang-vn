@@ -10,6 +10,7 @@
       <a href="index.php" class="hover:text-indigo-300">Dashboard</a>
       <a href="tenants.php" class="hover:text-indigo-300">Tenants</a>
       <a href="payments.php" class="hover:text-indigo-300">Thanh toán</a>
+      <a href="blog.php" class="hover:text-indigo-300">Blog</a>
       <a href="logout.php" class="hover:text-red-300">Đăng xuất</a>
     </div>
   </div>
