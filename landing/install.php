@@ -34,29 +34,18 @@
         <div class="w-12 h-12 rounded-xl bg-green-600 text-white flex items-center justify-center text-2xl">🤖</div>
         <div>
           <h2 class="text-xl font-bold">Android</h2>
-          <p class="text-sm text-slate-500">Chrome hoặc tải APK</p>
+          <p class="text-sm text-slate-500">Chrome · 3 bước</p>
         </div>
       </div>
-
-      <div class="border rounded-lg p-4 mb-3 bg-indigo-50/40">
-        <div class="font-semibold text-indigo-700 mb-2">✅ Cách 1: Cài qua trình duyệt (Khuyến nghị)</div>
-        <ol class="text-sm text-slate-700 space-y-1 list-decimal list-inside">
-          <li>Mở website trên <b>Chrome</b>.</li>
-          <li>Bấm menu <b>3 chấm</b> góc trên phải.</li>
-          <li>Chọn <b>Add to Home Screen</b> / <b>Thêm vào màn hình chính</b>.</li>
-        </ol>
-        <a href="/" class="mt-3 inline-block bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium">Mở web ngay</a>
-      </div>
-
-      <div class="border rounded-lg p-4">
-        <div class="font-semibold text-slate-800 mb-2">📦 Cách 2: Tải file APK</div>
-        <a href="/downloads/quanlybanhang.apk" class="block w-full text-center bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-medium">⬇️ Tải APK</a>
-        <p class="text-xs text-slate-500 mt-2">
-          ⚠️ Khi cài lần đầu, Android sẽ hỏi cấp quyền <b>“Cài đặt từ nguồn không xác định”</b>.
-          <a class="text-indigo-600 underline" target="_blank" href="https://www.google.com/search?q=cách+bật+cài+đặt+ứng+dụng+từ+nguồn+không+xác+định+android">Xem hướng dẫn</a>.
-        </p>
-      </div>
-    </div>
+      <ol class="space-y-3 text-sm text-slate-700">
+        <li class="flex gap-3"><span class="flex-shrink-0 w-7 h-7 rounded-full bg-green-100 text-green-700 font-bold flex items-center justify-center">1</span>
+          Mở <code class="bg-slate-100 px-2 py-0.5 rounded">quanlybanhang.shop</code> trên <b>Chrome</b>.</li>
+        <li class="flex gap-3"><span class="flex-shrink-0 w-7 h-7 rounded-full bg-green-100 text-green-700 font-bold flex items-center justify-center">2</span>
+          Bấm menu <b>3 chấm</b> ở góc trên bên phải.</li>
+        <li class="flex gap-3"><span class="flex-shrink-0 w-7 h-7 rounded-full bg-green-100 text-green-700 font-bold flex items-center justify-center">3</span>
+          Chọn <b>Cài đặt ứng dụng</b> / <b>Thêm vào màn hình chính</b> → Bấm <b>Cài đặt</b>.</li>
+      </ol>
+      <a href="/" class="mt-6 block w-full text-center bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-medium">Mở trong Chrome</a>
   </div>
 
   <div class="text-center mt-10 text-sm text-slate-500">
