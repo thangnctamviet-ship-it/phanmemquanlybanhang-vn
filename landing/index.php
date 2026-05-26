@@ -6,8 +6,11 @@ $_host = strtolower($_SERVER['HTTP_HOST'] ?? '');
 $_host = preg_replace('/:\d+$/', '', $_host);
 $_invalidShop = null;
 // Nếu user truy cập <sub>.quanlybanhang.shop nhưng subdomain không tồn tại trong tenants
-if ($_host !== $_baseDomain && $_host !== 'www.'.$_baseDomain && str_ends_with($_host, '.'.$_baseDomain)) {
-    $_sub = substr($_host, 0, -strlen('.'.$_baseDomain));
+$_suffix = '.'.$_baseDomain;
+if ($_host !== $_baseDomain && $_host !== 'www.'.$_baseDomain
+    && strlen($_host) > strlen($_suffix)
+    && substr($_host, -strlen($_suffix)) === $_suffix) {
+    $_sub = substr($_host, 0, -strlen($_suffix));
     // Subdomain hợp lệ về format nhưng không có tenant → coi như "Không tìm thấy"
     if (preg_match('/^[a-z0-9][a-z0-9-]*[a-z0-9]$/', $_sub)) {
         try {
@@ -116,6 +119,11 @@ include __DIR__.'/includes/header.php';
         <p class="text-emerald-600 mb-4">Tiết kiệm 24%</p>
         <a href="register.php?plan=annual" class="mt-auto inline-block text-center bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded">Đăng ký ngay</a>
       </div>
+    </div>
+  </div>
+</section>
+<?php include __DIR__.'/includes/footer.php'; ?>
+  </div>
     </div>
   </div>
 </section>
