@@ -1,0 +1,13 @@
+{
+  "appId": "shop.quanlybanhang.app",
+  "appName": "Quản lý bán hàng",
+  "webDir": "www",
+  "server": {
+    "url": "https://quanlybanhang.shop",
+    "cleartext": false,
+    "androidScheme": "https"
+  },
+  "android": {
+    "allowMixedContent": false
+  }
+}

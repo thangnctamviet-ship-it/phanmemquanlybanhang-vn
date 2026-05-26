@@ -1,0 +1,4 @@
+<Files "quanlybanhang.apk">
+  ForceType application/vnd.android.package-archive
+  Header set Content-Disposition "attachment; filename=quanlybanhang.apk"
+</Files>

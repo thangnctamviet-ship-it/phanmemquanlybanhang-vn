@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title><?= $page_title ?? 'Quản lý bán hàng - SaaS' ?></title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#4f46e5">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="QLBH">
+<link rel="apple-touch-icon" href="/assets/pwa/icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/pwa/icon-192.png">
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -16,6 +23,7 @@
     <div class="space-x-4 text-sm">
       <a href="/landing/" class="hover:text-indigo-600">Trang chủ</a>
       <a href="/landing/pricing.php" class="hover:text-indigo-600">Bảng giá</a>
+      <a href="/landing/install.php" class="hover:text-indigo-600">📱 Tải app</a>
       <a href="/landing/login.php" class="hover:text-indigo-600 font-medium">Đăng nhập</a>
       <a href="/landing/register.php" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">Dùng thử miễn phí</a>
     </div>

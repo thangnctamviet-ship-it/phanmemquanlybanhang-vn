@@ -4,4 +4,5 @@
     · Hỗ trợ: <a href="mailto:hotroquanlybanhang.shop@gmail.com" class="text-blue-600 hover:underline">hotroquanlybanhang.shop@gmail.com</a>
   </div>
 </footer>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').catch(()=>{})}</script>
 </body></html>
