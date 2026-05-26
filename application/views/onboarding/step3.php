@@ -3,7 +3,7 @@
     <div class="box-header with-border"><h3 class="box-title">Bước 3/3 · Thêm sản phẩm đầu tiên</h3></div>
     <div class="box-body">
       <p>Tuyệt vời! Hãy thêm sản phẩm đầu tiên để bắt đầu bán hàng.</p>
-      <a href="<?= base_url('products/add') ?>" class="btn btn-success">Thêm sản phẩm ngay</a>
+      <a href="<?= base_url('products/create') ?>" class="btn btn-success">Thêm sản phẩm ngay</a>
     </div>
     <form method="post" action="<?= base_url('onboarding/finish') ?>" class="box-footer">
       <button type="submit" class="btn btn-primary">Hoàn thành</button>
