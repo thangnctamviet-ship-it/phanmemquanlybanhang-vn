@@ -18,6 +18,8 @@
   <link rel="stylesheet" href="<?php echo base_url('assets/dist/css/AdminLTE.min.css') ?>">
   <!-- iCheck -->
   <link rel="stylesheet" href="<?php echo base_url('assets/plugins/iCheck/square/blue.css') ?>">
+  <!-- Modern Login Overlay -->
+  <link rel="stylesheet" href="<?php echo base_url('assets/dist/css/modern-login.css') ?>">
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -27,10 +29,10 @@
   <![endif]-->
 
   <!-- Google Font -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
 
 </head>
-<body class="hold-transition login-page">
+<body class="hold-transition login-page modern-theme">
 <div class="login-box">
   <div class="login-logo">
     <a href="<?php echo base_url('auth/login'); ?>"><b>Đăng nhập</b></a>
@@ -64,7 +66,7 @@
         </div>
         <!-- /.col -->
         <div class="col-xs-4">
-          <button type="submit" class="btn btn-primary btn-block btn-flat">Đăng nhập</button>
+          <button type="submit" class="btn btn-primary btn-block">Đăng nhập</button>
         </div>
         <!-- /.col -->
       </div>
