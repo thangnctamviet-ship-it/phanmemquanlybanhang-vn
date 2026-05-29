@@ -102,7 +102,7 @@ class Reports extends Admin_Controller
 			case 'by_employee':
 				$header = array('Nhân viên','Số đơn','Doanh thu','Giảm giá');
 				foreach ($this->model_reports2->byEmployee($from,$to) as $r) {
-					$name = trim(($r['first_name'] ?? '').' '.($r['last_name'] ?? '')) ?: $r['username'];
+					$name = trim(($r['firstname'] ?? '').' '.($r['lastname'] ?? '')) ?: $r['username'];
 					$rows[] = array($name, $r['order_count'], $r['revenue'], $r['discount']);
 				}
 				break;

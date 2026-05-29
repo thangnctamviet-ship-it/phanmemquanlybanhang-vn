@@ -89,14 +89,14 @@ class Model_reports2 extends CI_Model
     public function byEmployee($from, $to)
     {
         list($f, $t) = $this->range($from, $to);
-        $sql = "SELECT u.id, u.username, u.first_name, u.last_name,
+        $sql = "SELECT u.id, u.username, u.firstname, u.lastname,
                        COUNT(o.id) AS order_count,
                        COALESCE(SUM(CAST(o.net_amount AS DECIMAL(15,2))),0) AS revenue,
                        COALESCE(SUM(CAST(o.discount AS DECIMAL(15,2))),0) AS discount
                 FROM `orders` o
                 LEFT JOIN `users` u ON u.id = o.user_id
                 WHERE CAST(o.date_time AS UNSIGNED) BETWEEN ? AND ? AND o.paid_status=1
-                GROUP BY u.id, u.username, u.first_name, u.last_name
+                GROUP BY u.id, u.username, u.firstname, u.lastname
                 ORDER BY revenue DESC";
         return $this->db->query($sql, array($f, $t))->result_array();
     }

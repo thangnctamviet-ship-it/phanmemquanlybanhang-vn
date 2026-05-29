@@ -149,7 +149,7 @@ $tabs = array(
               <?php if (empty($by_employee)): ?>
                 <tr><td colspan="4" class="text-center text-muted" style="padding:20px;">Không có dữ liệu.</td></tr>
               <?php else: foreach ($by_employee as $u):
-                $name = trim(($u['first_name'] ?? '').' '.($u['last_name'] ?? '')) ?: $u['username'];
+                $name = trim(($u['firstname'] ?? '').' '.($u['lastname'] ?? '')) ?: $u['username'];
               ?>
                 <tr>
                   <td><strong><?= htmlspecialchars($name) ?></strong> <small class="text-muted"><?= htmlspecialchars($u['username']) ?></small></td>
