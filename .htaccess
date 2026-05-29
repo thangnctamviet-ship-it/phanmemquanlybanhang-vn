@@ -1,7 +1,9 @@
 RewriteEngine On
 
-# Force HTTPS
+# Force HTTPS (trừ localhost/dev)
 RewriteCond %{HTTPS} !=on
+RewriteCond %{HTTP_HOST} !^localhost(:[0-9]+)?$
+RewriteCond %{HTTP_HOST} !^127\.0\.0\.1(:[0-9]+)?$
 RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
 
 # Trang chủ → landing
