@@ -109,10 +109,15 @@
         <?php endif; ?>
 
         <?php if ($can_report): ?>
-          <li id="reportNav">
-            <a href="<?php echo base_url('reports/') ?>">
+          <li class="treeview" id="reportNav">
+            <a href="#">
               <i class="fa fa-bar-chart"></i> <span>Báo cáo</span>
+              <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
             </a>
+            <ul class="treeview-menu">
+              <li><a href="<?php echo base_url('reports/advanced') ?>"><i class="fa fa-pie-chart"></i> Phân tích nâng cao</a></li>
+              <li><a href="<?php echo base_url('reports') ?>"><i class="fa fa-line-chart"></i> Doanh thu theo năm</a></li>
+            </ul>
           </li>
         <?php endif; ?>
 
