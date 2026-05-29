@@ -17,6 +17,19 @@ class Pos extends Admin_Controller
         $this->load->model('model_orders');
         $this->load->model('model_stores');
         $this->load->model('model_company');
+        $this->load->model('model_stock');
+    }
+
+    /** Helper: gắn tồn theo store cho mỗi SP. */
+    private function attachStock(&$rows, $store_id)
+    {
+        if (!$store_id || empty($rows)) return;
+        foreach ($rows as &$r) {
+            $r['stock'] = $this->model_stock->getQty((int)$r['id'], (int)$store_id);
+            // ghi đè qty để frontend dùng nhất quán
+            $r['qty'] = $r['stock'];
+        }
+        unset($r);
     }
 
     public function index()
@@ -44,6 +57,7 @@ class Pos extends Admin_Controller
             show_error('forbidden', 403); return;
         }
         $q = trim((string)$this->input->get('q'));
+        $store_id = (int)$this->input->get('store_id');
         $sql = "SELECT id, name, sku, price, qty, image FROM `products` WHERE availability = 1";
         $params = array();
         if ($q !== '') {
@@ -53,6 +67,7 @@ class Pos extends Admin_Controller
         }
         $sql .= " ORDER BY id DESC LIMIT 200";
         $rows = $this->db->query($sql, $params)->result_array();
+        $this->attachStock($rows, $store_id);
         $this->output->set_content_type('application/json');
         $this->output->set_output(json_encode($rows));
     }
@@ -62,11 +77,17 @@ class Pos extends Admin_Controller
     {
         if (!in_array('createOrder', $this->permission)) { show_error('forbidden', 403); return; }
         $code = trim((string)$this->input->get('code'));
+        $store_id = (int)$this->input->get('store_id');
         $row = null;
         if ($code !== '') {
             $sql = "SELECT id, name, sku, price, qty, image FROM `products`
                     WHERE availability = 1 AND (sku = ? OR id = ?) LIMIT 1";
             $row = $this->db->query($sql, array($code, (int)$code))->row_array();
+            if ($row && $store_id) {
+                $rows = array($row);
+                $this->attachStock($rows, $store_id);
+                $row = $rows[0];
+            }
         }
         $this->output->set_content_type('application/json');
         $this->output->set_output(json_encode($row ?: null));
@@ -94,6 +115,7 @@ class Pos extends Admin_Controller
         $paid_amount = isset($payload['paid_amount']) ? (float)$payload['paid_amount'] : 0;
         $customer_name = isset($payload['customer_name']) ? trim($payload['customer_name']) : '';
         $customer_phone = isset($payload['customer_phone']) ? trim($payload['customer_phone']) : '';
+        $store_id = isset($payload['store_id']) ? (int)$payload['store_id'] : 0;
 
         // Tính tổng
         $gross = 0;
@@ -122,7 +144,7 @@ class Pos extends Admin_Controller
             'customer_name' => $customer_name,
             'customer_address' => '',
             'customer_phone' => $customer_phone,
-            'date_time' => time(),  // unix timestamp (tương thích code cũ dùng strtotime)
+            'date_time' => time(),
             'gross_amount' => $gross,
             'service_charge_rate' => 0,
             'service_charge' => 0,
@@ -133,10 +155,15 @@ class Pos extends Admin_Controller
             'paid_status' => $paid_status,
             'user_id' => $user_id,
         );
+        // Cột store_id/paid_amount/debt_amount đã có sau migration 001 (tránh fail nếu chưa migrate)
+        if ($this->db->field_exists('store_id', 'orders'))     $order['store_id']     = $store_id;
+        if ($this->db->field_exists('paid_amount', 'orders'))  $order['paid_amount']  = $paid_amount;
+        if ($this->db->field_exists('debt_amount', 'orders'))  $order['debt_amount']  = max(0, $net - $paid_amount);
+
         $this->db->insert('orders', $order);
         $order_id = $this->db->insert_id();
 
-        // Insert items + trừ kho
+        // Insert items + trừ kho qua Model_stock (sẽ tự sync products.qty)
         foreach ($clean_items as $it) {
             $this->db->insert('orders_item', array(
                 'order_id' => $order_id,
@@ -145,10 +172,14 @@ class Pos extends Admin_Controller
                 'rate' => $it['price'],
                 'amount' => $it['amount'],
             ));
-            // Trừ kho (cột products.qty đang là varchar → cast)
-            $row = $this->db->query("SELECT qty FROM `products` WHERE id = ?", array($it['id']))->row_array();
-            $new_qty = (int)$row['qty'] - $it['qty'];
-            $this->db->where('id', $it['id'])->update('products', array('qty' => $new_qty));
+            if ($store_id) {
+                $this->model_stock->adjust($it['id'], $store_id, -$it['qty']);
+            } else {
+                // Fallback: trừ thẳng products.qty
+                $row = $this->db->query("SELECT qty FROM `products` WHERE id = ?", array($it['id']))->row_array();
+                $new_qty = (int)$row['qty'] - $it['qty'];
+                $this->db->where('id', $it['id'])->update('products', array('qty' => $new_qty));
+            }
         }
 
         $this->_json(array(

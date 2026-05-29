@@ -165,7 +165,7 @@
   // Lưu cửa hàng đang chọn
   var savedStore = localStorage.getItem('pos_store_id');
   if (savedStore && $store) $store.value = savedStore;
-  $store && $store.addEventListener('change', function(){ localStorage.setItem('pos_store_id', this.value); });
+  $store && $store.addEventListener('change', function(){ localStorage.setItem('pos_store_id', this.value); loadProducts($search.value.trim()); });
 
   function fmt(n){ return new Intl.NumberFormat('vi-VN').format(Math.round(n)) + 'đ'; }
   function showToast(msg, isErr){
@@ -176,7 +176,11 @@
   }
 
   function loadProducts(q){
-    fetch(BASE + 'pos/products' + (q ? '?q=' + encodeURIComponent(q) : ''))
+    var sid = parseInt($store.value, 10) || 0;
+    var qs = [];
+    if (q) qs.push('q=' + encodeURIComponent(q));
+    if (sid) qs.push('store_id=' + sid);
+    fetch(BASE + 'pos/products' + (qs.length ? '?' + qs.join('&') : ''))
       .then(function(r){ return r.json(); })
       .then(function(data){
         products = data || [];
@@ -314,7 +318,8 @@
       var code = $search.value.trim();
       if (!code) return;
       // Thử lookup chính xác trước (barcode)
-      fetch(BASE + 'pos/lookup?code=' + encodeURIComponent(code))
+      var sid = parseInt($store.value, 10) || 0;
+      fetch(BASE + 'pos/lookup?code=' + encodeURIComponent(code) + (sid ? '&store_id=' + sid : ''))
         .then(function(r){ return r.json(); })
         .then(function(p){
           if (p) {

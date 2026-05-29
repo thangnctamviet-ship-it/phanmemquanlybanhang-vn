@@ -72,6 +72,24 @@
           </li>
         <?php endif; ?>
 
+        <?php if ($can_order): ?>
+          <li id="purchasesNav">
+            <a href="<?php echo base_url('purchases') ?>">
+              <i class="fa fa-truck"></i> <span>Nhập hàng</span>
+            </a>
+          </li>
+          <li id="customersNav">
+            <a href="<?php echo base_url('customers') ?>">
+              <i class="fa fa-id-card-o"></i> <span>Khách hàng</span>
+            </a>
+          </li>
+          <li id="suppliersNav">
+            <a href="<?php echo base_url('suppliers') ?>">
+              <i class="fa fa-handshake-o"></i> <span>Nhà cung cấp</span>
+            </a>
+          </li>
+        <?php endif; ?>
+
         <?php if ($can_store): ?>
           <li id="storeNav">
             <a href="<?php echo base_url('stores/') ?>">
