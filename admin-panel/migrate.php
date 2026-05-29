@@ -11,6 +11,7 @@ sort($files);
 $action = $_POST['action'] ?? '';
 $onlyTenant = trim($_POST['tenant'] ?? '');
 $onlyFile = trim($_POST['file'] ?? '');
+$forceRerun = !empty($_POST['force']);
 $logs = array();
 
 if ($action === 'run') {
@@ -41,53 +42,105 @@ if ($action === 'run') {
 
         foreach ($filesToRun as $f) {
             $name = basename($f);
-            if (isset($done[$name])) { $logs[] = "   ⊙ $name (đã chạy)"; continue; }
+            if (isset($done[$name]) && !$forceRerun) { $logs[] = "   ⊙ $name (đã chạy)"; continue; }
             $sql = file_get_contents($f);
             try {
-                run_sql_with_delim($pdo, $sql);
-                $pdo->prepare("INSERT INTO `_migrations` (name) VALUES (?)")->execute(array($name));
-                $logs[] = "   ✓ $name";
+                $stats = run_sql_with_delim($pdo, $sql);
+                if (!isset($done[$name])) {
+                    $pdo->prepare("INSERT INTO `_migrations` (name) VALUES (?)")->execute(array($name));
+                }
+                $logs[] = "   ✓ $name ({$stats['ok']} stmt OK" . ($stats['skipped'] ? ", {$stats['skipped']} đã có" : "") . ")";
             } catch (Exception $e) {
                 $logs[] = "   ❌ $name: " . $e->getMessage();
             }
         }
+
+        // Verify schema 002 cần thiết
+        $required = array('cash_accounts','customer_groups','product_units','product_prices','product_batches',
+                          'product_combos','returns','purchase_returns','stock_checks','employee_shifts',
+                          'commission_rules','promotions','vouchers','tags','audit_log','settings');
+        $missing = array();
+        foreach ($required as $t) {
+            $r = $pdo->query("SHOW TABLES LIKE " . $pdo->quote($t))->fetch();
+            if (!$r) $missing[] = $t;
+        }
+        if ($missing) $logs[] = "   ⚠️ Bảng còn THIẾU: " . implode(', ', $missing);
+        else         $logs[] = "   ✅ Đủ 16 bảng schema sâu";
     }
     $logs[] = "Xong.";
 }
 
+/**
+ * SQL splitter chuẩn — tách statement theo delimiter động (hỗ trợ DELIMITER $$).
+ * Bỏ qua comment `-- ...` và `# ...`. Không tách `;` bên trong string literal.
+ */
 function run_sql_with_delim(PDO $pdo, $sql) {
+    // 1. Bỏ comment dòng (-- ...) và (# ...) trước khi parse
+    $clean_lines = array();
+    foreach (preg_split("/\r?\n/", $sql) as $line) {
+        $t = ltrim($line);
+        if (preg_match('/^(--|#)/', $t)) continue;
+        $clean_lines[] = $line;
+    }
+    $sql = implode("\n", $clean_lines);
+
+    // 2. Tách theo DELIMITER block + state machine để skip ; trong string
     $stmts = array();
     $delim = ';';
     $buf = '';
-    foreach (preg_split("/\r?\n/", $sql) as $line) {
-        if (preg_match('/^\s*DELIMITER\s+(\S+)/i', $line, $m)) {
-            if (trim($buf) !== '') $stmts[] = $buf;
-            $buf = ''; $delim = $m[1]; continue;
+    $i = 0; $n = strlen($sql);
+    $in_str = false; $str_ch = '';
+    while ($i < $n) {
+        // Check DELIMITER directive (chỉ ở đầu dòng, ngoài string)
+        if (!$in_str && ($i === 0 || $sql[$i-1] === "\n")) {
+            if (preg_match('/\GDELIMITER\s+(\S+)\s*(\n|$)/i', $sql, $m, 0, $i)) {
+                if (trim($buf) !== '') { $stmts[] = $buf; $buf = ''; }
+                $delim = $m[1];
+                $i += strlen($m[0]);
+                continue;
+            }
         }
-        $buf .= $line . "\n";
-        if ($delim !== ';' && substr(rtrim($line), -strlen($delim)) === $delim) {
-            $stmts[] = substr(rtrim($buf), 0, -strlen($delim));
+        $c = $sql[$i];
+        // String state
+        if ($in_str) {
+            $buf .= $c;
+            if ($c === '\\' && $i + 1 < $n) { $buf .= $sql[$i+1]; $i += 2; continue; }
+            if ($c === $str_ch) $in_str = false;
+            $i++; continue;
+        }
+        if ($c === "'" || $c === '"' || $c === '`') {
+            $in_str = true; $str_ch = $c; $buf .= $c; $i++; continue;
+        }
+        // Check delimiter match
+        if (substr($sql, $i, strlen($delim)) === $delim) {
+            $stmts[] = $buf;
             $buf = '';
+            $i += strlen($delim);
+            continue;
         }
+        $buf .= $c; $i++;
     }
     if (trim($buf) !== '') $stmts[] = $buf;
 
-    $final = array();
-    foreach ($stmts as $s) {
-        if (preg_match('/CREATE\s+PROCEDURE|DROP\s+PROCEDURE|^\s*CALL\s+/im', $s)) {
-            $final[] = $s;
-        } else {
-            foreach (explode(';', $s) as $p) if (trim($p) !== '') $final[] = $p;
+    // 3. Execute với tolerance cho idempotent errors
+    $ok = 0; $skipped = 0;
+    foreach ($stmts as $stmt) {
+        $stmt = trim($stmt);
+        if ($stmt === '') continue;
+        try {
+            $pdo->exec($stmt);
+            $ok++;
+        } catch (PDOException $e) {
+            $msg = $e->getMessage();
+            // Idempotent errors — skip silently
+            if (preg_match('/already exists|Duplicate column|Duplicate key/i', $msg)) {
+                $skipped++;
+                continue;
+            }
+            throw new Exception("Stmt fail: " . substr($stmt, 0, 200) . "...\n→ " . $msg);
         }
     }
-    foreach ($final as $stmt) {
-        $stmt = trim($stmt);
-        if ($stmt === '' || preg_match('/^--/', $stmt)) continue;
-        // Remove inline -- comments at start of lines
-        $clean = preg_replace('/^\s*--.*$/m', '', $stmt);
-        if (trim($clean) === '') continue;
-        $pdo->exec($clean);
-    }
+    return array('ok' => $ok, 'skipped' => $skipped);
 }
 
 include __DIR__.'/includes/layout.php';
@@ -118,6 +171,10 @@ include __DIR__.'/includes/layout.php';
     </div>
   </div>
   <p class="text-xs text-slate-500 mb-3">Idempotent — chạy lại không hỏng dữ liệu. Lịch sử migration lưu trong bảng <code>_migrations</code> của mỗi tenant.</p>
+  <label class="flex items-center gap-2 mb-3 text-sm">
+    <input type="checkbox" name="force" value="1" <?= $forceRerun ? 'checked' : '' ?>>
+    <span><strong>Force re-run</strong> — chạy lại migration kể cả đã có trong <code>_migrations</code> (dùng để sửa migration bị skip nhầm)</span>
+  </label>
   <button type="submit" name="action" value="run" class="bg-indigo-600 text-white px-5 py-2 rounded font-medium hover:bg-indigo-700">▶ Chạy migrations</button>
 </form>
 
