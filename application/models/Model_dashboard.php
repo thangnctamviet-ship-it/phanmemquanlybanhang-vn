@@ -150,4 +150,18 @@ class Model_dashboard extends CI_Model
         $row = $this->db->query($sql, array((int)$threshold))->row_array();
         return (int) ($row['c'] ?? 0);
     }
+
+    /* ---------- Công nợ ---------- */
+    public function totalCustomerDebt()
+    {
+        if (!$this->db->table_exists('customers')) return 0;
+        $r = $this->db->query("SELECT COALESCE(SUM(debt),0) AS t FROM `customers` WHERE debt > 0")->row_array();
+        return (float)($r['t'] ?? 0);
+    }
+    public function totalSupplierDebt()
+    {
+        if (!$this->db->table_exists('suppliers')) return 0;
+        $r = $this->db->query("SELECT COALESCE(SUM(debt),0) AS t FROM `suppliers` WHERE debt > 0")->row_array();
+        return (float)($r['t'] ?? 0);
+    }
 }

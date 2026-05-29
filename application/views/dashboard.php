@@ -177,13 +177,24 @@ $fmt = function($n) { return number_format((float)$n, 0, ',', '.') . 'đ'; };
       </div>
 
       <div class="col-md-6">
-        <div class="box box-default">
+        <div class="box box-info">
           <div class="box-header with-border">
             <h3 class="box-title"><i class="fa fa-credit-card"></i> Công nợ</h3>
+            <div class="box-tools"><a href="<?= base_url('debts') ?>" class="text-muted" style="font-size:12px;">Xem chi tiết <i class="fa fa-arrow-right"></i></a></div>
           </div>
-          <div class="box-body" style="text-align:center; color:#999; padding:40px 20px;">
-            <i class="fa fa-clock-o" style="font-size:36px;"></i>
-            <p style="margin-top:10px;">Module công nợ đang được phát triển.<br><small>Có ở phiên bản tiếp theo.</small></p>
+          <div class="box-body">
+            <div class="row">
+              <div class="col-xs-6" style="border-right:1px solid #f0f0f0;">
+                <p style="color:#92400e;margin:0;font-size:13px;"><i class="fa fa-user-o"></i> KH còn nợ (phải thu)</p>
+                <h3 style="color:#92400e;margin:6px 0 0;font-size:22px;"><?= $fmt($customer_debt) ?></h3>
+              </div>
+              <div class="col-xs-6">
+                <p style="color:#dc2626;margin:0;font-size:13px;"><i class="fa fa-truck"></i> Phải trả NCC</p>
+                <h3 style="color:#dc2626;margin:6px 0 0;font-size:22px;"><?= $fmt($supplier_debt) ?></h3>
+              </div>
+            </div>
+            <hr style="margin:14px 0;">
+            <a href="<?= base_url('debts') ?>" class="btn btn-default btn-block btn-sm"><i class="fa fa-money"></i> Mở trang thu/chi</a>
           </div>
         </div>
       </div>

@@ -88,6 +88,11 @@
               <i class="fa fa-handshake-o"></i> <span>Nhà cung cấp</span>
             </a>
           </li>
+          <li id="debtsNav">
+            <a href="<?php echo base_url('debts') ?>">
+              <i class="fa fa-credit-card"></i> <span>Công nợ &amp; Thu chi</span>
+            </a>
+          </li>
         <?php endif; ?>
 
         <?php if ($can_store): ?>

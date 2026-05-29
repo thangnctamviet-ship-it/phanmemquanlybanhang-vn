@@ -54,6 +54,8 @@ class Dashboard extends Admin_Controller
 		$this->data['low_stock']        = $m->lowStockProducts(5, 5);
 		$this->data['low_stock_count']  = $m->lowStockCount(5);
 		$this->data['chart_30d']        = $m->revenueLast30Days();
+		$this->data['customer_debt']    = $m->totalCustomerDebt();
+		$this->data['supplier_debt']    = $m->totalSupplierDebt();
 
 		$user_id = $this->session->userdata('id');
 		$is_admin = ($user_id == 1) ? true :false;
