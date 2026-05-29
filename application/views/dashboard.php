@@ -44,15 +44,19 @@ $fmt = function($n) { return number_format((float)$n, 0, ',', '.') . 'đ'; };
           <div class="inner">
             <h3 style="font-size:24px;"><?= $fmt($rev_today) ?></h3>
             <p>Doanh thu hôm nay
-              <?php if ($rev_yesterday > 0): ?>
-                <br><small style="font-size:12px;">
+              <br><small style="font-size:12px;">
+                <?php if ($rev_yesterday > 0): ?>
                   <?php if ($rev_diff_pct >= 0): ?>
                     <i class="fa fa-arrow-up"></i> +<?= number_format($rev_diff_pct, 1) ?>% so hôm qua
                   <?php else: ?>
                     <i class="fa fa-arrow-down"></i> <?= number_format($rev_diff_pct, 1) ?>% so hôm qua
                   <?php endif; ?>
-                </small>
-              <?php endif; ?>
+                <?php elseif ($rev_today > 0): ?>
+                  <i class="fa fa-arrow-up"></i> Mới có doanh thu (hôm qua: 0đ)
+                <?php else: ?>
+                  Hôm qua: 0đ
+                <?php endif; ?>
+              </small>
             </p>
           </div>
           <div class="icon"><i class="fa fa-money"></i></div>

@@ -108,6 +108,10 @@ class Pos extends Admin_Controller
             $this->_json(array('ok' => false, 'error' => 'Giỏ hàng trống'));
             return;
         }
+        if (empty($payload['store_id']) || (int)$payload['store_id'] <= 0) {
+            $this->_json(array('ok' => false, 'error' => 'Chưa chọn cửa hàng'));
+            return;
+        }
 
         $user_id = $this->session->userdata('id');
         $items = $payload['items'];

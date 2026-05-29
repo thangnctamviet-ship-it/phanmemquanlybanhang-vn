@@ -350,6 +350,8 @@
 
   function checkout(){
     if (!cart.length) { showToast('Giỏ trống', true); return; }
+    var sid = parseInt($store.value, 10) || 0;
+    if (!sid) { showToast('Vui lòng tạo & chọn cửa hàng trước (vào menu Cửa hàng)', true); return; }
     var payload = {
       items: cart.map(function(it){ return { id: it.id, qty: it.qty, price: it.price }; }),
       discount: parseFloat($discount.value) || 0,
