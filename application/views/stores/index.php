@@ -34,10 +34,28 @@
           </div>
         <?php endif; ?>
 
+        <?php if (!empty($branch_at_limit)): ?>
+          <div class="alert alert-warning" style="border-left:4px solid #f59e0b;">
+            <i class="fa fa-exclamation-circle"></i>
+            <strong>Bạn đã đạt giới hạn <?= (int)$branch_max ?> chi nhánh.</strong>
+            Cần thêm cửa hàng? Mua thêm chi nhánh chỉ <strong>50.000đ/tháng/chi nhánh</strong>.
+            <button type="button" class="btn btn-warning btn-sm" style="margin-left:10px;" onclick="openQuickBuy('extra_branch')">
+              <i class="fa fa-shopping-cart"></i> Mua thêm chi nhánh ngay
+            </button>
+          </div>
+        <?php endif; ?>
+
         <?php if(in_array('createStore', $user_permission)): ?>
-          <button class="btn btn-primary" data-toggle="modal" data-target="#addModal">Thêm cửa hàng</button>
+          <button class="btn btn-primary" data-toggle="modal" data-target="#addModal" <?= !empty($branch_at_limit) ? 'disabled title="Đã đạt giới hạn — mua thêm chi nhánh để bật lại"' : '' ?>>
+            <i class="fa fa-plus"></i> Thêm cửa hàng
+          </button>
+          <span class="text-muted" style="margin-left:10px;">
+            <?= (int)($branch_current ?? 0) ?>/<?= (int)($branch_max ?? 0) ?> chi nhánh đã dùng
+          </span>
           <br /> <br />
         <?php endif; ?>
+
+        <?php $this->load->view('partials/quick_buy_modal'); ?>
 
         <div class="box">
           <div class="box-header">

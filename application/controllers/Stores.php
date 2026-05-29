@@ -24,6 +24,12 @@ class Stores extends Admin_Controller
 			redirect('dashboard', 'refresh');
 		}
 
+		$current = count($this->model_stores->getStoresData());
+		$max = $this->license ? $this->license->maxBranches() : 999;
+		$this->data['branch_current'] = $current;
+		$this->data['branch_max']     = $max;
+		$this->data['branch_at_limit'] = ($current >= $max);
+
 		$this->render_template('stores/index', $this->data);
 	}
 
@@ -89,7 +95,7 @@ class Stores extends Admin_Controller
 		if ($this->license) {
 			$current = count($this->model_stores->getStoresData());
 			if (!$this->license->canCreateBranch($current)) {
-				echo json_encode(['success'=>false,'messages'=>'Bạn đã đạt giới hạn chi nhánh ('.$this->license->maxBranches().'). Liên hệ admin để thêm chi nhánh (50.000đ/tháng/chi nhánh).']);
+				echo json_encode(['success'=>false,'messages'=>'Bạn đã đạt giới hạn chi nhánh ('.$this->license->maxBranches().'). <a href="#" onclick="openQuickBuy(\'extra_branch\');return false;" style="text-decoration:underline;font-weight:600;">Mua thêm chi nhánh ngay →</a>']);
 				return;
 			}
 		}
