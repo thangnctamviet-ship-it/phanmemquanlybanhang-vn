@@ -34,6 +34,14 @@
 
         <li class="header" style="color:#94a3b8;font-size:11px;letter-spacing:.5px;">KINH DOANH</li>
 
+        <?php if (in_array('createOrder', $user_permission)): ?>
+          <li id="posNav">
+            <a href="<?php echo base_url('pos') ?>" target="_blank" style="background:linear-gradient(90deg,#4f46e5,#7c3aed);color:#fff;border-radius:6px;margin:4px 8px;">
+              <i class="fa fa-bolt"></i> <span>Bán hàng (POS)</span>
+            </a>
+          </li>
+        <?php endif; ?>
+
         <?php if ($can_product): ?>
           <li class="treeview" id="mainProductNav">
             <a href="#">
