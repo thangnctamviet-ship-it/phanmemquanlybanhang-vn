@@ -117,6 +117,10 @@ class Products extends Admin_Controller
 		'category_id' => json_encode($this->input->post('category')),
                 'store_id' => $this->input->post('store'),
 		'availability' => $this->input->post('availability'),
+		// Pass arrays cho pivot (model sẽ tách ra)
+		'_brands'     => $this->input->post('brands'),
+		'_categories' => $this->input->post('category'),
+		'_attributes' => $this->input->post('attributes_value_id'),
 	);
 
 	// Trường nâng cao (chỉ thêm nếu cột tồn tại — tương thích DB chưa migrate)
@@ -229,6 +233,9 @@ class Products extends Admin_Controller
                 'category_id' => json_encode($this->input->post('category')),
                 'store_id' => $this->input->post('store'),
                 'availability' => $this->input->post('availability'),
+                '_brands'     => $this->input->post('brands'),
+                '_categories' => $this->input->post('category'),
+                '_attributes' => $this->input->post('attributes_value_id'),
             );
 
             // Trường nâng cao

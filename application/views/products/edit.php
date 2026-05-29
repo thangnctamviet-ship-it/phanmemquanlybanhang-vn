@@ -86,7 +86,11 @@
                   </textarea>
                 </div>
 
-                <?php $attribute_id = json_decode($product_data['attribute_value_id']); ?>
+                <?php
+                  // Đọc qua pivot (fallback JSON cũ trong TEXT)
+                  $CI =& get_instance(); $CI->load->model('model_products');
+                  $attribute_id = $CI->model_products->getRelatedIds($product_data['id'], 'attributes');
+                ?>
                 <?php if($attributes): ?>
                   <?php foreach ($attributes as $k => $v): ?>
                     <div class="form-group">
@@ -102,7 +106,7 @@
 
                 <div class="form-group">
                   <label for="brands">Thương hiệu</label>
-                  <?php $brand_data = json_decode($product_data['brand_id']); ?>
+                  <?php $brand_data = $CI->model_products->getRelatedIds($product_data['id'], 'brands'); ?>
                   <select class="form-control select_group" id="brands" name="brands[]" multiple="multiple">
                     <?php foreach ($brands as $k => $v): ?>
                       <option value="<?php echo $v['id'] ?>" <?php if(in_array($v['id'], $brand_data)) { echo 'selected="selected"'; } ?>><?php echo $v['name'] ?></option>
@@ -112,7 +116,7 @@
 
                 <div class="form-group">
                   <label for="category">Danh mục</label>
-                  <?php $category_data = json_decode($product_data['category_id']); ?>
+                  <?php $category_data = $CI->model_products->getRelatedIds($product_data['id'], 'categories'); ?>
                   <select class="form-control select_group" id="category" name="category[]" multiple="multiple">
                     <?php foreach ($category as $k => $v): ?>
                       <option value="<?php echo $v['id'] ?>" <?php if(in_array($v['id'], $category_data)) { echo 'selected="selected"'; } ?>><?php echo $v['name'] ?></option>
