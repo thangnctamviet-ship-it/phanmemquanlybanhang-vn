@@ -24,7 +24,8 @@
           </a>
           <ul class="dropdown-menu" style="min-width:200px;">
             <li><a href="<?php echo base_url('users/profile/') ?>"><i class="fa fa-user-o"></i> Hồ sơ</a></li>
-            <li><a href="<?php echo base_url('users/setting/') ?>"><i class="fa fa-wrench"></i> Cài đặt</a></li>
+            <li><a href="<?php echo base_url('settings/devices') ?>"><i class="fa fa-cogs"></i> Cấu hình hệ thống</a></li>
+            <li><a href="<?php echo base_url('users/setting/') ?>"><i class="fa fa-wrench"></i> Cài đặt cá nhân</a></li>
             <li><a href="<?php echo base_url('account') ?>"><i class="fa fa-credit-card"></i> Tài khoản &amp; Gói</a></li>
             <li><a href="<?php echo base_url('profile') ?>"><i class="fa fa-key"></i> Đổi mật khẩu</a></li>
             <li class="divider"></li>

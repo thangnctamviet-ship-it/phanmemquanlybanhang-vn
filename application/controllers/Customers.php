@@ -81,4 +81,64 @@ class Customers extends Admin_Controller
         $ok = $this->model_customers->remove($id);
         echo json_encode(array('success' => (bool)$ok, 'messages' => $ok ? 'Đã xóa.' : 'Lỗi xóa.'));
     }
+
+    /** 2.3: Top KH + sinh nhật tháng */
+    public function loyalty()
+    {
+        // Top KH theo loyalty_points
+        $this->data['top_points'] = $this->db->query(
+            "SELECT id, name, phone, loyalty_points, debt FROM `customers`
+             WHERE loyalty_points > 0 ORDER BY loyalty_points DESC LIMIT 20"
+        )->result_array();
+
+        // Top KH theo tổng chi tiêu
+        $hasCustomer = $this->db->field_exists('customer_id', 'orders');
+        $this->data['top_spent'] = $hasCustomer ? $this->db->query(
+            "SELECT c.id, c.name, c.phone,
+                    COUNT(o.id) AS order_count,
+                    COALESCE(SUM(CAST(o.net_amount AS DECIMAL(15,2))),0) AS total_spent
+             FROM `customers` c
+             JOIN `orders` o ON o.customer_id = c.id AND o.paid_status = 1
+             GROUP BY c.id, c.name, c.phone
+             ORDER BY total_spent DESC LIMIT 20"
+        )->result_array() : array();
+
+        // Sinh nhật tháng này
+        $month = (int)date('n');
+        $this->data['birthdays'] = $this->db->query(
+            "SELECT id, name, phone, birthday, loyalty_points
+             FROM `customers`
+             WHERE birthday IS NOT NULL AND MONTH(birthday) = ?
+             ORDER BY DAY(birthday)", array($month)
+        )->result_array();
+
+        // Sinh nhật hôm nay
+        $this->data['birthdays_today'] = array_filter($this->data['birthdays'], function($c){
+            return $c['birthday'] && date('m-d', strtotime($c['birthday'])) === date('m-d');
+        });
+
+        // Setting điểm
+        $rate = 1;
+        if ($this->db->table_exists('settings')) {
+            $r = $this->db->query("SELECT `value` FROM `settings` WHERE `key`='loyalty_points_per_1000' LIMIT 1")->row_array();
+            if ($r) $rate = (float)$r['value'];
+        }
+        $this->data['loyalty_rate'] = $rate;
+
+        $this->data['page_title'] = 'Khách hàng thân thiết';
+        $this->render_template('customers/loyalty', $this->data);
+    }
+
+    /** Cập nhật tỷ lệ tích điểm */
+    public function setLoyaltyRate()
+    {
+        $rate = (float)$this->input->post('rate');
+        if ($rate < 0) $rate = 0;
+        if (!$this->db->table_exists('settings')) {
+            echo json_encode(array('ok'=>false,'error'=>'Cần chạy migration 002')); return;
+        }
+        $this->db->query("INSERT INTO `settings`(`key`,`value`) VALUES('loyalty_points_per_1000', ?)
+                          ON DUPLICATE KEY UPDATE `value` = VALUES(`value`)", array($rate));
+        echo json_encode(array('ok'=>true));
+    }
 }

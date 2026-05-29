@@ -18,6 +18,16 @@ class Pos extends Admin_Controller
         $this->load->model('model_stores');
         $this->load->model('model_company');
         $this->load->model('model_stock');
+        $this->load->model('model_customers');
+    }
+
+    /** API: tìm KH theo SĐT để POS gợi ý */
+    public function findCustomer()
+    {
+        $phone = trim((string)$this->input->get('phone'));
+        $row = $this->model_customers->findByPhone($phone);
+        $this->output->set_content_type('application/json');
+        $this->output->set_output(json_encode($row ?: null));
     }
 
     /** Helper: gắn tồn theo store cho mỗi SP. */
@@ -166,6 +176,42 @@ class Pos extends Admin_Controller
 
         $this->db->insert('orders', $order);
         $order_id = $this->db->insert_id();
+
+        // Tìm/tạo khách hàng theo SĐT để liên kết + tích điểm
+        $customer_id = 0;
+        if ($customer_phone !== '') {
+            $c = $this->model_customers->findByPhone($customer_phone);
+            if ($c) {
+                $customer_id = (int)$c['id'];
+                // Cập nhật tên nếu trước đó để trống
+                if ($customer_name !== '' && empty($c['name'])) {
+                    $this->model_customers->update($customer_id, array('name' => $customer_name));
+                }
+            } elseif ($customer_name !== '') {
+                $customer_id = (int)$this->model_customers->create(array(
+                    'name' => $customer_name, 'phone' => $customer_phone,
+                ));
+            }
+        }
+        if ($customer_id > 0 && $this->db->field_exists('customer_id', 'orders')) {
+            $this->db->where('id', $order_id)->update('orders', array('customer_id' => $customer_id));
+        }
+
+        // Tích điểm: 1000đ = X điểm (settings.loyalty_points_per_1000, default 1)
+        if ($customer_id > 0) {
+            $rate = 1;
+            if ($this->db->table_exists('settings')) {
+                $s = $this->db->query("SELECT `value` FROM `settings` WHERE `key`='loyalty_points_per_1000' LIMIT 1")->row_array();
+                if ($s) $rate = (float)$s['value'];
+            }
+            $points = (int) floor($net / 1000 * $rate);
+            if ($points > 0) $this->model_customers->addPoints($customer_id, $points);
+
+            // Nếu còn nợ → cộng vào debt
+            if ($net > $paid_amount) {
+                $this->model_customers->adjustDebt($customer_id, +($net - $paid_amount));
+            }
+        }
 
         // Insert items + trừ kho qua Model_stock (sẽ tự sync products.qty)
         foreach ($clean_items as $it) {

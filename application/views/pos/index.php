@@ -128,8 +128,9 @@
       <div class="cart-empty">Chưa có sản phẩm nào.<br><small>Quét barcode hoặc click sản phẩm bên trái.</small></div>
     </div>
     <div class="cart-foot">
-      <input class="cust" type="text" id="custName" placeholder="Tên khách hàng (tùy chọn)">
-      <input class="cust" type="text" id="custPhone" placeholder="SĐT khách (tùy chọn)">
+      <input class="cust" type="text" id="custPhone" placeholder="SĐT khách (tự tìm KH)" autocomplete="off">
+      <input class="cust" type="text" id="custName" placeholder="Tên khách hàng">
+      <div id="custInfo" style="font-size:11px;color:#059669;margin:-4px 0 6px;display:none;"></div>
       <div class="row"><span>Tạm tính:</span> <span id="grossLabel">0đ</span></div>
       <div class="row"><span>Giảm giá:</span> <input type="number" id="discountInput" value="0" min="0"></div>
       <div class="row total"><span>TỔNG:</span> <span id="netLabel">0đ</span></div>
@@ -399,6 +400,29 @@
       if (cart.length) { if (confirm('Hủy giỏ hàng?')) { cart=[]; renderCart(); } }
       $search.focus();
     }
+  });
+
+  // Auto-find customer by phone
+  var phoneTimer;
+  document.getElementById('custPhone').addEventListener('input', function(){
+    var v = this.value.trim();
+    clearTimeout(phoneTimer);
+    if (v.length < 6) { document.getElementById('custInfo').style.display='none'; return; }
+    phoneTimer = setTimeout(function(){
+      fetch(BASE + 'pos/findCustomer?phone=' + encodeURIComponent(v))
+        .then(function(r){ return r.json(); })
+        .then(function(c){
+          var $info = document.getElementById('custInfo');
+          if (c) {
+            document.getElementById('custName').value = c.name;
+            $info.innerHTML = '✓ KH: <b>' + escapeHtml(c.name) + '</b> · Điểm: ' + (c.loyalty_points||0) + (parseFloat(c.debt)>0 ? ' · <span style="color:#dc2626;">Nợ: ' + new Intl.NumberFormat('vi-VN').format(c.debt) + 'đ</span>' : '');
+            $info.style.display = 'block'; $info.style.color = '#059669';
+          } else {
+            $info.innerHTML = 'KH mới — sẽ tự tạo khi thanh toán';
+            $info.style.display = 'block'; $info.style.color = '#94a3b8';
+          }
+        });
+    }, 400);
   });
 
   // Init

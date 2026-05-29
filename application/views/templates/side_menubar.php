@@ -83,10 +83,15 @@
               <i class="fa fa-exchange"></i> <span>Chuyển kho</span>
             </a>
           </li>
-          <li id="customersNav">
-            <a href="<?php echo base_url('customers') ?>">
+          <li class="treeview" id="customersNav">
+            <a href="#">
               <i class="fa fa-id-card-o"></i> <span>Khách hàng</span>
+              <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
             </a>
+            <ul class="treeview-menu">
+              <li><a href="<?php echo base_url('customers') ?>"><i class="fa fa-list"></i> Danh sách KH</a></li>
+              <li><a href="<?php echo base_url('customers/loyalty') ?>"><i class="fa fa-star"></i> KH thân thiết &amp; Sinh nhật</a></li>
+            </ul>
           </li>
           <li id="suppliersNav">
             <a href="<?php echo base_url('suppliers') ?>">
