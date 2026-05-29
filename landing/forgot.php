@@ -89,9 +89,9 @@ include __DIR__.'/includes/header.php';
     <?php endif; ?>
 
     <div class="mt-6 text-center text-sm text-slate-500 space-x-3">
-      <a href="login.php" class="text-indigo-600 hover:underline">← Quay lại đăng nhập</a>
+      <a href="/landing/login.php" class="text-indigo-600 hover:underline">← Quay lại đăng nhập</a>
       <span>·</span>
-      <a href="register.php" class="text-indigo-600 hover:underline">Đăng ký mới</a>
+      <a href="/landing/register.php" class="text-indigo-600 hover:underline">Đăng ký mới</a>
     </div>
   </div>
 </section>

@@ -70,7 +70,7 @@
       <?php endif; ?>
       <p class="text-sm text-slate-600 mt-3 min-h-[40px]"><?= $p['desc'] ?></p>
 
-      <a href="register.php?plan=<?= urlencode($p['id']) ?>"
+      <a href="/landing/register.php?plan=<?= urlencode($p['id']) ?>"
          class="mt-5 block text-center py-2.5 rounded-lg font-semibold transition
                 <?= $p['highlight'] ? 'bg-indigo-600 text-white hover:bg-indigo-700' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' ?>">
         Dùng thử miễn phí 7 ngày

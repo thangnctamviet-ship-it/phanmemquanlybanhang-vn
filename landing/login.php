@@ -72,11 +72,11 @@ include __DIR__.'/includes/header.php';
     </form>
 
     <div class="mt-4 text-center text-sm">
-      <a href="forgot.php" class="text-slate-500 hover:text-indigo-600 hover:underline">Quên tên cửa hàng / mật khẩu?</a>
+      <a href="/landing/forgot.php" class="text-slate-500 hover:text-indigo-600 hover:underline">Quên tên cửa hàng / mật khẩu?</a>
     </div>
     <div class="mt-4 pt-4 border-t text-center text-sm text-slate-500">
       Chưa có cửa hàng?
-      <a href="register.php" class="text-indigo-600 font-medium hover:underline">Đăng ký dùng thử miễn phí</a>
+      <a href="/landing/register.php" class="text-indigo-600 font-medium hover:underline">Đăng ký dùng thử miễn phí</a>
     </div>
   </div>
 </section>

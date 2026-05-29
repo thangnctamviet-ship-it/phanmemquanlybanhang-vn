@@ -12,7 +12,7 @@ $phone= trim($_POST['phone'] ?? '');
 
 function fail($msg) {
     include __DIR__.'/includes/header.php';
-    echo '<div class="max-w-xl mx-auto px-4 py-12"><div class="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg">'.htmlspecialchars($msg).'</div><p class="mt-4"><a href="register.php" class="text-indigo-600">← Quay lại</a></p></div>';
+    echo '<div class="max-w-xl mx-auto px-4 py-12"><div class="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg">'.htmlspecialchars($msg).'</div><p class="mt-4"><a href="/landing/register.php" class="text-indigo-600">← Quay lại</a></p></div>';
     include __DIR__.'/includes/footer.php';
     exit;
 }

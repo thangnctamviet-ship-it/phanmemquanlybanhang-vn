@@ -2,7 +2,7 @@
 <section class="max-w-xl mx-auto px-4 py-12">
   <h1 class="text-3xl font-bold mb-2">Đăng ký dùng thử miễn phí 7 ngày</h1>
   <p class="text-slate-600 mb-6">Không cần thẻ tín dụng. Cửa hàng của bạn sẽ sẵn sàng trong vài giây.</p>
-  <form id="regForm" action="provision.php" method="POST" class="bg-white p-6 rounded-xl shadow-sm space-y-4">
+  <form id="regForm" action="/landing/provision.php" method="POST" class="bg-white p-6 rounded-xl shadow-sm space-y-4">
     <input type="hidden" name="plan" value="<?= htmlspecialchars($selected_plan) ?>">
     <div>
       <label class="block text-sm font-medium mb-1">Tên cửa hàng / thương hiệu *</label>
