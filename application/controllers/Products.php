@@ -119,6 +119,14 @@ class Products extends Admin_Controller
 		'availability' => $this->input->post('availability'),
 	);
 
+	// Trường nâng cao (chỉ thêm nếu cột tồn tại — tương thích DB chưa migrate)
+	foreach (array('barcode','unit','cost_price','wholesale_price','min_stock','max_stock','weight','has_batches','has_variants') as $col) {
+		if ($this->db->field_exists($col, 'products')) {
+			$v = $this->input->post($col);
+			if ($v !== null && $v !== '') $data[$col] = $v;
+		}
+	}
+
 	$create = $this->model_products->create($data);
 	if($create == true) {
 		$this->session->set_flashdata('success', 'Tạo thành công');
@@ -223,6 +231,13 @@ class Products extends Admin_Controller
                 'availability' => $this->input->post('availability'),
             );
 
+            // Trường nâng cao
+            foreach (array('barcode','unit','cost_price','wholesale_price','min_stock','max_stock','weight','has_batches','has_variants') as $col) {
+                if ($this->db->field_exists($col, 'products')) {
+                    $v = $this->input->post($col);
+                    if ($v !== null && $v !== '') $data[$col] = $v;
+                }
+            }
 
             if($_FILES['product_image']['size'] > 0) {
                 $upload_image = $this->upload_image();

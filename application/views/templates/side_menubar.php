@@ -30,6 +30,10 @@
           $can_report  = in_array('viewReports', $user_permission);
           $can_company = in_array('updateCompany', $user_permission);
           $can_config  = $can_brand || $can_cat || $can_attr;
+
+          // Tenant feature flags (đọc từ Admin_Controller::_load_tenant_settings)
+          $TS = isset($tenant_settings) ? $tenant_settings : array();
+          $feat = function($k) use ($TS) { return !empty($TS[$k]) && $TS[$k] != '0'; };
         ?>
 
         <li class="header" style="color:#94a3b8;font-size:11px;letter-spacing:.5px;">KINH DOANH</li>
@@ -83,16 +87,24 @@
               <i class="fa fa-exchange"></i> <span>Chuyển kho</span>
             </a>
           </li>
-          <li class="treeview" id="customersNav">
-            <a href="#">
-              <i class="fa fa-id-card-o"></i> <span>Khách hàng</span>
-              <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
-            </a>
-            <ul class="treeview-menu">
-              <li><a href="<?php echo base_url('customers') ?>"><i class="fa fa-list"></i> Danh sách KH</a></li>
-              <li><a href="<?php echo base_url('customers/loyalty') ?>"><i class="fa fa-star"></i> KH thân thiết &amp; Sinh nhật</a></li>
-            </ul>
-          </li>
+          <?php if ($feat('enable_loyalty')): ?>
+            <li class="treeview" id="customersNav">
+              <a href="#">
+                <i class="fa fa-id-card-o"></i> <span>Khách hàng</span>
+                <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
+              </a>
+              <ul class="treeview-menu">
+                <li><a href="<?php echo base_url('customers') ?>"><i class="fa fa-list"></i> Danh sách KH</a></li>
+                <li><a href="<?php echo base_url('customers/loyalty') ?>"><i class="fa fa-star"></i> KH thân thiết &amp; Sinh nhật</a></li>
+              </ul>
+            </li>
+          <?php else: ?>
+            <li id="customersNav">
+              <a href="<?php echo base_url('customers') ?>">
+                <i class="fa fa-id-card-o"></i> <span>Khách hàng</span>
+              </a>
+            </li>
+          <?php endif; ?>
           <li id="suppliersNav">
             <a href="<?php echo base_url('suppliers') ?>">
               <i class="fa fa-handshake-o"></i> <span>Nhà cung cấp</span>
@@ -103,6 +115,37 @@
               <i class="fa fa-credit-card"></i> <span>Công nợ &amp; Thu chi</span>
             </a>
           </li>
+
+          <?php /* Các module nâng cao — hiện khi bật feature, ẩn mặc định */ ?>
+          <?php if ($feat('enable_returns')): ?>
+            <li id="returnsNav" class="text-muted" title="Module sẽ hoàn thiện ở phase 4">
+              <a href="#" onclick="alert('Module Trả hàng đang phát triển — DB đã sẵn sàng, UI sẽ ra ở phase tiếp.');return false;">
+                <i class="fa fa-undo"></i> <span>Trả hàng</span> <small style="opacity:.5;">(sắp ra)</small>
+              </a>
+            </li>
+          <?php endif; ?>
+          <?php if ($feat('enable_batches')): ?>
+            <li id="batchesNav" class="text-muted">
+              <a href="#" onclick="alert('Module Lô hàng/HSD đang phát triển.');return false;">
+                <i class="fa fa-flask"></i> <span>Lô hàng &amp; HSD</span> <small style="opacity:.5;">(sắp ra)</small>
+              </a>
+            </li>
+          <?php endif; ?>
+          <?php if ($feat('enable_promotions')): ?>
+            <li id="promosNav" class="text-muted">
+              <a href="#" onclick="alert('Module Khuyến mãi/Voucher đang phát triển.');return false;">
+                <i class="fa fa-gift"></i> <span>Khuyến mãi</span> <small style="opacity:.5;">(sắp ra)</small>
+              </a>
+            </li>
+          <?php endif; ?>
+          <?php if ($feat('enable_employee_shift')): ?>
+            <li id="shiftsNav" class="text-muted">
+              <a href="#" onclick="alert('Module Ca làm nhân viên đang phát triển.');return false;">
+                <i class="fa fa-clock-o"></i> <span>Ca làm việc</span> <small style="opacity:.5;">(sắp ra)</small>
+              </a>
+            </li>
+          <?php endif; ?>
+
         <?php endif; ?>
 
         <?php if ($can_store): ?>
