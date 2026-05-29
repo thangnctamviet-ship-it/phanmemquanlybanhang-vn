@@ -70,10 +70,14 @@
       <?php endif; ?>
       <p class="text-sm text-slate-600 mt-3 min-h-[40px]"><?= $p['desc'] ?></p>
 
+      <a href="/landing/register.php?plan=<?= urlencode($p['id']) ?>&buy=1"
+         class="mt-5 block text-center py-3 rounded-lg font-semibold transition
+                <?= $p['highlight'] ? 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-md hover:shadow-lg' : 'bg-slate-900 text-white hover:bg-slate-800' ?>">
+        Mua ngay
+      </a>
       <a href="/landing/register.php?plan=<?= urlencode($p['id']) ?>"
-         class="mt-5 block text-center py-2.5 rounded-lg font-semibold transition
-                <?= $p['highlight'] ? 'bg-indigo-600 text-white hover:bg-indigo-700' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' ?>">
-        Dùng thử miễn phí 7 ngày
+         class="mt-2 block text-center py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-indigo-600 hover:bg-slate-50 transition">
+        Hoặc dùng thử miễn phí 7 ngày →
       </a>
 
       <div class="border-t mt-6 pt-4">

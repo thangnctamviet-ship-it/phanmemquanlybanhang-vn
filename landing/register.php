@@ -1,9 +1,39 @@
-<?php $page_title = 'Đăng ký dùng thử'; include __DIR__.'/includes/header.php'; $selected_plan = preg_replace('/[^a-z_]/', '', $_GET['plan'] ?? 'trial'); ?>
+<?php
+$page_title = 'Đăng ký';
+include __DIR__.'/includes/header.php';
+$selected_plan = preg_replace('/[^a-z_]/', '', $_GET['plan'] ?? 'trial');
+$buy_now = !empty($_GET['buy']) && $_GET['buy'] == '1' && $selected_plan !== 'trial';
+
+$plan_labels = [
+  'monthly'    => ['name' => 'Gói tháng',    'price' => '120.000đ',   'duration' => '1 tháng'],
+  'semiannual' => ['name' => 'Gói 6 tháng',  'price' => '600.000đ',   'duration' => '6 tháng'],
+  'annual'     => ['name' => 'Gói năm',      'price' => '1.100.000đ', 'duration' => '12 tháng'],
+];
+$cur = $plan_labels[$selected_plan] ?? null;
+?>
 <section class="max-w-xl mx-auto px-4 py-12">
-  <h1 class="text-3xl font-bold mb-2">Đăng ký dùng thử miễn phí 7 ngày</h1>
-  <p class="text-slate-600 mb-6">Không cần thẻ tín dụng. Cửa hàng của bạn sẽ sẵn sàng trong vài giây.</p>
+  <?php if ($buy_now && $cur): ?>
+    <h1 class="text-3xl font-bold mb-2">Đăng ký &amp; thanh toán <?= htmlspecialchars($cur['name']) ?></h1>
+    <p class="text-slate-600 mb-6">Tạo cửa hàng và thanh toán <strong class="text-indigo-600"><?= htmlspecialchars($cur['price']) ?></strong> qua QR code để kích hoạt <?= htmlspecialchars($cur['duration']) ?> dùng ngay (bỏ qua trial 7 ngày).</p>
+    <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-4 mb-5 text-sm text-indigo-900">
+      <div class="font-semibold mb-1">📦 Gói đã chọn: <?= htmlspecialchars($cur['name']) ?> — <?= htmlspecialchars($cur['price']) ?></div>
+      <div class="text-xs">Sau khi tạo cửa hàng xong, bạn sẽ được chuyển sang trang thanh toán QR. Đăng nhập + dùng được ngay khi admin xác nhận CK (24h).</div>
+      <a href="/landing/pricing.php" class="text-xs underline mt-1 inline-block">← Đổi gói khác</a>
+    </div>
+  <?php else: ?>
+    <h1 class="text-3xl font-bold mb-2">Đăng ký dùng thử miễn phí 7 ngày</h1>
+    <p class="text-slate-600 mb-6">Không cần thẻ tín dụng. Cửa hàng của bạn sẽ sẵn sàng trong vài giây.</p>
+    <?php if ($cur): ?>
+      <div class="bg-slate-50 border rounded-lg p-3 mb-5 text-sm text-slate-700 flex items-center justify-between gap-2">
+        <span>Đang xem gói <strong><?= htmlspecialchars($cur['name']) ?></strong> (<?= htmlspecialchars($cur['price']) ?>). Bạn sẽ có 7 ngày dùng thử trước khi tính phí.</span>
+        <a href="/landing/register.php?plan=<?= htmlspecialchars($selected_plan) ?>&buy=1" class="bg-indigo-600 text-white text-xs px-3 py-1.5 rounded font-medium hover:bg-indigo-700 whitespace-nowrap">Mua ngay</a>
+      </div>
+    <?php endif; ?>
+  <?php endif; ?>
+
   <form id="regForm" action="/landing/provision.php" method="POST" class="bg-white p-6 rounded-xl shadow-sm space-y-4">
     <input type="hidden" name="plan" value="<?= htmlspecialchars($selected_plan) ?>">
+    <input type="hidden" name="buy_now" value="<?= $buy_now ? '1' : '0' ?>">
     <div>
       <label class="block text-sm font-medium mb-1">Tên cửa hàng / thương hiệu *</label>
       <input id="shop_name" name="shop_name" required class="w-full border rounded-lg px-3 py-2" placeholder="VD: Điện Thoại Số">
@@ -28,7 +58,9 @@
       <label class="block text-sm font-medium mb-1">Số điện thoại</label>
       <input name="phone" class="w-full border rounded-lg px-3 py-2">
     </div>
-    <button type="submit" id="submitBtn" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed">Tạo cửa hàng của tôi</button>
+    <button type="submit" id="submitBtn" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed">
+      <?= $buy_now ? 'Tạo cửa hàng &amp; chuyển sang thanh toán →' : 'Tạo cửa hàng của tôi (Dùng thử 7 ngày)' ?>
+    </button>
   </form>
 
   <!-- Loading overlay khi đang provision (mất 20-30s) -->
