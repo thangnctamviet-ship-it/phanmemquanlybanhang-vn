@@ -78,6 +78,11 @@
               <i class="fa fa-truck"></i> <span>Nhập hàng</span>
             </a>
           </li>
+          <li id="transfersNav">
+            <a href="<?php echo base_url('transfers') ?>">
+              <i class="fa fa-exchange"></i> <span>Chuyển kho</span>
+            </a>
+          </li>
           <li id="customersNav">
             <a href="<?php echo base_url('customers') ?>">
               <i class="fa fa-id-card-o"></i> <span>Khách hàng</span>

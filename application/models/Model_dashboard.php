@@ -131,24 +131,29 @@ class Model_dashboard extends CI_Model
 
     /* ---------- Sắp hết hàng ---------- */
 
-    /** Sản phẩm có tồn kho thấp. Ngưỡng mặc định 5 (sẽ thay bằng products.min_stock sau migration M4). */
-    public function lowStockProducts($threshold = 5, $limit = 5)
+    /** Sản phẩm có tồn ≤ min_stock của chính nó (fallback ngưỡng 5 nếu chưa set/chưa có cột). */
+    public function lowStockProducts($limit = 5)
     {
-        $sql = "SELECT id, name, sku, qty
+        $hasMin = $this->db->field_exists('min_stock', 'products');
+        $cond = $hasMin
+            ? "CAST(qty AS SIGNED) <= GREATEST(COALESCE(min_stock,5), 1)"
+            : "CAST(qty AS SIGNED) <= 5";
+        $sql = "SELECT id, name, sku, qty" . ($hasMin ? ", min_stock" : "") . "
                 FROM `products`
-                WHERE availability = 1
-                  AND CAST(qty AS SIGNED) <= ?
+                WHERE availability = 1 AND $cond
                 ORDER BY CAST(qty AS SIGNED) ASC
                 LIMIT " . (int)$limit;
-        return $this->db->query($sql, array((int)$threshold))->result_array();
+        return $this->db->query($sql)->result_array();
     }
 
-    public function lowStockCount($threshold = 5)
+    public function lowStockCount()
     {
-        $sql = "SELECT COUNT(*) AS c FROM `products`
-                WHERE availability = 1 AND CAST(qty AS SIGNED) <= ?";
-        $row = $this->db->query($sql, array((int)$threshold))->row_array();
-        return (int) ($row['c'] ?? 0);
+        $hasMin = $this->db->field_exists('min_stock', 'products');
+        $cond = $hasMin
+            ? "CAST(qty AS SIGNED) <= GREATEST(COALESCE(min_stock,5), 1)"
+            : "CAST(qty AS SIGNED) <= 5";
+        $row = $this->db->query("SELECT COUNT(*) AS c FROM `products` WHERE availability = 1 AND $cond")->row_array();
+        return (int)($row['c'] ?? 0);
     }
 
     /* ---------- Công nợ ---------- */

@@ -51,8 +51,8 @@ class Dashboard extends Admin_Controller
 		$this->data['rev_this_month']   = $m->revenueThisMonth();
 		$this->data['cash_on_hand']     = $m->cashOnHand();
 		$this->data['top_products']     = $m->topProducts(7, 5);
-		$this->data['low_stock']        = $m->lowStockProducts(5, 5);
-		$this->data['low_stock_count']  = $m->lowStockCount(5);
+		$this->data['low_stock']        = $m->lowStockProducts(5);
+		$this->data['low_stock_count']  = $m->lowStockCount();
 		$this->data['chart_30d']        = $m->revenueLast30Days();
 		$this->data['customer_debt']    = $m->totalCustomerDebt();
 		$this->data['supplier_debt']    = $m->totalSupplierDebt();
