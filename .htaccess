@@ -1,9 +1,11 @@
 RewriteEngine On
 
-# Force HTTPS (trừ localhost/dev)
+# Force HTTPS (trừ localhost/dev và khi proxy đã terminate TLS — Cloudflare tunnel)
 RewriteCond %{HTTPS} !=on
+RewriteCond %{HTTP:X-Forwarded-Proto} !=https
 RewriteCond %{HTTP_HOST} !^localhost(:[0-9]+)?$
 RewriteCond %{HTTP_HOST} !^127\.0\.0\.1(:[0-9]+)?$
+RewriteCond %{HTTP_HOST} !\.trycloudflare\.com$
 RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
 
 # Trang chủ → landing
