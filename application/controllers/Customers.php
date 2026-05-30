@@ -50,19 +50,18 @@ class Customers extends Admin_Controller
                 'birthday' => $this->input->post('birthday') ?: null,
                 'note'     => $this->input->post('note'),
             );
-            try {
-                $id = $this->model_customers->create($data);
-                if ($id) $this->audit->log('create', 'customers', (int)$id, null, $data);
-                $resp['success'] = (bool)$id;
-                $resp['messages'] = $id ? 'Đã thêm khách hàng.' : 'Lỗi khi tạo.';
-            } catch (Exception $e) {
-                $msg = $e->getMessage();
-                if (stripos($msg,'Duplicate')!==false && stripos($msg,'phone')!==false) {
-                    $resp['messages'] = 'Số điện thoại này đã tồn tại trong hệ thống.';
-                } else {
-                    $resp['messages'] = 'Lỗi: '.$msg;
+            // Pre-check duplicate phone (UNIQUE constraint trong DB sẽ chặn lần 2 — nhưng check trước để báo lỗi đẹp)
+            if (!empty($data['phone'])) {
+                $dup = $this->db->get_where('customers', array('phone'=>$data['phone'], 'deleted_at'=>null))->row_array();
+                if ($dup) {
+                    $resp['messages'] = 'Số điện thoại này đã tồn tại (KH: '.htmlspecialchars($dup['name']).')';
+                    echo json_encode($resp); return;
                 }
             }
+            $id = $this->model_customers->create($data);
+            if ($id) $this->audit->log('create', 'customers', (int)$id, null, $data);
+            $resp['success'] = (bool)$id;
+            $resp['messages'] = $id ? 'Đã thêm khách hàng.' : 'Lỗi khi tạo. Có thể trùng dữ liệu hoặc tham chiếu sai.';
         } else $resp['messages'] = validation_errors();
         echo json_encode($resp);
     }

@@ -54,17 +54,11 @@ class Suppliers extends Admin_Controller
                 'note'    => $this->input->post('note'),
                 'active'  => 1,
             );
-            try {
-                $id = $this->model_suppliers->create($data);
-                if ($id) {
-                    $this->audit->log('create', 'suppliers', (int)$id, null, $data);
-                    $resp['success'] = true; $resp['messages'] = 'Đã thêm NCC.';
-                } else $resp['messages'] = 'Lỗi khi tạo';
-            } catch (Exception $e) {
-                $resp['messages'] = stripos($e->getMessage(),'Duplicate')!==false
-                    ? 'NCC đã tồn tại (trùng thông tin unique).'
-                    : 'Lỗi: '.$e->getMessage();
-            }
+            $id = $this->model_suppliers->create($data);
+            if ($id) {
+                $this->audit->log('create', 'suppliers', (int)$id, null, $data);
+                $resp['success'] = true; $resp['messages'] = 'Đã thêm NCC.';
+            } else $resp['messages'] = 'Lỗi khi tạo. Có thể trùng dữ liệu.';
         } else $resp['messages'] = validation_errors();
         echo json_encode($resp);
     }

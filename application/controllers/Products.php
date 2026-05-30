@@ -131,20 +131,22 @@ class Products extends Admin_Controller
 		}
 	}
 
-	try {
-		$create = $this->model_products->create($data);
-	} catch (Exception $e) {
-		$msg = $e->getMessage();
-		if (stripos($msg,'Duplicate')!==false && stripos($msg,'sku')!==false) {
-			$this->session->set_flashdata('errors', 'Mã SKU đã tồn tại trong hệ thống. Vui lòng nhập mã khác.');
-		} elseif (stripos($msg,'Duplicate')!==false && stripos($msg,'barcode')!==false) {
-			$this->session->set_flashdata('errors', 'Mã vạch đã tồn tại trong hệ thống.');
-		} else {
-			$this->session->set_flashdata('errors', 'Lỗi: '.$msg);
+	// Pre-check duplicate SKU/barcode
+	if (!empty($data['sku'])) {
+		$dup = $this->db->get_where('products', array('sku'=>$data['sku'], 'deleted_at'=>null))->row_array();
+		if ($dup) {
+			$this->session->set_flashdata('errors', 'Mã SKU "'.htmlspecialchars($data['sku']).'" đã tồn tại (SP: '.htmlspecialchars($dup['name']).')');
+			redirect('products/add', 'refresh'); return;
 		}
-		redirect('products/add', 'refresh');
-		return;
 	}
+	if (!empty($data['barcode'])) {
+		$dup = $this->db->get_where('products', array('barcode'=>$data['barcode'], 'deleted_at'=>null))->row_array();
+		if ($dup) {
+			$this->session->set_flashdata('errors', 'Mã vạch "'.htmlspecialchars($data['barcode']).'" đã tồn tại');
+			redirect('products/add', 'refresh'); return;
+		}
+	}
+	$create = $this->model_products->create($data);
 	if($create == true) {
 		// Audit log: create product
 		$new_id = (int)$this->db->insert_id();
