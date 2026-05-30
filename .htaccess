@@ -1,7 +1,11 @@
 RewriteEngine On
 
-# Force HTTPS
+# Force HTTPS (trừ localhost/dev và khi proxy đã terminate TLS — Cloudflare tunnel)
 RewriteCond %{HTTPS} !=on
+RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+RewriteCond %{HTTP_HOST} !^localhost(:[0-9]+)?$
+RewriteCond %{HTTP_HOST} !^127\.0\.0\.1(:[0-9]+)?$
+RewriteCond %{HTTP_HOST} !\.trycloudflare\.com$
 RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
 
 # Trang chủ → landing
@@ -23,6 +27,9 @@ RewriteRule ^sitemap\.xml$ landing/sitemap_dynamic.php [L]
 # Blog pretty URLs
 RewriteRule ^blog/?$ landing/blog/index.php [L]
 RewriteRule ^blog/([a-z0-9-]+)/?$ landing/blog/post.php?slug=$1 [L,QSA]
+
+# Pretty URLs cho các trang landing — gọi tắt /register.php, /pricing.php, ...
+RewriteRule ^(register|pricing|login|forgot|install|provision)\.php$ landing/$1.php [L,QSA]
 
 # Tất cả route khác → landing
 RewriteRule ^ landing/ [L]

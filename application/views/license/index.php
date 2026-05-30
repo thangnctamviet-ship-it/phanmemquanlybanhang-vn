@@ -68,4 +68,27 @@ function calcBranch(){
 document.getElementById('branchQty').addEventListener('input', calcBranch);
 document.getElementById('branchDuration').addEventListener('change', calcBranch);
 calcBranch();
+
+// Auto-submit khi đến từ register?plan=monthly|semiannual|annual
+(function(){
+  var p = new URLSearchParams(location.search).get('plan');
+  if (!p) return;
+  if (!['monthly','semiannual','annual'].includes(p)) return;
+  // Highlight gói tương ứng + auto submit sau 1.5s với toast
+  var forms = document.querySelectorAll('form[action$="/license/buy"]');
+  var targetForm = null;
+  forms.forEach(function(f){
+    var input = f.querySelector('input[name="plan"]');
+    if (input && input.value === p && !targetForm) targetForm = f;
+  });
+  if (targetForm) {
+    var box = targetForm.closest('.box');
+    if (box) box.style.boxShadow = '0 0 0 3px #4f46e5';
+    var t = document.createElement('div');
+    t.innerHTML = '⏳ Đang tự chuyển đến trang thanh toán <strong>' + p + '</strong>...';
+    t.style.cssText = 'position:fixed;top:80px;right:20px;background:#059669;color:#fff;padding:14px 20px;border-radius:10px;font-size:14px;z-index:9999;box-shadow:0 6px 20px rgba(0,0,0,.2);';
+    document.body.appendChild(t);
+    setTimeout(function(){ targetForm.submit(); }, 1500);
+  }
+})();
 </script>

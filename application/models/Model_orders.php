@@ -165,14 +165,11 @@ class Model_orders extends CI_Model
 
 	public function remove($id)
 	{
-		if($id) {
-			$this->db->where('id', $id);
-			$delete = $this->db->delete('orders');
-
-			$this->db->where('order_id', $id);
-			$delete_item = $this->db->delete('orders_item');
-			return ($delete == true && $delete_item) ? true : false;
-		}
+		if(!$id) return false;
+		// Soft delete order — orders_item giữ nguyên (FK CASCADE chỉ kích hoạt khi hard delete)
+		// Khi report cần ẩn order đã trash → JOIN với WHERE orders.deleted_at IS NULL
+		return $this->db->where('id', (int)$id)
+		                ->update('orders', array('deleted_at' => date('Y-m-d H:i:s')));
 	}
 
 	public function countTotalPaidOrders()

@@ -86,7 +86,11 @@
                   </textarea>
                 </div>
 
-                <?php $attribute_id = json_decode($product_data['attribute_value_id']); ?>
+                <?php
+                  // Đọc qua pivot (fallback JSON cũ trong TEXT)
+                  $CI =& get_instance(); $CI->load->model('model_products');
+                  $attribute_id = $CI->model_products->getRelatedIds($product_data['id'], 'attributes');
+                ?>
                 <?php if($attributes): ?>
                   <?php foreach ($attributes as $k => $v): ?>
                     <div class="form-group">
@@ -102,7 +106,7 @@
 
                 <div class="form-group">
                   <label for="brands">Thương hiệu</label>
-                  <?php $brand_data = json_decode($product_data['brand_id']); ?>
+                  <?php $brand_data = $CI->model_products->getRelatedIds($product_data['id'], 'brands'); ?>
                   <select class="form-control select_group" id="brands" name="brands[]" multiple="multiple">
                     <?php foreach ($brands as $k => $v): ?>
                       <option value="<?php echo $v['id'] ?>" <?php if(in_array($v['id'], $brand_data)) { echo 'selected="selected"'; } ?>><?php echo $v['name'] ?></option>
@@ -112,7 +116,7 @@
 
                 <div class="form-group">
                   <label for="category">Danh mục</label>
-                  <?php $category_data = json_decode($product_data['category_id']); ?>
+                  <?php $category_data = $CI->model_products->getRelatedIds($product_data['id'], 'categories'); ?>
                   <select class="form-control select_group" id="category" name="category[]" multiple="multiple">
                     <?php foreach ($category as $k => $v): ?>
                       <option value="<?php echo $v['id'] ?>" <?php if(in_array($v['id'], $category_data)) { echo 'selected="selected"'; } ?>><?php echo $v['name'] ?></option>
@@ -137,14 +141,73 @@
                   </select>
                 </div>
 
+                <?php
+                  $TS = isset($tenant_settings) ? $tenant_settings : array();
+                  $feat = function($k) use ($TS) { return !empty($TS[$k]) && $TS[$k] != '0'; };
+                  $pd = function($k, $d = '') use ($product_data) { return htmlspecialchars($product_data[$k] ?? $d); };
+                ?>
 
+                <hr>
+                <h4 style="color:#64748b;font-size:14px;margin:14px 0 10px;"><i class="fa fa-cogs"></i> Trường nâng cao</h4>
+
+                <div class="row">
+                  <div class="col-md-6 form-group">
+                    <label>Mã vạch (Barcode)</label>
+                    <input type="text" name="barcode" class="form-control" value="<?= $pd('barcode') ?>">
+                  </div>
+                  <div class="col-md-6 form-group">
+                    <label>Đơn vị tính</label>
+                    <input type="text" name="unit" class="form-control" value="<?= $pd('unit') ?>" placeholder="vd: cái, hộp, lon, kg">
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6 form-group">
+                    <label>Giá vốn</label>
+                    <input type="number" name="cost_price" class="form-control" value="<?= $pd('cost_price', '0') ?>" min="0">
+                  </div>
+                  <?php if ($feat('enable_wholesale')): ?>
+                  <div class="col-md-6 form-group">
+                    <label>Giá bán sỉ</label>
+                    <input type="number" name="wholesale_price" class="form-control" value="<?= $pd('wholesale_price', '0') ?>" min="0">
+                  </div>
+                  <?php endif; ?>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-4 form-group">
+                    <label>Tồn tối thiểu</label>
+                    <input type="number" name="min_stock" class="form-control" value="<?= $pd('min_stock', $TS['low_stock_threshold'] ?? 5) ?>" min="0">
+                  </div>
+                  <div class="col-md-4 form-group">
+                    <label>Tồn tối đa</label>
+                    <input type="number" name="max_stock" class="form-control" value="<?= $pd('max_stock', '0') ?>" min="0">
+                  </div>
+                  <?php if (in_array($TS['industry_preset'] ?? '', array('food','pharmacy','fashion'))): ?>
+                  <div class="col-md-4 form-group">
+                    <label>Cân nặng (kg)</label>
+                    <input type="number" step="0.001" name="weight" class="form-control" value="<?= $pd('weight', '0') ?>" min="0">
+                  </div>
+                  <?php endif; ?>
+                </div>
+
+                <?php if ($feat('enable_batches')): ?>
+                <div class="checkbox">
+                  <label><input type="checkbox" name="has_batches" value="1" <?= !empty($product_data['has_batches']) ? 'checked' : '' ?>> Theo dõi lô hàng &amp; HSD</label>
+                </div>
+                <?php endif; ?>
+                <?php if ($feat('enable_variants')): ?>
+                <div class="checkbox">
+                  <label><input type="checkbox" name="has_variants" value="1" <?= !empty($product_data['has_variants']) ? 'checked' : '' ?>> Có nhiều biến thể (size/màu)</label>
+                </div>
+                <?php endif; ?>
 
               </div>
               <!-- /.box-body -->
 
               <div class="box-footer">
                 <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
-                <a href="<?php echo base_url('users/') ?>" class="btn btn-warning">Quay lại</a>
+                <a href="<?php echo base_url('products/') ?>" class="btn btn-warning">Quay lại</a>
               </div>
             </form>
           <!-- /.box-body -->

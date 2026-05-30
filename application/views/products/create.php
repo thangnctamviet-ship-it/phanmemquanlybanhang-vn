@@ -129,6 +129,68 @@
                   </select>
                 </div>
 
+                <?php
+                  $TS = isset($tenant_settings) ? $tenant_settings : array();
+                  $feat = function($k) use ($TS) { return !empty($TS[$k]) && $TS[$k] != '0'; };
+                ?>
+
+                <!-- ===== Trường nâng cao (hiện theo industry preset / feature flag) ===== -->
+                <hr>
+                <h4 style="color:#64748b;font-size:14px;margin:14px 0 10px;"><i class="fa fa-cogs"></i> Trường nâng cao (tùy chọn)</h4>
+
+                <div class="row">
+                  <div class="col-md-6 form-group">
+                    <label>Mã vạch (Barcode)</label>
+                    <input type="text" name="barcode" class="form-control" placeholder="Để trống = tự sinh">
+                    <small class="text-muted">Khác SKU. Có thể quét trực tiếp khi bán hàng.</small>
+                  </div>
+                  <div class="col-md-6 form-group">
+                    <label>Đơn vị tính</label>
+                    <input type="text" name="unit" class="form-control" placeholder="vd: cái, hộp, lon, kg">
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6 form-group">
+                    <label>Giá vốn (giá nhập)</label>
+                    <input type="number" name="cost_price" class="form-control" value="0" min="0">
+                  </div>
+                  <?php if ($feat('enable_wholesale')): ?>
+                  <div class="col-md-6 form-group">
+                    <label>Giá bán sỉ</label>
+                    <input type="number" name="wholesale_price" class="form-control" value="0" min="0">
+                  </div>
+                  <?php endif; ?>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-4 form-group">
+                    <label>Tồn tối thiểu (cảnh báo)</label>
+                    <input type="number" name="min_stock" class="form-control" value="<?= htmlspecialchars($TS['low_stock_threshold'] ?? 5) ?>" min="0">
+                  </div>
+                  <div class="col-md-4 form-group">
+                    <label>Tồn tối đa</label>
+                    <input type="number" name="max_stock" class="form-control" value="0" min="0">
+                  </div>
+                  <?php if (in_array($TS['industry_preset'] ?? '', array('food','pharmacy','fashion'))): ?>
+                  <div class="col-md-4 form-group">
+                    <label>Cân nặng (kg)</label>
+                    <input type="number" step="0.001" name="weight" class="form-control" value="0" min="0">
+                  </div>
+                  <?php endif; ?>
+                </div>
+
+                <?php if ($feat('enable_batches')): ?>
+                <div class="checkbox">
+                  <label><input type="checkbox" name="has_batches" value="1"> Theo dõi lô hàng &amp; hạn sử dụng cho sản phẩm này</label>
+                </div>
+                <?php endif; ?>
+                <?php if ($feat('enable_variants')): ?>
+                <div class="checkbox">
+                  <label><input type="checkbox" name="has_variants" value="1"> Có nhiều biến thể (size/màu/mẫu)</label>
+                </div>
+                <?php endif; ?>
+
               </div>
               <!-- /.box-body -->
 

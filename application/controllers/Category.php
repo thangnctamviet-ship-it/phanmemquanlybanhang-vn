@@ -106,6 +106,7 @@ class Category extends Admin_Controller
 
 	$create = $this->model_category->create($data);
 	if($create == true) {
+		$this->audit->log('create', 'categories', (int)$this->db->insert_id(), null, $data);
 		$response['success'] = true;
 		$response['messages'] = 'Tạo thành công';
 	}
@@ -150,8 +151,10 @@ class Category extends Admin_Controller
 			'active' => $this->input->post('edit_active'),
 		);
 
+		$old_row = $this->db->get_where('categories', array('id'=>$id))->row_array();
 		$update = $this->model_category->update($data, $id);
 		if($update == true) {
+			$this->audit->log('update', 'categories', (int)$id, $old_row, $data);
 			$response['success'] = true;
 			$response['messages'] = 'Cập nhật thành công';
 		}
@@ -189,8 +192,10 @@ class Category extends Admin_Controller
 
 		$response = array();
 		if($category_id) {
+			$old_row = $this->db->get_where('categories', array('id'=>$category_id))->row_array();
 			$delete = $this->model_category->remove($category_id);
 			if($delete == true) {
+				$this->audit->log('delete', 'categories', (int)$category_id, $old_row, null);
 				$response['success'] = true;
 				$response['messages'] = "Xoá thành công";
 			}

@@ -1,18 +1,49 @@
 <header class="main-header">
-    <!-- Logo -->
-    <a href="<?php echo base_url('') ?>" class="logo">
-      <!-- mini logo for sidebar mini 50x50 pixels -->
-      <span class="logo-mini"><b>Kho</b></span>
-      <!-- logo for regular state and mobile devices -->
-      <span class="logo-lg"><b>Hệ thống quản lý kho</b></span>
+  <a href="<?php echo base_url('') ?>" class="logo">
+    <span class="logo-mini"><b>QL</b></span>
+    <span class="logo-lg"><b>QLBH</b> <small style="font-size:11px;opacity:0.7;font-weight:400;">Pro</small></span>
+  </a>
+  <nav class="navbar navbar-static-top">
+    <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+      <span class="sr-only">Bật/tắt điều hướng</span>
     </a>
-    <!-- Header Navbar: style can be found in header.less -->
-    <nav class="navbar navbar-static-top">
-      <!-- Sidebar toggle button-->
-      <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
-        <span class="sr-only">Bật/tắt điều hướng</span>
-      </a>
 
-    </nav>
-  </header>
-  <!-- Left side column. contains the logo and sidebar -->
+    <div class="navbar-custom-menu">
+      <ul class="nav navbar-nav">
+        <li class="dropdown user user-menu">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="color:#64748b;">
+            <i class="fa fa-user-circle-o" style="font-size:20px;"></i>
+            <span class="hidden-xs" style="margin-left:6px;font-size:13px;">
+              <?php
+                $CI =& get_instance();
+                $uname = $CI->session->userdata('username');
+                echo htmlspecialchars($uname ?: 'Tài khoản');
+              ?>
+            </span>
+            <i class="fa fa-caret-down" style="margin-left:4px;font-size:11px;"></i>
+          </a>
+          <ul class="dropdown-menu" style="min-width:200px;">
+            <li><a href="<?php echo base_url('users/profile/') ?>"><i class="fa fa-user-o"></i> Hồ sơ</a></li>
+            <li><a href="<?php echo base_url('settings/devices') ?>"><i class="fa fa-cogs"></i> Cấu hình hệ thống</a></li>
+            <li><a href="<?php echo base_url('users/setting/') ?>"><i class="fa fa-wrench"></i> Cài đặt cá nhân</a></li>
+            <li><a href="<?php echo base_url('account') ?>"><i class="fa fa-credit-card"></i> Tài khoản &amp; Gói</a></li>
+            <li><a href="<?php echo base_url('profile') ?>"><i class="fa fa-key"></i> Đổi mật khẩu</a></li>
+            <?php
+              $_uid = (int)$this->session->userdata('id');
+              $_uname = strtolower((string)$this->session->userdata('username'));
+              $_perms = isset($user_permission) && is_array($user_permission) ? $user_permission : array();
+              if ($_uid === 1 || $_uname === 'admin' || in_array('user_create', $_perms, true)):
+            ?>
+            <li class="divider"></li>
+            <li><a href="<?php echo base_url('AuditLog') ?>"><i class="fa fa-history"></i> Nhật ký hệ thống</a></li>
+            <li><a href="<?php echo base_url('Trash/index/products') ?>"><i class="fa fa-trash-o"></i> Thùng rác</a></li>
+            <?php endif; ?>
+            <li class="divider"></li>
+            <li><a href="<?php echo base_url('auth/logout') ?>" style="color:#dc2626;"><i class="fa fa-sign-out"></i> Đăng xuất</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+  </nav>
+</header>

@@ -12,7 +12,7 @@ $phone= trim($_POST['phone'] ?? '');
 
 function fail($msg) {
     include __DIR__.'/includes/header.php';
-    echo '<div class="max-w-xl mx-auto px-4 py-12"><div class="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg">'.htmlspecialchars($msg).'</div><p class="mt-4"><a href="register.php" class="text-indigo-600">← Quay lại</a></p></div>';
+    echo '<div class="max-w-xl mx-auto px-4 py-12"><div class="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg">'.htmlspecialchars($msg).'</div><p class="mt-4"><a href="/landing/register.php" class="text-indigo-600">← Quay lại</a></p></div>';
     include __DIR__.'/includes/footer.php';
     exit;
 }
@@ -107,17 +107,42 @@ if (!empty($env['OWNER_EMAIL'])) {
 
 include __DIR__.'/includes/header.php';
 ?>
+<?php
+  $buy_now = !empty($_POST['buy_now']) && $_POST['buy_now'] == '1';
+  $plan_input = preg_replace('/[^a-z_]/', '', $_POST['plan'] ?? 'trial');
+  $plan_labels = [
+    'monthly'    => ['name' => 'Gói tháng',   'price' => '120.000đ'],
+    'semiannual' => ['name' => 'Gói 6 tháng', 'price' => '600.000đ'],
+    'annual'     => ['name' => 'Gói năm',     'price' => '1.100.000đ'],
+  ];
+  $cur_plan = $plan_labels[$plan_input] ?? null;
+  // Khi buy_now → trỏ thẳng vào /license/buy của tenant + auto post plan
+  $checkout_url = $buy_now && $cur_plan ? ($tenant_url . '/license?plan=' . $plan_input) : null;
+?>
 <section class="max-w-xl mx-auto px-4 py-12">
   <div class="bg-emerald-50 border border-emerald-200 p-6 rounded-xl">
     <h1 class="text-2xl font-bold text-emerald-700 mb-2">🎉 Cửa hàng đã sẵn sàng!</h1>
-    <p class="mb-4">Cửa hàng <strong><?= htmlspecialchars($shop) ?></strong> đã được tạo. Bạn đang dùng thử <strong>7 ngày miễn phí</strong>.</p>
+    <?php if ($buy_now && $cur_plan): ?>
+      <p class="mb-4">Cửa hàng <strong><?= htmlspecialchars($shop) ?></strong> đã được tạo. Bạn đã chọn <strong><?= htmlspecialchars($cur_plan['name']) ?></strong> — bước tiếp theo là <strong>quét QR thanh toán</strong>.</p>
+    <?php else: ?>
+      <p class="mb-4">Cửa hàng <strong><?= htmlspecialchars($shop) ?></strong> đã được tạo. Bạn đang dùng thử <strong>7 ngày miễn phí</strong>.</p>
+    <?php endif; ?>
     <div class="bg-white p-4 rounded-lg border space-y-2 text-sm">
       <div><span class="text-slate-500">URL:</span> <a href="<?= htmlspecialchars($tenant_url) ?>" class="text-indigo-600 font-mono"><?= htmlspecialchars($tenant_url) ?></a></div>
       <div><span class="text-slate-500">Email đăng nhập:</span> <code><?= htmlspecialchars($email) ?></code></div>
       <div><span class="text-slate-500">Username:</span> <code>admin</code></div>
       <div><span class="text-slate-500">Mật khẩu:</span> <code><?= htmlspecialchars($pass) ?></code></div>
     </div>
-    <a href="<?= htmlspecialchars($tenant_url) ?>" class="mt-6 inline-block bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700">Đi đến cửa hàng của tôi →</a>
+
+    <?php if ($buy_now && $cur_plan): ?>
+      <a href="<?= htmlspecialchars($checkout_url) ?>" class="mt-6 inline-block bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 font-semibold">
+        💳 Thanh toán <?= htmlspecialchars($cur_plan['price']) ?> ngay →
+      </a>
+      <a href="<?= htmlspecialchars($tenant_url) ?>" class="mt-3 inline-block ml-2 text-slate-600 hover:text-indigo-600 text-sm">Bỏ qua, vào dùng thử →</a>
+      <p class="text-xs text-slate-500 mt-3">Bạn sẽ được chuyển đến trang đăng nhập của cửa hàng. Đăng nhập xong sẽ thấy popup QR thanh toán.</p>
+    <?php else: ?>
+      <a href="<?= htmlspecialchars($tenant_url) ?>" class="mt-6 inline-block bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700">Đi đến cửa hàng của tôi →</a>
+    <?php endif; ?>
   </div>
 </section>
 <?php include __DIR__.'/includes/footer.php'; ?>

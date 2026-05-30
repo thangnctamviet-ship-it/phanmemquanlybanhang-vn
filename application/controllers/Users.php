@@ -66,6 +66,8 @@ class Users extends Admin_Controller
 
 	$create = $this->model_users->create($data, $this->input->post('groups'));
 	if($create == true) {
+		$audit_data = $data; unset($audit_data['password']);
+		$this->audit->log('create', 'users', (int)$this->db->insert_id(), null, $audit_data);
 		$this->session->set_flashdata('success', 'Tạo thành công');
 		redirect('users/', 'refresh');
 	}

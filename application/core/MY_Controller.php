@@ -32,10 +32,14 @@ class MY_Controller extends CI_Controller
 class Admin_Controller extends MY_Controller 
 {
 	var $permission = array();
+	public $tenant_settings = array();
 
 	public function __construct() 
 	{
 		parent::__construct();
+		// Audit log + soft delete helpers — load luôn
+		$this->load->library('audit');
+		$this->load->library('soft_delete');
 
 		$group_data = array();
 		if(empty($this->session->userdata('logged_in'))) {
@@ -50,6 +54,66 @@ class Admin_Controller extends MY_Controller
 			$this->data['user_permission'] = unserialize($group_data['permission']);
 			$this->permission = unserialize($group_data['permission']);
 		}
+
+		// Load tenant settings (industry preset + feature flags)
+		$this->_load_tenant_settings();
+	}
+
+	/** Đọc bảng settings + áp preset mặc định nếu chưa override */
+	protected function _load_tenant_settings()
+	{
+		$s = array();
+		if ($this->db->table_exists('settings')) {
+			foreach ($this->db->query("SELECT `key`,`value` FROM `settings`")->result_array() as $r) {
+				$s[$r['key']] = $r['value'];
+			}
+		}
+		// Defaults
+		$defaults = array(
+			'industry_preset' => 'general',
+			'enable_loyalty' => 1, 'enable_variants' => 1,
+			'enable_batches' => 0, 'enable_combos' => 0,
+			'enable_wholesale' => 0, 'enable_returns' => 1,
+			'enable_multi_unit' => 0, 'enable_promotions' => 0,
+			'enable_employee_shift' => 0,
+			'low_stock_threshold' => 5,
+			'loyalty_points_per_1000' => 1,
+			'print_bill_width' => '80',
+			'print_bill_open_method' => 'popup',
+			'print_auto' => 1,
+		);
+		foreach ($defaults as $k => $v) {
+			if (!isset($s[$k]) || $s[$k] === '') $s[$k] = $v;
+		}
+		// Industry preset → áp dụng nếu user CHƯA tự bật/tắt riêng (chỉ khi keys flags vẫn = default)
+		// Mỗi preset gợi ý 1 bộ flag → KHÔNG ghi đè giá trị user đã chọn (đã có row trong DB)
+		$db_keys = array();
+		if ($this->db->table_exists('settings')) {
+			foreach ($this->db->query("SELECT `key` FROM `settings`")->result_array() as $r) $db_keys[$r['key']] = 1;
+		}
+		$presets = array(
+			'grocery'   => array('enable_batches'=>0,'enable_variants'=>0,'enable_multi_unit'=>1),
+			'fashion'   => array('enable_variants'=>1,'enable_batches'=>0),
+			'cosmetics' => array('enable_batches'=>1,'enable_variants'=>1),
+			'pharmacy'  => array('enable_batches'=>1,'enable_multi_unit'=>1,'enable_wholesale'=>1),
+			'mom_baby'  => array('enable_combos'=>1,'enable_batches'=>1,'enable_loyalty'=>1),
+			'phone'     => array('enable_variants'=>1,'enable_wholesale'=>1),
+			'food'      => array('enable_batches'=>1),
+		);
+		$p = $s['industry_preset'] ?? 'general';
+		if (isset($presets[$p])) {
+			foreach ($presets[$p] as $k => $v) {
+				if (!isset($db_keys[$k])) $s[$k] = $v;  // chỉ áp nếu user chưa override
+			}
+		}
+		$this->tenant_settings = $s;
+		$this->data['tenant_settings'] = $s;
+	}
+
+	/** Helper: kiểm tra feature có bật không */
+	public function feature($key)
+	{
+		return !empty($this->tenant_settings[$key]) && $this->tenant_settings[$key] != '0';
 	}
 
 	public function logged_in()

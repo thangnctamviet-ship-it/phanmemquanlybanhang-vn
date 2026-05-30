@@ -117,10 +117,45 @@ class Products extends Admin_Controller
 		'category_id' => json_encode($this->input->post('category')),
                 'store_id' => $this->input->post('store'),
 		'availability' => $this->input->post('availability'),
+		// Pass arrays cho pivot (model sẽ tách ra)
+		'_brands'     => $this->input->post('brands'),
+		'_categories' => $this->input->post('category'),
+		'_attributes' => $this->input->post('attributes_value_id'),
 	);
 
+	// Trường nâng cao (chỉ thêm nếu cột tồn tại — tương thích DB chưa migrate)
+	foreach (array('barcode','unit','cost_price','wholesale_price','min_stock','max_stock','weight','has_batches','has_variants') as $col) {
+		if ($this->db->field_exists($col, 'products')) {
+			$v = $this->input->post($col);
+			if ($v !== null && $v !== '') $data[$col] = $v;
+		}
+	}
+
+	// Pre-check duplicate SKU/barcode
+	if (!empty($data['sku'])) {
+		$dup = $this->db->get_where('products', array('sku'=>$data['sku'], 'deleted_at'=>null))->row_array();
+		if ($dup) {
+			$this->session->set_flashdata('errors', 'Mã SKU "'.htmlspecialchars($data['sku']).'" đã tồn tại (SP: '.htmlspecialchars($dup['name']).')');
+			redirect('products/add', 'refresh'); return;
+		}
+	}
+	if (!empty($data['barcode'])) {
+		$dup = $this->db->get_where('products', array('barcode'=>$data['barcode'], 'deleted_at'=>null))->row_array();
+		if ($dup) {
+			$this->session->set_flashdata('errors', 'Mã vạch "'.htmlspecialchars($data['barcode']).'" đã tồn tại');
+			redirect('products/add', 'refresh'); return;
+		}
+	}
 	$create = $this->model_products->create($data);
 	if($create == true) {
+		// Audit log: create product
+		$new_id = (int)$this->db->insert_id();
+		if ($new_id <= 0) {
+			$row = $this->db->order_by('id','DESC')->limit(1)->get_where('products', array('name'=>$data['name']))->row_array();
+			$new_id = $row ? (int)$row['id'] : 0;
+		}
+		$audit_data = $data; unset($audit_data['_brands'],$audit_data['_categories'],$audit_data['_attributes']);
+		$this->audit->log('create', 'products', $new_id, null, $audit_data);
 		$this->session->set_flashdata('success', 'Tạo thành công');
 		redirect('products/', 'refresh');
 	}
@@ -221,8 +256,18 @@ class Products extends Admin_Controller
                 'category_id' => json_encode($this->input->post('category')),
                 'store_id' => $this->input->post('store'),
                 'availability' => $this->input->post('availability'),
+                '_brands'     => $this->input->post('brands'),
+                '_categories' => $this->input->post('category'),
+                '_attributes' => $this->input->post('attributes_value_id'),
             );
 
+            // Trường nâng cao
+            foreach (array('barcode','unit','cost_price','wholesale_price','min_stock','max_stock','weight','has_batches','has_variants') as $col) {
+                if ($this->db->field_exists($col, 'products')) {
+                    $v = $this->input->post($col);
+                    if ($v !== null && $v !== '') $data[$col] = $v;
+                }
+            }
 
             if($_FILES['product_image']['size'] > 0) {
                 $upload_image = $this->upload_image();
@@ -231,8 +276,12 @@ class Products extends Admin_Controller
                 $this->model_products->update($upload_image, $product_id);
             }
 
+            // Audit log: capture old data trước khi update
+            $old_row = $this->db->get_where('products', array('id'=>$product_id))->row_array();
             $update = $this->model_products->update($data, $product_id);
             if($update == true) {
+                $audit_new = $data; unset($audit_new['_brands'],$audit_new['_categories'],$audit_new['_attributes']);
+                $this->audit->log('update', 'products', (int)$product_id, $old_row, $audit_new);
                 $this->session->set_flashdata('success', 'Cập nhật thành công');
                 redirect('products/', 'refresh');
             }
@@ -280,8 +329,10 @@ class Products extends Admin_Controller
 
         $response = array();
         if($product_id) {
+            $old_row = $this->db->get_where('products', array('id'=>$product_id))->row_array();
             $delete = $this->model_products->remove($product_id);
             if($delete == true) {
+                $this->audit->log('delete', 'products', (int)$product_id, $old_row, null);
                 $response['success'] = true;
                 $response['messages'] = "Xoá thành công";
             }

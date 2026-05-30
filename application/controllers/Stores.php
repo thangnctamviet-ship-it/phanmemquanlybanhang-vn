@@ -24,6 +24,12 @@ class Stores extends Admin_Controller
 			redirect('dashboard', 'refresh');
 		}
 
+		$current = count($this->model_stores->getStoresData());
+		$max = $this->license ? $this->license->maxBranches() : 999;
+		$this->data['branch_current'] = $current;
+		$this->data['branch_max']     = $max;
+		$this->data['branch_at_limit'] = ($current >= $max);
+
 		$this->render_template('stores/index', $this->data);
 	}
 
@@ -89,7 +95,7 @@ class Stores extends Admin_Controller
 		if ($this->license) {
 			$current = count($this->model_stores->getStoresData());
 			if (!$this->license->canCreateBranch($current)) {
-				echo json_encode(['success'=>false,'messages'=>'Bạn đã đạt giới hạn chi nhánh ('.$this->license->maxBranches().'). Liên hệ admin để thêm chi nhánh (50.000đ/tháng/chi nhánh).']);
+				echo json_encode(['success'=>false,'messages'=>'Bạn đã đạt giới hạn chi nhánh ('.$this->license->maxBranches().'). <a href="#" onclick="openQuickBuy(\'extra_branch\');return false;" style="text-decoration:underline;font-weight:600;">Mua thêm chi nhánh ngay →</a>']);
 				return;
 			}
 		}
@@ -109,6 +115,7 @@ class Stores extends Admin_Controller
 
 	$create = $this->model_stores->create($data);
 	if($create == true) {
+		$this->audit->log('create', 'stores', (int)$this->db->insert_id(), null, $data);
 		$response['success'] = true;
 		$response['messages'] = 'Tạo thành công';
 	}
@@ -152,8 +159,10 @@ class Stores extends Admin_Controller
 			'active' => $this->input->post('edit_active'),
 		);
 
+		$old_row = $this->db->get_where('stores', array('id'=>$id))->row_array();
 		$update = $this->model_stores->update($data, $id);
 		if($update == true) {
+			$this->audit->log('update', 'stores', (int)$id, $old_row, $data);
 			$response['success'] = true;
 			$response['messages'] = 'Cập nhật thành công';
 		}
@@ -193,8 +202,10 @@ class Stores extends Admin_Controller
 
 		$response = array();
 		if($store_id) {
+			$old_row = $this->db->get_where('stores', array('id'=>$store_id))->row_array();
 			$delete = $this->model_stores->remove($store_id);
 			if($delete == true) {
+				$this->audit->log('delete', 'stores', (int)$store_id, $old_row, null);
 				$response['success'] = true;
 				$response['messages'] = "Xoá thành công";
 			}

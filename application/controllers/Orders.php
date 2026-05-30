@@ -111,6 +111,7 @@ class Orders extends Admin_Controller
 	$order_id = $this->model_orders->create();
 
 	if($order_id) {
+		$this->audit->log('create', 'orders', (int)$order_id, null, $this->input->post());
 		$this->session->set_flashdata('success', 'Tạo thành công');
 		redirect('orders/update/'.$order_id, 'refresh');
 	}
@@ -229,8 +230,10 @@ class Orders extends Admin_Controller
 
         $response = array();
         if($order_id) {
+            $old_row = $this->db->get_where('orders', array('id'=>$order_id))->row_array();
             $delete = $this->model_orders->remove($order_id);
             if($delete == true) {
+                $this->audit->log('delete', 'orders', (int)$order_id, $old_row, null);
                 $response['success'] = true;
                 $response['messages'] = "Xoá thành công";
             }

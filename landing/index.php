@@ -62,8 +62,8 @@ include __DIR__.'/includes/header.php';
       <h1 class="text-4xl md:text-5xl font-bold text-slate-900 mb-4">Quản Lý Bán Hàng</h1>
       <p class="text-lg text-slate-600 mb-8">Phần mềm SaaS cho cửa hàng Việt: bán hàng, kho, đơn hàng, chi nhánh và báo cáo trong một hệ thống riêng cho từng cửa hàng.</p>
       <div class="flex flex-wrap gap-3">
-        <a href="register.php" class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700">Dùng thử miễn phí 7 ngày</a>
-        <a href="pricing.php" class="border border-slate-300 text-slate-700 px-6 py-3 rounded-lg font-semibold hover:bg-slate-50">Xem bảng giá</a>
+        <a href="/landing/register.php" class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700">Dùng thử miễn phí 7 ngày</a>
+        <a href="/landing/pricing.php" class="border border-slate-300 text-slate-700 px-6 py-3 rounded-lg font-semibold hover:bg-slate-50">Xem bảng giá</a>
       </div>
     </div>
     <div class="bg-slate-900 text-white rounded-lg p-6 shadow-sm">
@@ -104,20 +104,20 @@ include __DIR__.'/includes/header.php';
         <h3 class="font-semibold text-xl">Gói tháng</h3>
         <div class="text-3xl font-bold text-indigo-600 mt-2">120.000đ</div>
         <p class="text-slate-500 mb-4">1 tháng</p>
-        <a href="register.php?plan=monthly" class="mt-auto inline-block text-center bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded">Đăng ký ngay</a>
+        <a href="/landing/register.php?plan=monthly" class="mt-auto inline-block text-center bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded">Đăng ký ngay</a>
       </div>
       <div class="bg-white border-2 border-indigo-500 rounded-lg p-6 flex flex-col relative">
         <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-indigo-600 text-white text-xs px-3 py-1 rounded-full">Phổ biến</span>
         <h3 class="font-semibold text-xl">Gói 6 tháng</h3>
         <div class="text-3xl font-bold text-indigo-600 mt-2">600.000đ</div>
         <p class="text-emerald-600 mb-4">Tiết kiệm 17%</p>
-        <a href="register.php?plan=semiannual" class="mt-auto inline-block text-center bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded">Đăng ký ngay</a>
+        <a href="/landing/register.php?plan=semiannual" class="mt-auto inline-block text-center bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded">Đăng ký ngay</a>
       </div>
       <div class="bg-white border rounded-lg p-6 flex flex-col">
         <h3 class="font-semibold text-xl">Gói năm</h3>
         <div class="text-3xl font-bold text-indigo-600 mt-2">1.100.000đ</div>
         <p class="text-emerald-600 mb-4">Tiết kiệm 24%</p>
-        <a href="register.php?plan=annual" class="mt-auto inline-block text-center bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded">Đăng ký ngay</a>
+        <a href="/landing/register.php?plan=annual" class="mt-auto inline-block text-center bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded">Đăng ký ngay</a>
       </div>
     </div>
   </div>
