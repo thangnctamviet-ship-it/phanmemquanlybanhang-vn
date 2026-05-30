@@ -28,7 +28,11 @@
             <li><a href="<?php echo base_url('users/setting/') ?>"><i class="fa fa-wrench"></i> Cài đặt cá nhân</a></li>
             <li><a href="<?php echo base_url('account') ?>"><i class="fa fa-credit-card"></i> Tài khoản &amp; Gói</a></li>
             <li><a href="<?php echo base_url('profile') ?>"><i class="fa fa-key"></i> Đổi mật khẩu</a></li>
-            <?php if (isset($this->ion_auth) && $this->ion_auth->is_admin()): ?>
+            <?php
+              $_grp = (int)$this->session->userdata('group_id');
+              $_perms = isset($user_permission) && is_array($user_permission) ? $user_permission : array();
+              if ($_grp === 1 || in_array('user_create', $_perms, true)):
+            ?>
             <li class="divider"></li>
             <li><a href="<?php echo base_url('AuditLog') ?>"><i class="fa fa-history"></i> Nhật ký hệ thống</a></li>
             <?php endif; ?>

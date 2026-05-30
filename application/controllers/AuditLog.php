@@ -5,8 +5,14 @@ class AuditLog extends Admin_Controller {
 
     public function __construct() {
         parent::__construct();
-        // Chỉ admin được xem audit log
-        if (!$this->ion_auth->is_admin()) {
+        if (empty($this->session->userdata('logged_in'))) {
+            redirect('auth', 'refresh');
+        }
+        // Chỉ admin (group_id=1) hoặc có quyền user_create được xem audit log
+        $group_id = (int)$this->session->userdata('group_id');
+        $perms = is_array($this->permission ?? null) ? $this->permission : array();
+        $is_admin = ($group_id === 1) || in_array('user_create', $perms, true);
+        if (!$is_admin) {
             show_error('Bạn không có quyền xem nhật ký hệ thống', 403);
         }
     }
