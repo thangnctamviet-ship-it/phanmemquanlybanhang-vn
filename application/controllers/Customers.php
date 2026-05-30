@@ -50,10 +50,19 @@ class Customers extends Admin_Controller
                 'birthday' => $this->input->post('birthday') ?: null,
                 'note'     => $this->input->post('note'),
             );
-            $id = $this->model_customers->create($data);
-            if ($id) $this->audit->log('create', 'customers', (int)$id, null, $data);
-            $resp['success'] = (bool)$id;
-            $resp['messages'] = $id ? 'Đã thêm khách hàng.' : 'Lỗi.';
+            try {
+                $id = $this->model_customers->create($data);
+                if ($id) $this->audit->log('create', 'customers', (int)$id, null, $data);
+                $resp['success'] = (bool)$id;
+                $resp['messages'] = $id ? 'Đã thêm khách hàng.' : 'Lỗi khi tạo.';
+            } catch (Exception $e) {
+                $msg = $e->getMessage();
+                if (stripos($msg,'Duplicate')!==false && stripos($msg,'phone')!==false) {
+                    $resp['messages'] = 'Số điện thoại này đã tồn tại trong hệ thống.';
+                } else {
+                    $resp['messages'] = 'Lỗi: '.$msg;
+                }
+            }
         } else $resp['messages'] = validation_errors();
         echo json_encode($resp);
     }

@@ -131,7 +131,20 @@ class Products extends Admin_Controller
 		}
 	}
 
-	$create = $this->model_products->create($data);
+	try {
+		$create = $this->model_products->create($data);
+	} catch (Exception $e) {
+		$msg = $e->getMessage();
+		if (stripos($msg,'Duplicate')!==false && stripos($msg,'sku')!==false) {
+			$this->session->set_flashdata('errors', 'Mã SKU đã tồn tại trong hệ thống. Vui lòng nhập mã khác.');
+		} elseif (stripos($msg,'Duplicate')!==false && stripos($msg,'barcode')!==false) {
+			$this->session->set_flashdata('errors', 'Mã vạch đã tồn tại trong hệ thống.');
+		} else {
+			$this->session->set_flashdata('errors', 'Lỗi: '.$msg);
+		}
+		redirect('products/add', 'refresh');
+		return;
+	}
 	if($create == true) {
 		// Audit log: create product
 		$new_id = (int)$this->db->insert_id();
