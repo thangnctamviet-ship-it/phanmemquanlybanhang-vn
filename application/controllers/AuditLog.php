@@ -8,10 +8,11 @@ class AuditLog extends Admin_Controller {
         if (empty($this->session->userdata('logged_in'))) {
             redirect('auth', 'refresh');
         }
-        // Chỉ admin (group_id=1) hoặc có quyền user_create được xem audit log
-        $group_id = (int)$this->session->userdata('group_id');
+        // Chỉ owner/admin: user_id=1 (owner đầu tiên), username='admin', hoặc có perm 'user_create'
+        $uid = (int)$this->session->userdata('id');
+        $uname = strtolower((string)$this->session->userdata('username'));
         $perms = is_array($this->permission ?? null) ? $this->permission : array();
-        $is_admin = ($group_id === 1) || in_array('user_create', $perms, true);
+        $is_admin = ($uid === 1) || ($uname === 'admin') || in_array('user_create', $perms, true);
         if (!$is_admin) {
             show_error('Bạn không có quyền xem nhật ký hệ thống', 403);
         }

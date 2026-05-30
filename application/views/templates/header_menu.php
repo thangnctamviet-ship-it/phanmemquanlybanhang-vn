@@ -29,9 +29,10 @@
             <li><a href="<?php echo base_url('account') ?>"><i class="fa fa-credit-card"></i> Tài khoản &amp; Gói</a></li>
             <li><a href="<?php echo base_url('profile') ?>"><i class="fa fa-key"></i> Đổi mật khẩu</a></li>
             <?php
-              $_grp = (int)$this->session->userdata('group_id');
+              $_uid = (int)$this->session->userdata('id');
+              $_uname = strtolower((string)$this->session->userdata('username'));
               $_perms = isset($user_permission) && is_array($user_permission) ? $user_permission : array();
-              if ($_grp === 1 || in_array('user_create', $_perms, true)):
+              if ($_uid === 1 || $_uname === 'admin' || in_array('user_create', $_perms, true)):
             ?>
             <li class="divider"></li>
             <li><a href="<?php echo base_url('AuditLog') ?>"><i class="fa fa-history"></i> Nhật ký hệ thống</a></li>
