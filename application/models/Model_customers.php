@@ -7,15 +7,15 @@ class Model_customers extends CI_Model
 
     public function getAll($id = null)
     {
-        if ($id) return $this->db->query("SELECT * FROM `customers` WHERE id = ?", array((int)$id))->row_array();
-        return $this->db->query("SELECT * FROM `customers` ORDER BY id DESC")->result_array();
+        if ($id) return $this->db->query("SELECT * FROM `customers` WHERE id = ? AND deleted_at IS NULL", array((int)$id))->row_array();
+        return $this->db->query("SELECT * FROM `customers` WHERE deleted_at IS NULL ORDER BY id DESC")->result_array();
     }
 
     public function findByPhone($phone)
     {
         $phone = trim($phone);
         if (!$phone) return null;
-        return $this->db->query("SELECT * FROM `customers` WHERE phone = ? LIMIT 1", array($phone))->row_array();
+        return $this->db->query("SELECT * FROM `customers` WHERE phone = ? AND deleted_at IS NULL LIMIT 1", array($phone))->row_array();
     }
 
     public function create($data)
@@ -30,7 +30,9 @@ class Model_customers extends CI_Model
 
     public function remove($id)
     {
-        return $this->db->where('id', (int)$id)->delete('customers');
+        // Soft delete: chỉ SET deleted_at, không xoá thật → có thể restore
+        return $this->db->where('id', (int)$id)
+                        ->update('customers', array('deleted_at' => date('Y-m-d H:i:s')));
     }
 
     public function addPoints($id, $delta)

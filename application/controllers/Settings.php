@@ -61,6 +61,8 @@ class Settings extends Admin_Controller
             }
             if ($v !== null) $this->set($k, $v);
         }
+        // Audit log: settings updated
+        $this->audit->log('update', 'settings', 0, null, $this->input->post());
         $this->session->set_flashdata('success', 'Đã lưu cấu hình.');
         redirect('settings/devices');
     }

@@ -115,6 +115,7 @@ class Stores extends Admin_Controller
 
 	$create = $this->model_stores->create($data);
 	if($create == true) {
+		$this->audit->log('create', 'stores', (int)$this->db->insert_id(), null, $data);
 		$response['success'] = true;
 		$response['messages'] = 'Tạo thành công';
 	}
@@ -158,8 +159,10 @@ class Stores extends Admin_Controller
 			'active' => $this->input->post('edit_active'),
 		);
 
+		$old_row = $this->db->get_where('stores', array('id'=>$id))->row_array();
 		$update = $this->model_stores->update($data, $id);
 		if($update == true) {
+			$this->audit->log('update', 'stores', (int)$id, $old_row, $data);
 			$response['success'] = true;
 			$response['messages'] = 'Cập nhật thành công';
 		}
@@ -199,8 +202,10 @@ class Stores extends Admin_Controller
 
 		$response = array();
 		if($store_id) {
+			$old_row = $this->db->get_where('stores', array('id'=>$store_id))->row_array();
 			$delete = $this->model_stores->remove($store_id);
 			if($delete == true) {
+				$this->audit->log('delete', 'stores', (int)$store_id, $old_row, null);
 				$response['success'] = true;
 				$response['messages'] = "Xoá thành công";
 			}

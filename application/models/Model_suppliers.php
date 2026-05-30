@@ -8,9 +8,9 @@ class Model_suppliers extends CI_Model
     public function getAll($id = null)
     {
         if ($id) {
-            return $this->db->query("SELECT * FROM `suppliers` WHERE id = ?", array((int)$id))->row_array();
+            return $this->db->query("SELECT * FROM `suppliers` WHERE id = ? AND deleted_at IS NULL", array((int)$id))->row_array();
         }
-        return $this->db->query("SELECT * FROM `suppliers` ORDER BY id DESC")->result_array();
+        return $this->db->query("SELECT * FROM `suppliers` WHERE deleted_at IS NULL ORDER BY id DESC")->result_array();
     }
 
     public function create($data)
@@ -25,7 +25,8 @@ class Model_suppliers extends CI_Model
 
     public function remove($id)
     {
-        return $this->db->where('id', (int)$id)->delete('suppliers');
+        return $this->db->where('id', (int)$id)
+                        ->update('suppliers', array('deleted_at' => date('Y-m-d H:i:s')));
     }
 
     public function adjustDebt($id, $delta)

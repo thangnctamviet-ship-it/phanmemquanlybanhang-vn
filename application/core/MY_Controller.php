@@ -37,8 +37,9 @@ class Admin_Controller extends MY_Controller
 	public function __construct() 
 	{
 		parent::__construct();
-		// Audit log helper — load luôn (autoload với tên 'audit' có conflict trên 1 số setup)
+		// Audit log + soft delete helpers — load luôn
 		$this->load->library('audit');
+		$this->load->library('soft_delete');
 
 		$group_data = array();
 		if(empty($this->session->userdata('logged_in'))) {

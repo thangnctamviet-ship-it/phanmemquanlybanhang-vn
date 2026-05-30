@@ -109,6 +109,8 @@ class Brands extends Admin_Controller
 
 	$create = $this->model_brands->create($data);
 	if($create == true) {
+		$new_id = (int)$this->db->insert_id();
+		$this->audit->log('create', 'brands', $new_id, null, $data);
 		$response['success'] = true;
 		$response['messages'] = 'Tạo thành công';
 	}
@@ -153,8 +155,10 @@ class Brands extends Admin_Controller
 			'active' => $this->input->post('edit_active'),
 		);
 
+		$old_row = $this->db->get_where('brands', array('id'=>$id))->row_array();
 		$update = $this->model_brands->update($data, $id);
 		if($update == true) {
+			$this->audit->log('update', 'brands', (int)$id, $old_row, $data);
 			$response['success'] = true;
 			$response['messages'] = 'Cập nhật thành công';
 		}
@@ -191,9 +195,11 @@ class Brands extends Admin_Controller
 		$brand_id = $this->input->post('brand_id');
 		$response = array();
 		if($brand_id) {
+			$old_row = $this->db->get_where('brands', array('id'=>$brand_id))->row_array();
 			$delete = $this->model_brands->remove($brand_id);
 
 			if($delete == true) {
+				$this->audit->log('delete', 'brands', (int)$brand_id, $old_row, null);
 				$response['success'] = true;
 				$response['messages'] = "Xoá thành công";
 			}

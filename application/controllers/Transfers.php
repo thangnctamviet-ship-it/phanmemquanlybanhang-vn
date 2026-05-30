@@ -49,15 +49,20 @@ class Transfers extends Admin_Controller
         $raw = file_get_contents('php://input');
         $payload = json_decode($raw, true);
         if (!is_array($payload)) { echo json_encode(['ok'=>false,'error'=>'Dữ liệu không hợp lệ']); return; }
-        $id = $this->model_transfers->create(array(
+        $data = array(
             'from_store_id' => (int)($payload['from_store_id'] ?? 0),
             'to_store_id'   => (int)($payload['to_store_id'] ?? 0),
             'items'         => $payload['items'] ?? array(),
             'note'          => trim($payload['note'] ?? ''),
             'user_id'       => (int)$this->session->userdata('id'),
-        ));
-        if ($id) echo json_encode(['ok'=>true,'id'=>$id,'redirect'=>base_url('transfers/view/'.$id)]);
-        else     echo json_encode(['ok'=>false,'error'=>'Lỗi (kiểm tra cửa hàng nguồn/đích phải khác nhau và có item)']);
+        );
+        $id = $this->model_transfers->create($data);
+        if ($id) {
+            $this->audit->log('create', 'stock_transfers', (int)$id, null, $data);
+            echo json_encode(['ok'=>true,'id'=>$id,'redirect'=>base_url('transfers/view/'.$id)]);
+        } else {
+            echo json_encode(['ok'=>false,'error'=>'Lỗi (kiểm tra cửa hàng nguồn/đích phải khác nhau và có item)']);
+        }
     }
 
     public function view($id)

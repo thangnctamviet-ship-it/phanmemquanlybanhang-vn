@@ -36,6 +36,7 @@
             ?>
             <li class="divider"></li>
             <li><a href="<?php echo base_url('AuditLog') ?>"><i class="fa fa-history"></i> Nhật ký hệ thống</a></li>
+            <li><a href="<?php echo base_url('Trash/index/products') ?>"><i class="fa fa-trash-o"></i> Thùng rác</a></li>
             <?php endif; ?>
             <li class="divider"></li>
             <li><a href="<?php echo base_url('auth/logout') ?>" style="color:#dc2626;"><i class="fa fa-sign-out"></i> Đăng xuất</a></li>

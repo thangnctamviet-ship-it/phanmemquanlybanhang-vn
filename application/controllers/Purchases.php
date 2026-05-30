@@ -56,16 +56,21 @@ class Purchases extends Admin_Controller
         if (!is_array($payload)) {
             echo json_encode(array('ok'=>false,'error'=>'Dữ liệu không hợp lệ')); return;
         }
-        $id = $this->model_purchases->create(array(
+        $data = array(
             'supplier_id' => (int)($payload['supplier_id'] ?? 0),
             'store_id'    => (int)($payload['store_id'] ?? 0),
             'items'       => $payload['items'] ?? array(),
             'paid_amount' => (float)($payload['paid_amount'] ?? 0),
             'note'        => trim($payload['note'] ?? ''),
             'user_id'     => (int)$this->session->userdata('id'),
-        ));
-        if ($id) echo json_encode(array('ok'=>true,'id'=>$id,'redirect'=>base_url('purchases/view/'.$id)));
-        else     echo json_encode(array('ok'=>false,'error'=>'Lỗi tạo phiếu nhập (kiểm tra cửa hàng / item)'));
+        );
+        $id = $this->model_purchases->create($data);
+        if ($id) {
+            $this->audit->log('create', 'purchases', (int)$id, null, $data);
+            echo json_encode(array('ok'=>true,'id'=>$id,'redirect'=>base_url('purchases/view/'.$id)));
+        } else {
+            echo json_encode(array('ok'=>false,'error'=>'Lỗi tạo phiếu nhập (kiểm tra cửa hàng / item)'));
+        }
     }
 
     public function view($id)
