@@ -176,6 +176,8 @@ class Pos extends Admin_Controller
 
         $this->db->insert('orders', $order);
         $order_id = $this->db->insert_id();
+        // Audit log: POS sale
+        $this->audit->log('pos_sale', 'orders', (int)$order_id, null, $order);
 
         // Tìm/tạo khách hàng theo SĐT để liên kết + tích điểm
         $customer_id = 0;

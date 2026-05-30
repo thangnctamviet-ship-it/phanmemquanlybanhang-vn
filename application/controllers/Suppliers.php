@@ -81,7 +81,9 @@ class Suppliers extends Admin_Controller
     public function remove()
     {
         $id = (int)$this->input->post('supplier_id');
+        $old_row = $this->db->get_where('suppliers', array('id'=>$id))->row_array();
         $ok = $this->model_suppliers->remove($id);
+        if ($ok) $this->audit->log('delete', 'suppliers', $id, $old_row, null);
         echo json_encode(array('success' => (bool)$ok, 'messages' => $ok ? 'Đã xóa.' : 'Lỗi xóa.'));
     }
 }

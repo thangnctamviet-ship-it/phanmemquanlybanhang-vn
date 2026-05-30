@@ -28,6 +28,10 @@
             <li><a href="<?php echo base_url('users/setting/') ?>"><i class="fa fa-wrench"></i> Cài đặt cá nhân</a></li>
             <li><a href="<?php echo base_url('account') ?>"><i class="fa fa-credit-card"></i> Tài khoản &amp; Gói</a></li>
             <li><a href="<?php echo base_url('profile') ?>"><i class="fa fa-key"></i> Đổi mật khẩu</a></li>
+            <?php if (isset($this->ion_auth) && $this->ion_auth->is_admin()): ?>
+            <li class="divider"></li>
+            <li><a href="<?php echo base_url('AuditLog') ?>"><i class="fa fa-history"></i> Nhật ký hệ thống</a></li>
+            <?php endif; ?>
             <li class="divider"></li>
             <li><a href="<?php echo base_url('auth/logout') ?>" style="color:#dc2626;"><i class="fa fa-sign-out"></i> Đăng xuất</a></li>
           </ul>

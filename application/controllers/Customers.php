@@ -78,7 +78,9 @@ class Customers extends Admin_Controller
     public function remove()
     {
         $id = (int)$this->input->post('customer_id');
+        $old_row = $this->db->get_where('customers', array('id'=>$id))->row_array();
         $ok = $this->model_customers->remove($id);
+        if ($ok) $this->audit->log('delete', 'customers', $id, $old_row, null);
         echo json_encode(array('success' => (bool)$ok, 'messages' => $ok ? 'Đã xóa.' : 'Lỗi xóa.'));
     }
 
