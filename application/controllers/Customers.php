@@ -42,14 +42,16 @@ class Customers extends Admin_Controller
         $resp = array('success' => false);
         $this->form_validation->set_rules('name', 'Tên KH', 'trim|required');
         if ($this->form_validation->run()) {
-            $id = $this->model_customers->create(array(
+            $data = array(
                 'name'     => $this->input->post('name'),
                 'phone'    => $this->input->post('phone'),
                 'email'    => $this->input->post('email'),
                 'address'  => $this->input->post('address'),
                 'birthday' => $this->input->post('birthday') ?: null,
                 'note'     => $this->input->post('note'),
-            ));
+            );
+            $id = $this->model_customers->create($data);
+            if ($id) $this->audit->log('create', 'customers', (int)$id, null, $data);
             $resp['success'] = (bool)$id;
             $resp['messages'] = $id ? 'Đã thêm khách hàng.' : 'Lỗi.';
         } else $resp['messages'] = validation_errors();
@@ -61,14 +63,17 @@ class Customers extends Admin_Controller
         $resp = array('success' => false);
         $this->form_validation->set_rules('edit_name', 'Tên KH', 'trim|required');
         if ($this->form_validation->run()) {
-            $ok = $this->model_customers->update($id, array(
+            $data = array(
                 'name'     => $this->input->post('edit_name'),
                 'phone'    => $this->input->post('edit_phone'),
                 'email'    => $this->input->post('edit_email'),
                 'address'  => $this->input->post('edit_address'),
                 'birthday' => $this->input->post('edit_birthday') ?: null,
                 'note'     => $this->input->post('edit_note'),
-            ));
+            );
+            $old_row = $this->db->get_where('customers', array('id'=>$id))->row_array();
+            $ok = $this->model_customers->update($id, $data);
+            if ($ok) $this->audit->log('update', 'customers', (int)$id, $old_row, $data);
             $resp['success'] = (bool)$ok;
             $resp['messages'] = $ok ? 'Đã cập nhật.' : 'Lỗi cập nhật.';
         } else $resp['messages'] = validation_errors();

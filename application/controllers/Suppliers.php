@@ -46,15 +46,19 @@ class Suppliers extends Admin_Controller
         $resp = array('success' => false);
         $this->form_validation->set_rules('name', 'Tên NCC', 'trim|required');
         if ($this->form_validation->run()) {
-            $id = $this->model_suppliers->create(array(
+            $data = array(
                 'name'    => $this->input->post('name'),
                 'phone'   => $this->input->post('phone'),
                 'email'   => $this->input->post('email'),
                 'address' => $this->input->post('address'),
                 'note'    => $this->input->post('note'),
                 'active'  => 1,
-            ));
-            if ($id) { $resp['success'] = true; $resp['messages'] = 'Đã thêm NCC.'; }
+            );
+            $id = $this->model_suppliers->create($data);
+            if ($id) {
+                $this->audit->log('create', 'suppliers', (int)$id, null, $data);
+                $resp['success'] = true; $resp['messages'] = 'Đã thêm NCC.';
+            }
             else $resp['messages'] = 'Lỗi khi tạo';
         } else $resp['messages'] = validation_errors();
         echo json_encode($resp);
@@ -65,13 +69,16 @@ class Suppliers extends Admin_Controller
         $resp = array('success' => false);
         $this->form_validation->set_rules('edit_name', 'Tên NCC', 'trim|required');
         if ($this->form_validation->run()) {
-            $ok = $this->model_suppliers->update($id, array(
+            $data = array(
                 'name'    => $this->input->post('edit_name'),
                 'phone'   => $this->input->post('edit_phone'),
                 'email'   => $this->input->post('edit_email'),
                 'address' => $this->input->post('edit_address'),
                 'note'    => $this->input->post('edit_note'),
-            ));
+            );
+            $old_row = $this->db->get_where('suppliers', array('id'=>$id))->row_array();
+            $ok = $this->model_suppliers->update($id, $data);
+            if ($ok) $this->audit->log('update', 'suppliers', (int)$id, $old_row, $data);
             $resp['success'] = (bool)$ok;
             $resp['messages'] = $ok ? 'Đã cập nhật.' : 'Lỗi cập nhật.';
         } else $resp['messages'] = validation_errors();
