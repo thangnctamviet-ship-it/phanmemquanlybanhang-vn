@@ -265,6 +265,33 @@ function provision_tenant_cpanel(array $opts): array {
         $cpanel->createSubdomain($sub, $env['BASE_DOMAIN'], $docroot);
         $created['sub'] = $sub . '.' . $env['BASE_DOMAIN'];
 
+        // Poll cho tới khi LiteSpeed/Apache đã build xong vhost cho subdomain
+        // mới — nếu không, user sẽ thấy trang "/cgi-sys/defaultwebpage.cgi" của
+        // cPanel. Timeout 15s; nếu chưa ready thì vẫn return (sẽ ready trong
+        // vài giây kế tiếp).
+        $tenantUrl = 'https://' . $sub . '.' . $env['BASE_DOMAIN'] . '/index.php';
+        $deadline = microtime(true) + 15.0;
+        while (microtime(true) < $deadline) {
+            $ch = curl_init($tenantUrl);
+            curl_setopt_array($ch, [
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_FOLLOWLOCATION => false,
+                CURLOPT_NOBODY => true,
+                CURLOPT_TIMEOUT => 5,
+                CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_SSL_VERIFYHOST => 0,
+            ]);
+            curl_exec($ch);
+            $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            $effective = (string)curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
+            curl_close($ch);
+            // Ready khi không còn redirect tới cgi-sys/defaultwebpage và status 2xx/3xx ngoài 404.
+            if ($code >= 200 && $code < 400 && strpos($effective, 'cgi-sys') === false) {
+                break;
+            }
+            usleep(800000); // 0.8s giữa các lần thử
+        }
+
         $master = master_pdo();
         $stmt = $master->prepare("UPDATE tenants SET db_name=?, db_user=?, db_pass=?, status='trial' WHERE subdomain=?");
         $stmt->execute([$fullDb, $fullUser, $dbPass, $sub]);
