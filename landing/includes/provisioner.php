@@ -169,15 +169,38 @@ function provision_tenant_cpanel(array $opts): array {
         $cpanel->grantPrivileges($fullUser, $fullDb);
 
         $host = $env['DB_HOST_TENANT'] ?? 'localhost';
+        // Bật MULTI_STATEMENTS để gom các câu thường thành batch lớn, giảm
+        // round-trip MySQL từ ~497 xuống còn vài chục. Khối procedure vẫn được
+        // tách riêng và chạy 1 statement/lần.
         $pdo = new PDO("mysql:host={$host};dbname={$fullDb};charset=utf8mb4", $fullUser, $dbPass, [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::MYSQL_ATTR_MULTI_STATEMENTS => false,
+            PDO::MYSQL_ATTR_MULTI_STATEMENTS => true,
         ]);
 
         $schema = file_get_contents($root . '/stock.sql');
-        foreach (provision_split_sql($schema) as $stmt) {
-            $pdo->exec($stmt);
+        $parts = provision_split_sql($schema);
+        $batch = '';
+        $batchMax = 200000; // ~200 KB / batch
+        $isProc = function ($s) {
+            return (bool)preg_match('/\b(CREATE|DROP)\s+(PROCEDURE|FUNCTION|TRIGGER|EVENT)\b/i', $s);
+        };
+        $flush = function () use (&$batch, $pdo) {
+            if (trim($batch) === '') { $batch = ''; return; }
+            $stmt = $pdo->query($batch);
+            // Phải drain hết result-set của multi-statement, nếu không câu sau sẽ lỗi.
+            if ($stmt) { while ($stmt->nextRowset()) {} }
+            $batch = '';
+        };
+        foreach ($parts as $s) {
+            if ($isProc($s)) {
+                $flush();
+                $pdo->exec($s);
+                continue;
+            }
+            $batch .= $s . ";\n";
+            if (strlen($batch) >= $batchMax) $flush();
         }
+        $flush();
         $pdo->exec('SET AUTOCOMMIT=1');
 
         $pdo->exec('SET FOREIGN_KEY_CHECKS=0');
