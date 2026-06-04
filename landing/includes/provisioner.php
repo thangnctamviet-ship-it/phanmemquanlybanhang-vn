@@ -44,18 +44,44 @@ function provision_split_sql($sql) {
     }
     if (trim($buf) !== '') $stmts[] = $buf;
 
-    // Với các block dùng delimiter mặc định ; → split tiếp theo ";\s*\R".
-    // Khối CREATE/DROP PROCEDURE (đã được tách bằng DELIMITER) giữ nguyên.
+    // Với các block dùng delimiter mặc định ; → split theo ";" cuối câu.
+    // Khối CREATE PROCEDURE...BEGIN...END (đã tách bằng DELIMITER) giữ nguyên
+    // để không cắt nhầm ";" bên trong body.
+    // Dùng tokenizer để không cắt nhầm ";" trong chuỗi 'a;b' hay comment.
     $final = [];
     foreach ($stmts as $s) {
-        if (preg_match('/CREATE\s+(PROCEDURE|FUNCTION|TRIGGER|EVENT)\b/i', $s)
-            || preg_match('/DROP\s+(PROCEDURE|FUNCTION|TRIGGER|EVENT)\b/i', $s)) {
+        if (preg_match('/\b(CREATE)\s+(PROCEDURE|FUNCTION|TRIGGER|EVENT)\b.*?\bBEGIN\b/is', $s)) {
             $final[] = $s;
-        } else {
-            foreach (preg_split('/;\s*\R/', $s) as $part) {
-                if (trim($part) !== '') $final[] = $part;
+            continue;
+        }
+        $buf = '';
+        $inStr = false;
+        $quote = '';
+        $len = strlen($s);
+        for ($i = 0; $i < $len; $i++) {
+            $ch = $s[$i];
+            $buf .= $ch;
+            if ($inStr) {
+                if ($ch === '\\' && $i + 1 < $len) {
+                    $buf .= $s[++$i];
+                } elseif ($ch === $quote) {
+                    $inStr = false;
+                }
+                continue;
+            }
+            if ($ch === "'" || $ch === '"' || $ch === '`') {
+                $inStr = true;
+                $quote = $ch;
+            } elseif ($ch === '-' && $i + 1 < $len && $s[$i + 1] === '-') {
+                // Comment "-- ..." → bỏ tới hết dòng (giữ trong buf để MySQL hiểu).
+                while ($i + 1 < $len && $s[$i + 1] !== "\n") $buf .= $s[++$i];
+            } elseif ($ch === ';') {
+                $stmt = trim(substr($buf, 0, -1));
+                if ($stmt !== '') $final[] = $stmt;
+                $buf = '';
             }
         }
+        if (trim($buf) !== '') $final[] = trim($buf);
     }
 
     return array_values(array_filter(array_map('trim', $final), function ($stmt) {
@@ -251,3 +277,4 @@ function provision_tenant_cpanel(array $opts): array {
         throw $e;
     }
 }
+
