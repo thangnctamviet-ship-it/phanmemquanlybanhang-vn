@@ -156,11 +156,19 @@ class CpanelApi
         }
 
         $ch = curl_init($url);
-        curl_setopt_array($ch, [
+        $opts = [
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_TIMEOUT => 60,
             CURLOPT_HTTPHEADER => ['Authorization: cpanel ' . $this->user . ':' . $this->token],
-        ]);
+        ];
+        // Loopback (127.0.0.1 / localhost) → bỏ verify SSL vì cert của cPanel
+        // được phát hành cho hostname public, không khớp IP loopback.
+        // Gọi loopback an toàn vì traffic không rời máy.
+        if (preg_match('#^(127\.0\.0\.1|localhost|\[::1\])(:\d+)?$#i', $this->host)) {
+            $opts[CURLOPT_SSL_VERIFYPEER] = false;
+            $opts[CURLOPT_SSL_VERIFYHOST] = 0;
+        }
+        curl_setopt_array($ch, $opts);
         $body = curl_exec($ch);
         $errno = curl_errno($ch);
         $error = curl_error($ch);
