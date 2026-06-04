@@ -87,13 +87,15 @@ if (($env['MODE'] ?? 'local') === 'local') {
     $tenant_url = $json['url'] ?? ('http://'.$sub.'.'.($env['LOCAL_BASE_DOMAIN'] ?? 'localhost:8080'));
 }
 
+// Defer việc gửi email tới sau khi đã render xong response để
+// rút ngắn perceived wait cho user (SMTP có thể tốn 5-10s).
 $customer_body = '<p>Xin chào,</p>'
     . '<p>Cửa hàng <strong>'.htmlspecialchars($shop, ENT_QUOTES, 'UTF-8').'</strong> đã được khởi tạo.</p>'
     . '<p>URL: <a href="'.htmlspecialchars($tenant_url, ENT_QUOTES, 'UTF-8').'">'.htmlspecialchars($tenant_url, ENT_QUOTES, 'UTF-8').'</a></p>'
     . '<p>Email đăng nhập: <strong>'.htmlspecialchars($email, ENT_QUOTES, 'UTF-8').'</strong><br>Username: <strong>admin</strong></p>'
     . '<p>Vui lòng đổi mật khẩu sau lần đăng nhập đầu tiên. Nếu quên mật khẩu, liên hệ chủ hệ thống để được reset.</p>';
-send_mail($email, 'Cửa hàng của bạn đã sẵn sàng', $customer_body);
 
+$owner_body = null;
 if (!empty($env['OWNER_EMAIL'])) {
     $owner_body = '<p>Có đăng ký mới:</p>'
         . '<ul>'
@@ -102,8 +104,21 @@ if (!empty($env['OWNER_EMAIL'])) {
         . '<li>Email: '.htmlspecialchars($email, ENT_QUOTES, 'UTF-8').'</li>'
         . '<li>URL: <a href="'.htmlspecialchars($tenant_url, ENT_QUOTES, 'UTF-8').'">'.htmlspecialchars($tenant_url, ENT_QUOTES, 'UTF-8').'</a></li>'
         . '</ul>';
-    send_mail($env['OWNER_EMAIL'], 'Đăng ký tenant mới: '.$sub, $owner_body);
 }
+
+register_shutdown_function(function () use ($email, $customer_body, $env, $owner_body, $sub) {
+    if (function_exists('fastcgi_finish_request')) {
+        @fastcgi_finish_request();
+    } else {
+        // Best-effort flush cho non-FPM SAPI
+        @ob_end_flush(); @flush();
+    }
+    @set_time_limit(60);
+    try { send_mail($email, 'Cửa hàng của bạn đã sẵn sàng', $customer_body); } catch (Throwable $e) {}
+    if ($owner_body && !empty($env['OWNER_EMAIL'])) {
+        try { send_mail($env['OWNER_EMAIL'], 'Đăng ký tenant mới: '.$sub, $owner_body); } catch (Throwable $e) {}
+    }
+});
 
 include __DIR__.'/includes/header.php';
 ?>
