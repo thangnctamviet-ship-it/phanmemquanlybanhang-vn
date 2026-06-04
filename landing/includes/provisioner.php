@@ -269,27 +269,29 @@ function provision_tenant_cpanel(array $opts): array {
         // mới — nếu không, user sẽ thấy trang "/cgi-sys/defaultwebpage.cgi" của
         // cPanel. Timeout 15s; nếu chưa ready thì vẫn return (sẽ ready trong
         // vài giây kế tiếp).
-        $tenantUrl = 'https://' . $sub . '.' . $env['BASE_DOMAIN'] . '/index.php';
-        $deadline = microtime(true) + 15.0;
+        // Dùng HTTP (không SSL) để tránh chờ cert; chỉ cần check không còn
+        // redirect sang /cgi-sys/defaultwebpage.cgi là vhost đã ready.
+        $tenantUrl = 'http://' . $sub . '.' . $env['BASE_DOMAIN'] . '/';
+        $deadline = microtime(true) + 12.0;
         while (microtime(true) < $deadline) {
             $ch = curl_init($tenantUrl);
             curl_setopt_array($ch, [
                 CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_FOLLOWLOCATION => false,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_MAXREDIRS => 3,
                 CURLOPT_NOBODY => true,
-                CURLOPT_TIMEOUT => 5,
+                CURLOPT_TIMEOUT => 4,
+                CURLOPT_CONNECTTIMEOUT => 3,
                 CURLOPT_SSL_VERIFYPEER => false,
                 CURLOPT_SSL_VERIFYHOST => 0,
             ]);
             curl_exec($ch);
-            $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
             $effective = (string)curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
             curl_close($ch);
-            // Ready khi không còn redirect tới cgi-sys/defaultwebpage và status 2xx/3xx ngoài 404.
-            if ($code >= 200 && $code < 400 && strpos($effective, 'cgi-sys') === false) {
+            if ($effective !== '' && strpos($effective, 'cgi-sys') === false) {
                 break;
             }
-            usleep(800000); // 0.8s giữa các lần thử
+            usleep(800000);
         }
 
         $master = master_pdo();
