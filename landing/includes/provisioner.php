@@ -23,8 +23,42 @@ function provision_short_name($base, $max = 23) {
 
 function provision_split_sql($sql) {
     $sql = preg_replace('/^\s*(CREATE\s+DATABASE|DROP\s+DATABASE|USE)\b.*?;\s*$/mi', '', $sql);
-    $parts = preg_split('/;\s*\R/', $sql);
-    return array_values(array_filter(array_map('trim', $parts), function ($stmt) {
+
+    // Tách theo DELIMITER block (giống scripts/run_migrations.php) để không
+    // gửi nhầm "DELIMITER $$" xuống MySQL (vốn chỉ là lệnh của CLI client).
+    $stmts = [];
+    $delim = ';';
+    $buf = '';
+    foreach (preg_split("/\r?\n/", $sql) as $line) {
+        if (preg_match('/^\s*DELIMITER\s+(\S+)/i', $line, $m)) {
+            if (trim($buf) !== '') $stmts[] = $buf;
+            $buf = '';
+            $delim = $m[1];
+            continue;
+        }
+        $buf .= $line . "\n";
+        if ($delim !== ';' && substr(rtrim($line), -strlen($delim)) === $delim) {
+            $stmts[] = substr(rtrim($buf), 0, -strlen($delim));
+            $buf = '';
+        }
+    }
+    if (trim($buf) !== '') $stmts[] = $buf;
+
+    // Với các block dùng delimiter mặc định ; → split tiếp theo ";\s*\R".
+    // Khối CREATE/DROP PROCEDURE (đã được tách bằng DELIMITER) giữ nguyên.
+    $final = [];
+    foreach ($stmts as $s) {
+        if (preg_match('/CREATE\s+(PROCEDURE|FUNCTION|TRIGGER|EVENT)\b/i', $s)
+            || preg_match('/DROP\s+(PROCEDURE|FUNCTION|TRIGGER|EVENT)\b/i', $s)) {
+            $final[] = $s;
+        } else {
+            foreach (preg_split('/;\s*\R/', $s) as $part) {
+                if (trim($part) !== '') $final[] = $part;
+            }
+        }
+    }
+
+    return array_values(array_filter(array_map('trim', $final), function ($stmt) {
         return $stmt !== '' && $stmt !== ';';
     }));
 }
