@@ -60,12 +60,18 @@ $content = (string)($data['content'] ?? $data['description'] ?? '');
 $account = (string)($data['accountNumber'] ?? '');
 
 if ($type !== 'in') {
-    sw_log("Ignore non-in tx $txId type=$type");
+    // Không log để giảm noise cho CK đi (anh chuyển tiền cho người khác).
     sw_reply('ok', 'Ignored (not incoming)');
 }
 if ($amount <= 0) {
-    sw_log("Ignore zero amount tx $txId");
     sw_reply('ok', 'Ignored (zero amount)');
+}
+
+// Chỉ xử lý CK vào đúng tài khoản business. Bỏ qua nếu khác (vd tài khoản
+// cá nhân khác link vào SePay sau này) — tránh log nội dung CK lạ.
+$bizAccount = (string)($env['BANK_ACCOUNT'] ?? '');
+if ($bizAccount !== '' && $account !== '' && $account !== $bizAccount) {
+    sw_reply('ok', 'Ignored (different account)');
 }
 
 // 3) Find matching pending payment
@@ -108,8 +114,10 @@ foreach ($rows as $r) {
 }
 
 if (!$match) {
-    sw_log("No match: amount=$amount content='$content' tx=$txId");
-    sw_reply('ok', 'No matching payment (will be reviewed manually)');
+    // Privacy: KHÔNG log nội dung CK khi không match (có thể là CK cá nhân).
+    // Chỉ log số tiền + tx id để debug; admin tự đối soát tay nếu cần.
+    sw_log("No match: amount=$amount tx=$txId (content not logged for privacy)");
+    sw_reply('ok', 'No matching payment');
 }
 
 // 4) Confirm payment + extend tenant (giống logic admin-panel/payments.php)
