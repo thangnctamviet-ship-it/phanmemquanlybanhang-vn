@@ -55,7 +55,7 @@ class License extends Admin_Controller
                     $env['MASTER_DB_USER'],
                     $env['MASTER_DB_PASS']
                 );
-                $ref = $sub . ' ' . $ref_suffix;
+                $ref = 'QLBH ' . $sub . ' ' . $ref_suffix;
                 $pdo->prepare("INSERT INTO payments (tenant_id, plan, amount, months_added, branches_added, bank_ref, status) VALUES (?,?,?,?,?,?,'pending')")
                     ->execute([
                         $tenant['id'],
@@ -72,7 +72,7 @@ class License extends Admin_Controller
 
         $this->data['plan'] = $plan_save;
         $this->data['info'] = $info;
-        $this->data['ref']  = $ref ?: ($sub . ' ' . $ref_suffix);
+        $this->data['ref']  = $ref ?: ('QLBH ' . $sub . ' ' . $ref_suffix);
         $this->data['bank'] = [
             'name'        => isset($env['BANK_NAME'])    ? $env['BANK_NAME']    : '',
             'account'     => isset($env['BANK_ACCOUNT']) ? $env['BANK_ACCOUNT'] : '',
@@ -114,7 +114,7 @@ class License extends Admin_Controller
         $sub    = $this->license ? $this->license->getSubdomain() : null;
         $tenant = $this->license ? $this->license->getTenant() : null;
         $env    = TenantLicense::loadEnv();
-        $ref    = $sub . ' ' . $ref_suffix;
+        $ref    = 'QLBH ' . $sub . ' ' . $ref_suffix;
         $payment_id = 0;
 
         if ($tenant) {
