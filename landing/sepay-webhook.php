@@ -38,8 +38,12 @@ if ($expected === '') {
     sw_log('Missing SEPAY_WEBHOOK_TOKEN in env');
     sw_reply('error', 'Server not configured', 500);
 }
-$auth = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
-if (stripos($auth, 'Bearer ') === 0) $auth = substr($auth, 7);
+$auth = trim($_SERVER['HTTP_AUTHORIZATION'] ?? '');
+// SePay dùng prefix "Apikey ", các provider khác dùng "Bearer ". Chấp nhận cả 2.
+foreach (['Bearer ', 'Apikey ', 'ApiKey ', 'APIKey '] as $prefix) {
+    if (stripos($auth, $prefix) === 0) { $auth = substr($auth, strlen($prefix)); break; }
+}
+$auth = trim($auth);
 if (!hash_equals($expected, $auth)) {
     sw_log('Auth failed. Got: ' . substr($auth, 0, 12) . '...');
     sw_reply('error', 'Unauthorized', 401);
