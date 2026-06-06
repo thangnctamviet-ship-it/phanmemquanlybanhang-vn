@@ -97,9 +97,13 @@ if ($txId !== '') {
     }
 }
 
-// Normalize content: bỏ dấu, lower, ép space đơn.
-$normContent = mb_strtolower($content, 'UTF-8');
-$normContent = preg_replace('/\s+/', ' ', $normContent);
+// Normalize: lower + bỏ tất cả ký tự không phải [a-z0-9].
+// MB/SePay strip dấu '-', space, dấu chấm → content "QLBH xinchao extra1cn-1th"
+// sẽ bị MB ép thành "QLBHxinchaoextra1cn1th" hoặc các biến thể tương tự.
+$normalize = function ($s) {
+    return preg_replace('/[^a-z0-9]/i', '', mb_strtolower((string)$s, 'UTF-8'));
+};
+$normContent = $normalize($content);
 
 // Tìm tất cả payment pending có cùng amount
 $st = $pdo->prepare("SELECT p.*, t.subdomain, t.owner_email FROM payments p JOIN tenants t ON t.id=p.tenant_id
@@ -109,7 +113,7 @@ $rows = $st->fetchAll(PDO::FETCH_ASSOC);
 
 $match = null;
 foreach ($rows as $r) {
-    $ref = mb_strtolower(preg_replace('/\s+/', ' ', (string)$r['bank_ref']), 'UTF-8');
+    $ref = $normalize($r['bank_ref']);
     if ($ref === '') continue;
     if (strpos($normContent, $ref) !== false) {
         $match = $r;
