@@ -141,13 +141,22 @@ try {
     $months   = (int)$match['months_added'];
     $branches = (int)$match['branches_added'];
     $plan     = (string)$match['plan'];
-    $pdo->prepare("UPDATE tenants
-                   SET expires_at = DATE_ADD(GREATEST(expires_at, NOW()), INTERVAL {$months} MONTH),
-                       paid_branches = paid_branches + ?,
-                       status = 'active',
-                       plan = ?
-                   WHERE id = ?")
-        ->execute([$branches, $plan, $match['tenant_id']]);
+    // Gói extra_branch CHỈ cộng số chi nhánh, không gia hạn license.
+    if ($plan === 'extra_branch') {
+        $pdo->prepare("UPDATE tenants
+                       SET paid_branches = paid_branches + ?,
+                           status = 'active'
+                       WHERE id = ?")
+            ->execute([$branches, $match['tenant_id']]);
+    } else {
+        $pdo->prepare("UPDATE tenants
+                       SET expires_at = DATE_ADD(GREATEST(expires_at, NOW()), INTERVAL {$months} MONTH),
+                           paid_branches = paid_branches + ?,
+                           status = 'active',
+                           plan = ?
+                       WHERE id = ?")
+            ->execute([$branches, $plan, $match['tenant_id']]);
+    }
     $pdo->commit();
 
     sw_log("Confirmed payment #{$match['id']} for {$match['subdomain']} amount={$amount} tx={$txId}");

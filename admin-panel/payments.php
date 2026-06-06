@@ -11,10 +11,19 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
         if ($action==='confirm') {
             $pdo->beginTransaction();
             $pdo->prepare("UPDATE payments SET status='confirmed', confirmed_at=NOW() WHERE id=?")->execute([$id]);
-            $months = (int)$p['months_added'];
+            $months   = (int)$p['months_added'];
             $branches = (int)$p['branches_added'];
-            $pdo->prepare("UPDATE tenants SET expires_at=DATE_ADD(GREATEST(expires_at,NOW()), INTERVAL {$months} MONTH), paid_branches=paid_branches+?, status='active', plan=? WHERE id=?")
-                ->execute([$branches, $p['plan'], $p['tenant_id']]);
+            // Gói extra_branch CHỈ cộng số chi nhánh, không gia hạn license.
+            // (months_added ở extra_branch là thời lượng thuê thêm chi nhánh,
+            // không phải thời gian sử dụng phần mềm.)
+            $isExtra = ($p['plan'] === 'extra_branch');
+            if ($isExtra) {
+                $pdo->prepare("UPDATE tenants SET paid_branches=paid_branches+?, status='active' WHERE id=?")
+                    ->execute([$branches, $p['tenant_id']]);
+            } else {
+                $pdo->prepare("UPDATE tenants SET expires_at=DATE_ADD(GREATEST(expires_at,NOW()), INTERVAL {$months} MONTH), paid_branches=paid_branches+?, status='active', plan=? WHERE id=?")
+                    ->execute([$branches, $p['plan'], $p['tenant_id']]);
+            }
             $pdo->commit();
             $msg = "Đã xác nhận thanh toán #$id";
             $stmt = $pdo->prepare("SELECT expires_at, paid_branches FROM tenants WHERE id=?");
