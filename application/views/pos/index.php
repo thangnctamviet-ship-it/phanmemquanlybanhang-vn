@@ -56,7 +56,10 @@
   .cart-item .qty-ctrl { display: flex; align-items: center; gap: 4px; }
   .cart-item .qty-ctrl button { width: 26px; height: 26px; border: 1px solid #cbd5e1; background: #fff; border-radius: 6px; cursor: pointer; font-weight: 700; }
   .cart-item .qty-ctrl button:hover { background: #f1f5f9; }
-  .cart-item .qty-ctrl input { width: 38px; text-align: center; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px; font-size: 13px; }
+  .cart-item .qty-ctrl input { width: 54px; text-align: center; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px; font-size: 13px; -moz-appearance: number-input; }
+  /* Hiện spinner mũi tên tăng/giảm của ô số trên Chrome/Safari */
+  .cart-item .qty-ctrl input::-webkit-outer-spin-button,
+  .cart-item .qty-ctrl input::-webkit-inner-spin-button { -webkit-appearance: inner-spin-button; opacity: 1; height: 24px; }
   .cart-item .amt { font-weight: 700; min-width: 80px; text-align: right; font-size: 13px; }
   .cart-item .rm { color: #ef4444; cursor: pointer; padding: 4px; }
 
@@ -294,12 +297,31 @@
     }
     renderCart();
   });
+  // Cập nhật ngay khi gõ tay hoặc bấm mũi tên spinner (input event),
+  // KHÔNG render lại toàn giỏ để giữ con trỏ/focus trong ô đang gõ.
+  $cartBody.addEventListener('input', function(e){
+    var t = e.target.closest('[data-act="set"]');
+    if (!t) return;
+    var idx = parseInt(t.getAttribute('data-idx'),10);
+    if (isNaN(idx) || !cart[idx]) return;
+    var v = parseInt(t.value,10);
+    if (isNaN(v)) return; // cho phép ô tạm trống khi đang gõ
+    if (v > cart[idx].stock) { v = cart[idx].stock; t.value = v; showToast('Tồn tối đa: ' + cart[idx].stock, true); }
+    if (v < 1) v = 1;
+    cart[idx].qty = v;
+    // chỉ cập nhật thành tiền dòng + tổng
+    var row = t.closest('.cart-item');
+    if (row) { var amt = row.querySelector('.amt'); if (amt) amt.textContent = fmt(cart[idx].qty * cart[idx].price); }
+    updateTotals();
+  });
+  // Khi rời ô (blur): chuẩn hoá giá trị (ô trống → 1) và render lại cho gọn.
   $cartBody.addEventListener('change', function(e){
     var t = e.target.closest('[data-act="set"]');
     if (!t) return;
     var idx = parseInt(t.getAttribute('data-idx'),10);
+    if (isNaN(idx) || !cart[idx]) return;
     var v = parseInt(t.value,10) || 1;
-    if (v > cart[idx].stock) { v = cart[idx].stock; showToast('Tồn tối đa: ' + cart[idx].stock, true); }
+    if (v > cart[idx].stock) v = cart[idx].stock;
     if (v < 1) v = 1;
     cart[idx].qty = v;
     renderCart();
