@@ -16,6 +16,64 @@ class Customers extends Admin_Controller
         $this->render_template('customers/index', $this->data);
     }
 
+    /* ============ NHẬP HÀNG LOẠT TỪ EXCEL ============ */
+
+    public function import()
+    {
+        $this->render_template('customers/import', $this->data);
+    }
+
+    public function importTemplate()
+    {
+        $cols = array('Tên khách hàng *', 'Số điện thoại', 'Email', 'Địa chỉ', 'Ngày sinh (YYYY-MM-DD)', 'Ghi chú');
+        $samples = array(
+            array('Nguyễn Văn A','0901234567','a@gmail.com','12 Lê Lợi, Q1','1990-05-20','Khách VIP'),
+            array('Trần Thị B','0987654321','','45 Trần Hưng Đạo','',''),
+        );
+        header('Content-Type: application/vnd.ms-excel; charset=utf-8');
+        header('Content-Disposition: attachment; filename="mau-nhap-khach-hang.xls"');
+        echo "\xEF\xBB\xBF";
+        $h = function($s){ return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); };
+        echo '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"></head><body>';
+        echo '<table border="1" cellspacing="0" cellpadding="4"><tr style="background:#dbeafe;font-weight:bold;">';
+        foreach ($cols as $c) echo '<td>'.$h($c).'</td>';
+        echo '</tr>';
+        foreach ($samples as $row){ echo '<tr>'; foreach ($row as $cell) echo '<td>'.$h($cell).'</td>'; echo '</tr>'; }
+        echo '</table><p style="color:#64748b;font-size:12px;">* = bắt buộc. Xóa 2 dòng ví dụ trước khi nhập thật.</p></body></html>';
+    }
+
+    public function importBulk()
+    {
+        $raw = file_get_contents('php://input');
+        $payload = json_decode($raw, true);
+        if (!is_array($payload) || empty($payload['rows'])) { echo json_encode(array('ok'=>false,'error'=>'Không có dữ liệu')); return; }
+        $rows = $payload['rows'];
+        if (count($rows) > 5000) { echo json_encode(array('ok'=>false,'error'=>'Tối đa 5000 dòng mỗi lần.')); return; }
+        $added=0; $skipped=0; $errors=array(); $seen=array();
+        foreach ($rows as $i=>$r) {
+            $line=$i+2;
+            $name=trim((string)($r['name']??''));
+            $phone=trim((string)($r['phone']??''));
+            if ($name==='') { $errors[]="Dòng $line: thiếu Tên"; continue; }
+            if ($phone!=='') {
+                if (isset($seen[$phone])) { $skipped++; continue; }
+                $seen[$phone]=true;
+                $dup=$this->db->get_where('customers', array('phone'=>$phone,'deleted_at'=>null))->row_array();
+                if ($dup) { $skipped++; continue; }
+            }
+            $data=array(
+                'name'=>$name,'phone'=>($phone?:null),
+                'email'=>trim((string)($r['email']??''))?:null,
+                'address'=>trim((string)($r['address']??''))?:null,
+                'birthday'=>trim((string)($r['birthday']??''))?:null,
+                'note'=>trim((string)($r['note']??''))?:null,
+            );
+            if ($this->model_customers->create($data)) $added++;
+            else $errors[]="Dòng $line: lỗi khi lưu";
+        }
+        echo json_encode(array('ok'=>true,'added'=>$added,'skipped'=>$skipped,'errors'=>$errors));
+    }
+
     public function fetchData()
     {
         $result = array('data' => array());

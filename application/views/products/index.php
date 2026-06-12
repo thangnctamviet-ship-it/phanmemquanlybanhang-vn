@@ -36,6 +36,7 @@
 
         <?php if(in_array('createProduct', $user_permission)): ?>
           <a href="<?php echo base_url('products/create') ?>" class="btn btn-primary">Thêm sản phẩm</a>
+          <a href="<?php echo base_url('products/import') ?>" class="btn btn-success"><i class="fa fa-file-excel-o"></i> Nhập từ Excel</a>
           <br /> <br />
         <?php endif; ?>
 

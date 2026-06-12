@@ -10,6 +10,7 @@
   <section class="content">
     <div id="messages"></div>
     <button class="btn btn-primary" data-toggle="modal" data-target="#addModal"><i class="fa fa-plus"></i> Thêm khách hàng</button>
+    <a href="<?php echo base_url('customers/import') ?>" class="btn btn-success"><i class="fa fa-file-excel-o"></i> Nhập từ Excel</a>
     <br><br>
     <div class="box">
       <div class="box-header"><h3 class="box-title">Danh sách khách hàng</h3></div>
