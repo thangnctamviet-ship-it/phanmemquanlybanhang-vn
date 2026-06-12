@@ -53,6 +53,11 @@ class Model_orders extends CI_Model
     		'paid_status' => 2,
     		'user_id' => $user_id
     	);
+		// Nguồn tiền: cash=1, bank(chuyển khoản)=2
+		if ($this->db->field_exists('cash_account_id', 'orders')) {
+			$pm = $this->input->post('payment_method');
+			$data['cash_account_id'] = ($pm === 'bank') ? 2 : 1;
+		}
 
 		$insert = $this->db->insert('orders', $data);
 		$order_id = $this->db->insert_id();
@@ -113,6 +118,11 @@ class Model_orders extends CI_Model
 	    		'paid_status' => $this->input->post('paid_status'),
 	    		'user_id' => $user_id
 	    	);
+			// Nguồn tiền: cash=1, bank(chuyển khoản)=2
+			if ($this->db->field_exists('cash_account_id', 'orders') && $this->input->post('payment_method') !== null) {
+				$pm = $this->input->post('payment_method');
+				$data['cash_account_id'] = ($pm === 'bank') ? 2 : 1;
+			}
 
 			$this->db->where('id', $id);
 			$update = $this->db->update('orders', $data);

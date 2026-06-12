@@ -7,8 +7,10 @@ $tabs = array(
   'top_products'=> array('Top sản phẩm', 'fa-star'),
   'by_employee' => array('Theo nhân viên', 'fa-user'),
   'by_store'    => array('Theo cửa hàng', 'fa-building-o'),
+  'by_payment'  => array('Nguồn tiền', 'fa-money'),
   'slow_moving' => array('Tồn lâu', 'fa-hourglass-end'),
   'inventory'   => array('Giá trị tồn kho', 'fa-cubes'),
+  's1hkd'       => array('Sổ S1-HKD (thuế)', 'fa-file-text-o'),
 );
 ?>
 <div class="content-wrapper">
@@ -185,6 +187,72 @@ $tabs = array(
               <?php endforeach; endif; ?>
             </tbody>
           </table>
+        </div>
+      </div>
+
+    <?php elseif ($tab === 'by_payment'): ?>
+      <!-- ========== BY PAYMENT METHOD (nguồn tiền) ========== -->
+      <div class="box">
+        <div class="box-header with-border">
+          <h3 class="box-title">Doanh thu theo nguồn tiền</h3>
+          <div class="box-tools"><a href="<?= base_url('reports/exportCsv/by_payment'.$qs) ?>" class="btn btn-default btn-sm"><i class="fa fa-file-excel-o"></i> Export CSV</a></div>
+        </div>
+        <div class="box-body no-padding">
+          <table class="table table-striped">
+            <thead><tr><th>Nguồn tiền</th><th style="text-align:right;">Số đơn</th><th style="text-align:right;">Doanh thu</th></tr></thead>
+            <tbody>
+              <?php if (empty($by_payment)): ?>
+                <tr><td colspan="3" class="text-center text-muted" style="padding:20px;">Chưa có dữ liệu.</td></tr>
+              <?php else:
+                $pm_total = 0; foreach ($by_payment as $pm) { $pm_total += (float)$pm['revenue']; }
+                foreach ($by_payment as $pm):
+                  $icon = $pm['method']==='Tiền mặt' ? '💵' : ($pm['method']==='Chuyển khoản' ? '🏦' : ($pm['method']==='Ví điện tử' ? '📱' : '❓'));
+              ?>
+                <tr>
+                  <td><strong><?= $icon ?> <?= htmlspecialchars($pm['method']) ?></strong></td>
+                  <td style="text-align:right;"><?= $num($pm['order_count']) ?></td>
+                  <td style="text-align:right;color:#059669;font-weight:600;"><?= $fmt($pm['revenue']) ?></td>
+                </tr>
+              <?php endforeach; ?>
+                <tr style="background:#f8fafc;font-weight:700;">
+                  <td>Tổng cộng</td>
+                  <td style="text-align:right;"></td>
+                  <td style="text-align:right;color:#059669;"><?= $fmt($pm_total) ?></td>
+                </tr>
+              <?php endif; ?>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    <?php elseif ($tab === 's1hkd'): ?>
+      <!-- ========== SỔ S1-HKD (thuế) ========== -->
+      <div class="box">
+        <div class="box-header with-border">
+          <h3 class="box-title"><i class="fa fa-file-text-o"></i> Sổ chi tiết doanh thu S1-HKD (Thông tư 88/2021/TT-BTC)</h3>
+        </div>
+        <div class="box-body">
+          <p class="text-muted">Xuất sổ S1-HKD để nộp cơ quan thuế. Doanh thu được gộp theo ngày, ghi vào cột <strong>Phân phối, cung cấp hàng hóa</strong>.</p>
+          <form method="get" action="<?= base_url('reports/exportS1HKD') ?>" class="form-inline" target="_blank" style="margin-top:12px;">
+            <div class="form-group" style="margin-right:10px;">
+              <label>Từ ngày &nbsp;</label>
+              <input type="date" name="from" value="<?= htmlspecialchars($from) ?>" class="form-control">
+            </div>
+            <div class="form-group" style="margin-right:10px;">
+              <label>Đến ngày &nbsp;</label>
+              <input type="date" name="to" value="<?= htmlspecialchars($to) ?>" class="form-control">
+            </div>
+            <div class="form-group" style="margin-right:10px;">
+              <label>Cửa hàng &nbsp;</label>
+              <select name="store_id" class="form-control">
+                <option value="0">Gộp tất cả</option>
+                <?php foreach (($store_list ?? array()) as $st): ?>
+                  <option value="<?= (int)$st['id'] ?>"><?= htmlspecialchars($st['name']) ?></option>
+                <?php endforeach; ?>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-success"><i class="fa fa-download"></i> Xuất sổ S1-HKD (Excel)</button>
+          </form>
         </div>
       </div>
 

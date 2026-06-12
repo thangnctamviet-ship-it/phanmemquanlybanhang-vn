@@ -159,4 +159,56 @@ class Model_reports2 extends CI_Model
              ORDER BY value DESC"
         )->result_array();
     }
+
+    /** Doanh thu tách theo nguồn tiền (tiền mặt / chuyển khoản / khác). */
+    public function byPaymentMethod($from, $to)
+    {
+        list($f, $t) = $this->range($from, $to);
+        if (!$this->db->field_exists('cash_account_id', 'orders')) {
+            return array();
+        }
+        $sql = "SELECT
+                    CASE
+                        WHEN ca.type = 'bank' THEN 'Chuyển khoản'
+                        WHEN ca.type = 'ewallet' THEN 'Ví điện tử'
+                        WHEN ca.type = 'cash' OR o.cash_account_id = 1 THEN 'Tiền mặt'
+                        WHEN o.cash_account_id = 0 OR o.cash_account_id IS NULL THEN 'Chưa phân loại'
+                        ELSE 'Khác'
+                    END AS method,
+                    COUNT(*) AS order_count,
+                    COALESCE(SUM(CAST(o.net_amount AS DECIMAL(15,2))),0) AS revenue
+                FROM `orders` o
+                LEFT JOIN `cash_accounts` ca ON ca.id = o.cash_account_id
+                WHERE CAST(o.date_time AS UNSIGNED) BETWEEN ? AND ? AND o.paid_status = 1
+                GROUP BY method
+                ORDER BY revenue DESC";
+        return $this->db->query($sql, array($f, $t))->result_array();
+    }
+
+    /**
+     * Dữ liệu cho sổ S1-HKD (TT88/2021), gộp theo ngày.
+     * Mỗi dòng = 1 ngày có phát sinh doanh thu.
+     * $store_id = 0 => gộp tất cả cửa hàng.
+     */
+    public function s1hkdDaily($from, $to, $store_id = 0)
+    {
+        $f = strtotime($from . ' 00:00:00');
+        $t = strtotime($to   . ' 23:59:59');
+        $where = "CAST(date_time AS UNSIGNED) BETWEEN ? AND ? AND paid_status = 1";
+        $params = array($f, $t);
+        if ($store_id > 0 && $this->db->field_exists('store_id', 'orders')) {
+            $where .= " AND store_id = ?";
+            $params[] = $store_id;
+        }
+        // Gộp theo ngày dương lịch (date_time là unix timestamp lưu dạng chuỗi).
+        $sql = "SELECT
+                    DATE(FROM_UNIXTIME(CAST(date_time AS UNSIGNED))) AS sale_date,
+                    COUNT(*) AS order_count,
+                    COALESCE(SUM(CAST(net_amount AS DECIMAL(15,2))),0) AS revenue
+                FROM `orders`
+                WHERE $where
+                GROUP BY sale_date
+                ORDER BY sale_date ASC";
+        return $this->db->query($sql, $params)->result_array();
+    }
 }

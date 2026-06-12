@@ -155,6 +155,15 @@
                       <input type="hidden" class="form-control" id="net_amount_value" name="net_amount_value" autocomplete="off">
                     </div>
                   </div>
+                  <div class="form-group">
+                    <label for="payment_method" class="col-sm-5 control-label">Nguồn tiền</label>
+                    <div class="col-sm-7">
+                      <select class="form-control" id="payment_method" name="payment_method">
+                        <option value="cash">💵 Tiền mặt</option>
+                        <option value="bank">🏦 Chuyển khoản</option>
+                      </select>
+                    </div>
+                  </div>
 
                 </div>
               </div>

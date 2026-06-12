@@ -65,6 +65,9 @@
   .cart-foot .row.total { font-size: 18px; font-weight: 700; color: #059669; margin: 8px 0; padding-top: 8px; border-top: 1px dashed #cbd5e1; }
   .cart-foot input[type="number"], .cart-foot input[type="text"] { padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 6px; width: 110px; text-align: right; font-size: 13px; }
   .cart-foot input.cust { width: 100%; text-align: left; margin-bottom: 6px; }
+  .pay-method { display: inline-flex; gap: 6px; }
+  .pm-btn { padding: 5px 10px; border: 1px solid #cbd5e1; background: #fff; border-radius: 8px; font-size: 12px; cursor: pointer; color: #475569; }
+  .pm-btn.active { background: #059669; color: #fff; border-color: #059669; font-weight: 600; }
   .btn-pay { width: 100%; padding: 14px; background: #059669; color: #fff; border: none; border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 8px; }
   .btn-pay:hover { background: #047857; }
   .btn-pay:disabled { background: #94a3b8; cursor: not-allowed; }
@@ -134,6 +137,13 @@
       <div class="row"><span>Tạm tính:</span> <span id="grossLabel">0đ</span></div>
       <div class="row"><span>Giảm giá:</span> <input type="number" id="discountInput" value="0" min="0"></div>
       <div class="row total"><span>TỔNG:</span> <span id="netLabel">0đ</span></div>
+      <div class="row" style="align-items:center;">
+        <span>Nguồn tiền:</span>
+        <span class="pay-method">
+          <button type="button" class="pm-btn active" data-method="cash">💵 Tiền mặt</button>
+          <button type="button" class="pm-btn" data-method="bank">🏦 Chuyển khoản</button>
+        </span>
+      </div>
       <div class="row"><span>Tiền khách trả:</span> <input type="number" id="paidInput" value="0" min="0"></div>
       <div class="row"><span>Tiền thừa:</span> <span id="changeLabel">0đ</span></div>
       <button class="btn-pay" id="payBtn">F9 · Thanh toán &amp; In bill</button>
@@ -346,6 +356,16 @@
     $search.focus();
   });
 
+  // Nguồn tiền (tiền mặt / chuyển khoản)
+  var payMethod = 'cash';
+  Array.prototype.forEach.call(document.querySelectorAll('.pm-btn'), function(b){
+    b.addEventListener('click', function(){
+      payMethod = b.getAttribute('data-method');
+      Array.prototype.forEach.call(document.querySelectorAll('.pm-btn'), function(x){ x.classList.remove('active'); });
+      b.classList.add('active');
+    });
+  });
+
   // Pay
   document.getElementById('payBtn').addEventListener('click', checkout);
 
@@ -360,6 +380,7 @@
       customer_name: document.getElementById('custName').value.trim(),
       customer_phone: document.getElementById('custPhone').value.trim(),
       store_id: parseInt($store.value, 10) || 0,
+      payment_method: payMethod,
     };
     var btn = document.getElementById('payBtn');
     btn.disabled = true; btn.textContent = 'Đang xử lý...';

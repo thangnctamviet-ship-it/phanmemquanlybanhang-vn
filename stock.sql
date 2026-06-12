@@ -928,7 +928,8 @@ INSERT IGNORE INTO `customer_groups` (`id`, `name`, `discount_percent`) VALUES
   (3, 'VIP', 5);
 
 INSERT IGNORE INTO `cash_accounts` (`id`, `name`, `type`, `balance`) VALUES
-  (1, 'Tiền mặt', 'cash', 0);
+  (1, 'Tiền mặt', 'cash', 0),
+  (2, 'Chuyển khoản', 'bank', 0);
 -- Migration 003: Type fix + Index + Charset unify
 -- Fix nợ kỹ thuật từ codebase 2018: VARCHAR(255) cho số/timestamp, thiếu index, utf8 vs utf8mb4
 -- Idempotent: check trước khi alter

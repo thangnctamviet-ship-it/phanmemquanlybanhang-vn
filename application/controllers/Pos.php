@@ -130,6 +130,9 @@ class Pos extends Admin_Controller
         $customer_name = isset($payload['customer_name']) ? trim($payload['customer_name']) : '';
         $customer_phone = isset($payload['customer_phone']) ? trim($payload['customer_phone']) : '';
         $store_id = isset($payload['store_id']) ? (int)$payload['store_id'] : 0;
+        // Nguồn tiền: cash=1, bank(chuyển khoản)=2 (theo seed cash_accounts)
+        $payment_method = isset($payload['payment_method']) ? $payload['payment_method'] : 'cash';
+        $cash_account_id = ($payment_method === 'bank') ? 2 : 1;
 
         // Tính tổng
         $gross = 0;
@@ -173,6 +176,7 @@ class Pos extends Admin_Controller
         if ($this->db->field_exists('store_id', 'orders'))     $order['store_id']     = $store_id;
         if ($this->db->field_exists('paid_amount', 'orders'))  $order['paid_amount']  = $paid_amount;
         if ($this->db->field_exists('debt_amount', 'orders'))  $order['debt_amount']  = max(0, $net - $paid_amount);
+        if ($this->db->field_exists('cash_account_id', 'orders')) $order['cash_account_id'] = $cash_account_id;
 
         $this->db->insert('orders', $order);
         $order_id = $this->db->insert_id();
