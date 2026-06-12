@@ -144,7 +144,7 @@ class Products extends Admin_Controller
 	{
 		$name = trim($name);
 		if ($name === '') return 0;
-		$table = $kind === 'category' ? 'category' : 'brands';
+		$table = $kind === 'category' ? 'categories' : 'brands';
 		if (!$this->db->table_exists($table)) return 0;
 		$row = $this->db->get_where($table, array('name'=>$name))->row_array();
 		if ($row) return (int)$row['id'];
