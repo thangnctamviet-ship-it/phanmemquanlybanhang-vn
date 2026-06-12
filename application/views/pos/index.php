@@ -144,7 +144,8 @@
           <button type="button" class="pm-btn" data-method="bank">🏦 Chuyển khoản</button>
         </span>
       </div>
-      <div class="row"><span>Tiền khách trả:</span> <input type="number" id="paidInput" value="0" min="0"></div>
+      <div class="row"><span>Tiền khách trả:</span> <input type="number" id="paidInput" value="0" min="0" placeholder="Để trống = trả đủ"></div>
+      <div class="row"><span style="font-size:11px;color:#94a3b8;">(Để 0 nếu khách trả đủ. Chỉ nhập khi bán nợ.)</span></div>
       <div class="row"><span>Tiền thừa:</span> <span id="changeLabel">0đ</span></div>
       <button class="btn-pay" id="payBtn">F9 · Thanh toán &amp; In bill</button>
       <button class="btn-clear" id="cancelBtn">ESC · Hủy giỏ hàng</button>

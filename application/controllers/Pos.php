@@ -126,7 +126,10 @@ class Pos extends Admin_Controller
         $user_id = $this->session->userdata('id');
         $items = $payload['items'];
         $discount = isset($payload['discount']) ? (float)$payload['discount'] : 0;
-        $paid_amount = isset($payload['paid_amount']) ? (float)$payload['paid_amount'] : 0;
+        // POS bán lẻ: bán xong là thu tiền ngay. Nếu nhân viên không nhập
+        // "tiền khách trả" (0/trống) → mặc định khách trả đủ. Chỉ khi nhập
+        // số dương NHỎ HƠN tổng tiền mới tính là bán nợ (ghi công nợ).
+        $paid_raw = isset($payload['paid_amount']) ? (float)$payload['paid_amount'] : 0;
         $customer_name = isset($payload['customer_name']) ? trim($payload['customer_name']) : '';
         $customer_phone = isset($payload['customer_phone']) ? trim($payload['customer_phone']) : '';
         $store_id = isset($payload['store_id']) ? (int)$payload['store_id'] : 0;
@@ -151,6 +154,9 @@ class Pos extends Admin_Controller
             return;
         }
         $net = max(0, $gross - $discount);
+        // paid_raw <= 0 → coi như trả đủ (bán lẻ thu tiền ngay).
+        // paid_raw > 0 nhưng < net → bán nợ, ghi đúng số đã trả.
+        $paid_amount = ($paid_raw <= 0) ? $net : $paid_raw;
         $paid_status = ($paid_amount >= $net) ? 1 : 2;
 
         // Bill no
