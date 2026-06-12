@@ -45,27 +45,21 @@ class Products extends Admin_Controller
 	public function importTemplate()
 	{
 		if (!in_array('createProduct', $this->permission)) { redirect('dashboard','refresh'); }
+		// mỗi cột: [nhãn, bắt buộc?]
 		$cols = array(
-			'Tên sản phẩm *', 'SKU / Mã hàng *', 'Giá bán *', 'Số lượng tồn *',
-			'Mã vạch (barcode)', 'Đơn vị tính', 'Giá vốn', 'Giá sỉ',
-			'Danh mục', 'Thương hiệu', 'Tồn tối thiểu', 'Mô tả'
+			array('Tên sản phẩm *', true), array('SKU / Mã hàng *', true),
+			array('Giá bán *', true), array('Số lượng tồn *', true),
+			array('Mã vạch (barcode)', false), array('Đơn vị tính', false),
+			array('Giá vốn', false), array('Giá sỉ', false),
+			array('Danh mục', false), array('Thương hiệu', false),
+			array('Tồn tối thiểu', false), array('Mô tả', false)
 		);
 		$samples = array(
 			array('Cà phê sữa lon','CF001','12000','100','8930001','Lon','8000','10000','Đồ uống','Highlands','10','Cà phê sữa đá đóng lon'),
 			array('Bánh mì ngọt','BM002','15000','50','8930002','Cái','9000','13000','Thực phẩm','ABC Bakery','5',''),
 		);
-		header('Content-Type: application/vnd.ms-excel; charset=utf-8');
-		header('Content-Disposition: attachment; filename="mau-nhap-san-pham.xls"');
-		echo "\xEF\xBB\xBF";
-		$h = function($s){ return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); };
-		echo '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"></head><body>';
-		echo '<table border="1" cellspacing="0" cellpadding="4"><tr style="background:#dbeafe;font-weight:bold;">';
-		foreach ($cols as $c) echo '<td>'.$h($c).'</td>';
-		echo '</tr>';
-		foreach ($samples as $row){ echo '<tr>'; foreach ($row as $cell) echo '<td>'.$h($cell).'</td>'; echo '</tr>'; }
-		echo '</table>';
-		echo '<p style="color:#64748b;font-size:12px;">* = bắt buộc. Xóa 2 dòng ví dụ trước khi nhập dữ liệu thật. Danh mục / Thương hiệu nhập theo TÊN, hệ thống tự tạo nếu chưa có.</p>';
-		echo '</body></html>';
+		$this->_renderTemplateXls('mau-nhap-san-pham.xls', $cols, $samples,
+			'Danh mục / Thương hiệu nhập theo TÊN, hệ thống tự tạo nếu chưa có.');
 	}
 
 	/** Nhận JSON rows từ client (SheetJS đã parse), insert hàng loạt */
@@ -124,6 +118,48 @@ class Products extends Admin_Controller
 			else $errors[] = "Dòng $line: lỗi khi lưu";
 		}
 		echo json_encode(array('ok'=>true,'added'=>$added,'skipped'=>$skipped,'errors'=>$errors));
+	}
+
+	/**
+	 * Render file .xls mẫu dùng chung: cột bắt buộc tô chữ đỏ + 20 dòng trống
+	 * để khách bôi đen kéo/dán thêm hàng dễ dàng.
+	 * @param array $cols mỗi phần tử [nhãn, bool bắt buộc]
+	 */
+	private function _renderTemplateXls($filename, $cols, $samples, $extraNote = '')
+	{
+		header('Content-Type: application/vnd.ms-excel; charset=utf-8');
+		header('Content-Disposition: attachment; filename="'.$filename.'"');
+		echo "\xEF\xBB\xBF";
+		$h = function($s){ return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); };
+		echo '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"></head><body>';
+		echo '<table border="1" cellspacing="0" cellpadding="4">';
+		// Hàng tiêu đề: cột bắt buộc chữ đỏ + nền vàng nhạt, cột thường chữ đen + nền xanh nhạt
+		echo '<tr style="font-weight:bold;">';
+		foreach ($cols as $c) {
+			$req = !empty($c[1]);
+			$bg  = $req ? '#ffe4e6' : '#dbeafe';
+			$fg  = $req ? '#dd0000' : '#1e293b';
+			echo '<td style="background:'.$bg.';color:'.$fg.';">'.$h($c[0]).'</td>';
+		}
+		echo '</tr>';
+		// 2 dòng ví dụ (chữ xám nhạt để biết là mẫu)
+		foreach ($samples as $row){
+			echo '<tr style="color:#94a3b8;">';
+			foreach ($row as $cell) echo '<td>'.$h($cell).'</td>';
+			echo '</tr>';
+		}
+		// 20 dòng trống cho khách dán dữ liệu
+		$ncol = count($cols);
+		for ($i=0; $i<20; $i++){
+			echo '<tr>';
+			for ($j=0; $j<$ncol; $j++) echo '<td></td>';
+			echo '</tr>';
+		}
+		echo '</table>';
+		echo '<p style="color:#dd0000;font-size:13px;font-weight:bold;">Cột chữ ĐỎ = bắt buộc phải điền.</p>';
+		echo '<p style="color:#64748b;font-size:12px;">Xóa 2 dòng ví dụ (chữ xám) trước khi nhập thật. '.$h($extraNote).'</p>';
+		echo '<p style="color:#64748b;font-size:12px;">Mẹo: đã có sẵn 20 dòng trống. Cần thêm thì bôi đen các dòng trống rồi kéo ô vuông nhỏ góc dưới-phải xuống để tạo thêm hàng.</p>';
+		echo '</body></html>';
 	}
 
 	/** Chuẩn hoá số: bỏ dấu chấm/phẩy ngăn cách, trả float hoặc null nếu rỗng/sai */

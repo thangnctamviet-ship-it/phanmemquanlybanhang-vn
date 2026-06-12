@@ -25,7 +25,11 @@ class Customers extends Admin_Controller
 
     public function importTemplate()
     {
-        $cols = array('Tên khách hàng *', 'Số điện thoại', 'Email', 'Địa chỉ', 'Ngày sinh (YYYY-MM-DD)', 'Ghi chú');
+        $cols = array(
+            array('Tên khách hàng *', true), array('Số điện thoại', false),
+            array('Email', false), array('Địa chỉ', false),
+            array('Ngày sinh (YYYY-MM-DD)', false), array('Ghi chú', false)
+        );
         $samples = array(
             array('Nguyễn Văn A','0901234567','a@gmail.com','12 Lê Lợi, Q1','1990-05-20','Khách VIP'),
             array('Trần Thị B','0987654321','','45 Trần Hưng Đạo','',''),
@@ -35,11 +39,18 @@ class Customers extends Admin_Controller
         echo "\xEF\xBB\xBF";
         $h = function($s){ return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); };
         echo '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"></head><body>';
-        echo '<table border="1" cellspacing="0" cellpadding="4"><tr style="background:#dbeafe;font-weight:bold;">';
-        foreach ($cols as $c) echo '<td>'.$h($c).'</td>';
+        echo '<table border="1" cellspacing="0" cellpadding="4"><tr style="font-weight:bold;">';
+        foreach ($cols as $c) {
+            $req=!empty($c[1]); $bg=$req?'#ffe4e6':'#dbeafe'; $fg=$req?'#dd0000':'#1e293b';
+            echo '<td style="background:'.$bg.';color:'.$fg.';">'.$h($c[0]).'</td>';
+        }
         echo '</tr>';
-        foreach ($samples as $row){ echo '<tr>'; foreach ($row as $cell) echo '<td>'.$h($cell).'</td>'; echo '</tr>'; }
-        echo '</table><p style="color:#64748b;font-size:12px;">* = bắt buộc. Xóa 2 dòng ví dụ trước khi nhập thật.</p></body></html>';
+        foreach ($samples as $row){ echo '<tr style="color:#94a3b8;">'; foreach ($row as $cell) echo '<td>'.$h($cell).'</td>'; echo '</tr>'; }
+        $ncol=count($cols);
+        for($i=0;$i<20;$i++){ echo '<tr>'; for($j=0;$j<$ncol;$j++) echo '<td></td>'; echo '</tr>'; }
+        echo '</table>';
+        echo '<p style="color:#dd0000;font-size:13px;font-weight:bold;">Cột chữ ĐỎ = bắt buộc phải điền.</p>';
+        echo '<p style="color:#64748b;font-size:12px;">Xóa 2 dòng ví dụ (chữ xám) trước khi nhập thật. Đã có sẵn 20 dòng trống — cần thêm thì bôi đen dòng trống rồi kéo xuống.</p></body></html>';
     }
 
     public function importBulk()
