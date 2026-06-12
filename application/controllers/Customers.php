@@ -39,13 +39,13 @@ class Customers extends Admin_Controller
         echo "\xEF\xBB\xBF";
         $h = function($s){ return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); };
         echo '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"></head><body>';
-        echo '<table border="1" cellspacing="0" cellpadding="4"><tr style="font-weight:bold;">';
+        echo '<table border="1" cellspacing="0" cellpadding="4"><tr>';
         foreach ($cols as $c) {
-            $req=!empty($c[1]); $bg=$req?'#ffe4e6':'#dbeafe'; $fg=$req?'#dd0000':'#1e293b';
-            echo '<td style="background:'.$bg.';color:'.$fg.';">'.$h($c[0]).'</td>';
+            $req=!empty($c[1]); $bg=$req?'#ffe4e6':'#dbeafe'; $fg=$req?'#FF0000':'#1E293B';
+            echo '<td style="background:'.$bg.';"><b><font color="'.$fg.'">'.$h($c[0]).'</font></b></td>';
         }
         echo '</tr>';
-        foreach ($samples as $row){ echo '<tr style="color:#94a3b8;">'; foreach ($row as $cell) echo '<td>'.$h($cell).'</td>'; echo '</tr>'; }
+        foreach ($samples as $row){ echo '<tr>'; foreach ($row as $cell) echo '<td><font color="#94A3B8">'.$h($cell).'</font></td>'; echo '</tr>'; }
         $ncol=count($cols);
         for($i=0;$i<20;$i++){ echo '<tr>'; for($j=0;$j<$ncol;$j++) echo '<td></td>'; echo '</tr>'; }
         echo '</table>';

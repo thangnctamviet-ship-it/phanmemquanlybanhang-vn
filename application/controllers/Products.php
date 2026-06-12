@@ -134,18 +134,18 @@ class Products extends Admin_Controller
 		echo '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"></head><body>';
 		echo '<table border="1" cellspacing="0" cellpadding="4">';
 		// Hàng tiêu đề: cột bắt buộc chữ đỏ + nền vàng nhạt, cột thường chữ đen + nền xanh nhạt
-		echo '<tr style="font-weight:bold;">';
+		echo '<tr>';
 		foreach ($cols as $c) {
 			$req = !empty($c[1]);
 			$bg  = $req ? '#ffe4e6' : '#dbeafe';
-			$fg  = $req ? '#dd0000' : '#1e293b';
-			echo '<td style="background:'.$bg.';color:'.$fg.';">'.$h($c[0]).'</td>';
+			if ($req) echo '<td style="background:'.$bg.';"><b><font color="#FF0000">'.$h($c[0]).'</font></b></td>';
+			else      echo '<td style="background:'.$bg.';"><b><font color="#1E293B">'.$h($c[0]).'</font></b></td>';
 		}
 		echo '</tr>';
 		// 2 dòng ví dụ (chữ xám nhạt để biết là mẫu)
 		foreach ($samples as $row){
-			echo '<tr style="color:#94a3b8;">';
-			foreach ($row as $cell) echo '<td>'.$h($cell).'</td>';
+			echo '<tr>';
+			foreach ($row as $cell) echo '<td><font color="#94A3B8">'.$h($cell).'</font></td>';
 			echo '</tr>';
 		}
 		// 20 dòng trống cho khách dán dữ liệu
