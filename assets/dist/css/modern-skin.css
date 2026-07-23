@@ -1000,3 +1000,26 @@ a {
 .fa, .glyphicon, .ion {
   vertical-align: middle;
 }
+
+/* ============================================================
+   FIX RESPONSIVE ĐIỆN THOẠI — sidebar overlay + nền mờ
+   (thay vì đẩy nội dung văng sang phải / đè lên nội dung)
+   ============================================================ */
+@media (max-width: 767px) {
+  /* Sidebar nổi lên trên nội dung */
+  .main-sidebar { z-index: 1600 !important; box-shadow: 0 0 24px rgba(0,0,0,0.35); }
+  /* KHÔNG đẩy nội dung khi mở sidebar — để sidebar phủ đè lên */
+  .sidebar-open .content-wrapper,
+  .sidebar-open .main-footer { transform: none !important; }
+  /* Lớp nền mờ phía sau sidebar */
+  .app-sidebar-backdrop {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(15, 23, 42, 0.5);
+    z-index: 1500; opacity: 0; visibility: hidden;
+    transition: opacity 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .sidebar-open .app-sidebar-backdrop { opacity: 1; visibility: visible; }
+  /* Thanh header không bị sidebar che nút toggle */
+  .main-header .navbar { z-index: 1400; }
+}

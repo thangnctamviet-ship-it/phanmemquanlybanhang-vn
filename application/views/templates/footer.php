@@ -13,5 +13,17 @@
 <!-- ./wrapper -->
 
 <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').catch(()=>{})}</script>
+<script>
+/* Nền mờ cho sidebar trên điện thoại: chạm ra ngoài để đóng */
+(function(){
+  var bd = document.createElement('div');
+  bd.className = 'app-sidebar-backdrop';
+  document.body.appendChild(bd);
+  bd.addEventListener('click', function(){
+    var t = document.querySelector('.sidebar-toggle');
+    if (t) t.click(); // đóng sidebar bằng chính nút toggle của AdminLTE
+  });
+})();
+</script>
 </body>
 </html>
