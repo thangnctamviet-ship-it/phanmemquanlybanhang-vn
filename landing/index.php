@@ -76,6 +76,18 @@ include __DIR__.'/includes/header.php';
     </div>
   </div>
 </section>
+<section class="bg-slate-50 border-y border-slate-100">
+  <div class="max-w-4xl mx-auto px-4 py-16 text-center">
+    <h2 class="text-3xl font-bold text-slate-900 mb-2">Xem demo 35 giây</h2>
+    <p class="text-slate-600 mb-8">Bán hàng, QR chuyển khoản, sổ thuế S1-HKD, chốt ca tiền mặt — tất cả trong một phần mềm.</p>
+    <div class="rounded-xl overflow-hidden shadow-lg bg-black">
+      <video src="/landing/media/demo.mp4" controls preload="metadata" playsinline poster="/landing/media/demo-poster.jpg" class="w-full h-auto block"></video>
+    </div>
+    <div class="mt-8">
+      <a href="/landing/register.php" class="bg-indigo-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-indigo-700 inline-block">Dùng thử miễn phí 14 ngày</a>
+    </div>
+  </div>
+</section>
 <section class="max-w-6xl mx-auto px-4 py-14">
   <div class="grid md:grid-cols-3 gap-6">
     <?php
