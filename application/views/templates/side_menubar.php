@@ -44,6 +44,11 @@
               <i class="fa fa-bolt"></i> <span>Bán hàng (POS)</span>
             </a>
           </li>
+          <li id="shiftsNav">
+            <a href="<?php echo base_url('shifts') ?>">
+              <i class="fa fa-clock-o"></i> <span>Chốt ca (tiền mặt)</span>
+            </a>
+          </li>
         <?php endif; ?>
 
         <?php if ($can_product): ?>

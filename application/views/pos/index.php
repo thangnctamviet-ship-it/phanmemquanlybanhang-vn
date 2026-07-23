@@ -103,6 +103,9 @@
       <?php endif; ?>
     </select>
   </div>
+  <a id="shiftBadge" href="<?= base_url('shifts') ?>" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:8px;font-size:12px;font-weight:600;text-decoration:none;background:#334155;color:#cbd5e1;">
+    <i class="fa fa-clock-o"></i> <span id="shiftBadgeText">Ca: đang tải...</span>
+  </a>
   <div class="spacer"></div>
   <span style="color:#64748b;font-size:12px;">F2 = Tìm · F9 = Thanh toán · ESC = Hủy</span>
   <a href="<?= base_url('dashboard') ?>"><i class="fa fa-arrow-left"></i> Thoát POS</a>
@@ -180,7 +183,24 @@
   // Lưu cửa hàng đang chọn
   var savedStore = localStorage.getItem('pos_store_id');
   if (savedStore && $store) $store.value = savedStore;
-  $store && $store.addEventListener('change', function(){ localStorage.setItem('pos_store_id', this.value); loadProducts($search.value.trim()); });
+  $store && $store.addEventListener('change', function(){ localStorage.setItem('pos_store_id', this.value); loadProducts($search.value.trim()); updateShiftBadge(); });
+
+  // Badge trạng thái ca theo cửa hàng
+  function updateShiftBadge(){
+    var badge = document.getElementById('shiftBadge'), txt = document.getElementById('shiftBadgeText');
+    if(!badge || !$store) return;
+    fetch('<?= base_url('shifts/status') ?>?store_id='+encodeURIComponent($store.value))
+      .then(function(r){return r.json();}).then(function(d){
+        if(d.open){
+          badge.style.background='#065f46'; badge.style.color='#d1fae5';
+          txt.textContent='Ca đang mở · dự kiến két '+new Intl.NumberFormat('vi-VN').format(Math.round(d.expected))+'đ';
+        } else {
+          badge.style.background='#7c2d12'; badge.style.color='#fed7aa';
+          txt.textContent='Chưa mở ca — bấm để mở';
+        }
+      }).catch(function(){ txt.textContent='Ca: —'; });
+  }
+  updateShiftBadge();
 
   function fmt(n){ return new Intl.NumberFormat('vi-VN').format(Math.round(n)) + 'đ'; }
   function showToast(msg, isErr){
