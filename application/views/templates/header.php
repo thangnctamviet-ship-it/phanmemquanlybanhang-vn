@@ -25,7 +25,7 @@
        folder instead of downloading all of them to reduce the load. -->
   <link rel="stylesheet" href="<?php echo base_url('assets/dist/css/skins/_all-skins.min.css') ?>">
   <!-- Modern Skin Overlay -->
-  <link rel="stylesheet" href="<?php echo base_url('assets/dist/css/modern-skin.css') ?>">
+  <link rel="stylesheet" href="<?php echo base_url('assets/dist/css/modern-skin.css') ?>?v=20260723b">
   <!-- Morris chart -->
   <link rel="stylesheet" href="<?php echo base_url('assets/bower_components/morris.js/morris.css') ?>">
   <!-- jvectormap -->
