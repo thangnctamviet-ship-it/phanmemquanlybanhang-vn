@@ -27,7 +27,7 @@ try {
     if ($stmt->fetch()) fail('Subdomain đã được sử dụng. Vui lòng chọn tên khác.');
 
     $now = date('Y-m-d H:i:s');
-    $exp = date('Y-m-d H:i:s', strtotime('+7 days'));
+    $exp = date('Y-m-d H:i:s', strtotime('+14 days'));
     $db_name = "tenant_$sub";
     $stmt = $pdo->prepare("INSERT INTO tenants (subdomain, shop_name, owner_email, db_name, db_user, db_pass, status, plan, paid_branches, trial_started_at, expires_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)");
     $stmt->execute([$sub, $shop, $email, $db_name, "t_$sub", '', 'pending_provision', 'trial', 2, $now, $exp]);
@@ -140,7 +140,7 @@ include __DIR__.'/includes/header.php';
     <?php if ($buy_now && $cur_plan): ?>
       <p class="mb-4">Cửa hàng <strong><?= htmlspecialchars($shop) ?></strong> đã được tạo. Bạn đã chọn <strong><?= htmlspecialchars($cur_plan['name']) ?></strong> — bước tiếp theo là <strong>quét QR thanh toán</strong>.</p>
     <?php else: ?>
-      <p class="mb-4">Cửa hàng <strong><?= htmlspecialchars($shop) ?></strong> đã được tạo. Bạn đang dùng thử <strong>7 ngày miễn phí</strong>.</p>
+      <p class="mb-4">Cửa hàng <strong><?= htmlspecialchars($shop) ?></strong> đã được tạo. Bạn đang dùng thử <strong>14 ngày miễn phí</strong>.</p>
     <?php endif; ?>
     <div class="bg-white p-4 rounded-lg border space-y-2 text-sm">
       <div><span class="text-slate-500">URL:</span> <a href="<?= htmlspecialchars($tenant_url) ?>" class="text-indigo-600 font-mono"><?= htmlspecialchars($tenant_url) ?></a></div>

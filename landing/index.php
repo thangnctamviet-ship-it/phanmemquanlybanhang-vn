@@ -62,7 +62,7 @@ include __DIR__.'/includes/header.php';
       <h1 class="text-4xl md:text-5xl font-bold text-slate-900 mb-4">Quản Lý Bán Hàng</h1>
       <p class="text-lg text-slate-600 mb-8">Phần mềm SaaS cho cửa hàng Việt: bán hàng, kho, đơn hàng, chi nhánh và báo cáo trong một hệ thống riêng cho từng cửa hàng.</p>
       <div class="flex flex-wrap gap-3">
-        <a href="/landing/register.php" class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700">Dùng thử miễn phí 7 ngày</a>
+        <a href="/landing/register.php" class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700">Dùng thử miễn phí 14 ngày</a>
         <a href="/landing/pricing.php" class="border border-slate-300 text-slate-700 px-6 py-3 rounded-lg font-semibold hover:bg-slate-50">Xem bảng giá</a>
       </div>
     </div>

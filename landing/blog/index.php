@@ -132,7 +132,7 @@ $meta_desc = 'Mẹo và hướng dẫn cho chủ shop, chủ cửa hàng bán l�
       <!-- CTA -->
       <div class="mt-12 bg-gradient-to-r from-amber-400 to-amber-300 rounded-2xl p-8 text-center">
         <h3 class="text-2xl font-bold text-slate-900 mb-2">Sẵn sàng quản lý cửa hàng nhẹ hơn?</h3>
-        <p class="text-slate-800 mb-4">Dùng thử miễn phí 7 ngày — không cần thẻ tín dụng.</p>
+        <p class="text-slate-800 mb-4">Dùng thử miễn phí 14 ngày — không cần thẻ tín dụng.</p>
         <a href="/landing/register.php" class="inline-block bg-slate-900 text-white px-6 py-3 rounded-lg font-semibold hover:bg-slate-800">Dùng thử ngay</a>
       </div>
     <?php endif; ?>

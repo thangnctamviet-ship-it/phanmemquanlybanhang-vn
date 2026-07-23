@@ -299,7 +299,7 @@ function provision_tenant_cpanel(array $opts): array {
         $stmt->execute([$fullDb, $fullUser, $dbPass, $sub]);
         if ($stmt->rowCount() === 0) {
             $now = date('Y-m-d H:i:s');
-            $exp = date('Y-m-d H:i:s', strtotime('+7 days'));
+            $exp = date('Y-m-d H:i:s', strtotime('+14 days'));
             $stmt = $master->prepare("INSERT INTO tenants (subdomain, shop_name, owner_email, db_name, db_user, db_pass, status, plan, paid_branches, trial_started_at, expires_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)");
             $stmt->execute([$sub, $opts['shop_name'], $opts['email'], $fullDb, $fullUser, $dbPass, 'trial', 'trial', 2, $now, $exp]);
         }

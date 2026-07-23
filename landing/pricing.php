@@ -2,7 +2,7 @@
 
 <section class="max-w-6xl mx-auto px-4 py-12">
   <h1 class="text-3xl md:text-4xl font-bold text-center mb-3">Bảng giá đơn giản, minh bạch</h1>
-  <p class="text-center text-slate-600 mb-2">Dùng thử <strong>7 ngày miễn phí</strong> — không cần thẻ tín dụng</p>
+  <p class="text-center text-slate-600 mb-2">Dùng thử <strong>14 ngày miễn phí</strong> — không cần thẻ tín dụng</p>
   <p class="text-center text-slate-500 text-sm mb-10">Tất cả các gói đã bao gồm <strong>2 chi nhánh</strong>. Cần thêm chi nhánh: <strong>50.000đ/tháng/chi nhánh</strong> (giảm 17% gói 6 tháng, giảm 25% gói năm)</p>
 
   <?php
@@ -77,7 +77,7 @@
       </a>
       <a href="/landing/register.php?plan=<?= urlencode($p['id']) ?>"
          class="mt-2 block text-center py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-indigo-600 hover:bg-slate-50 transition">
-        Hoặc dùng thử miễn phí 7 ngày →
+        Hoặc dùng thử miễn phí 14 ngày →
       </a>
 
       <div class="border-t mt-6 pt-4">
@@ -121,7 +121,7 @@
     <div class="max-w-3xl mx-auto space-y-3">
       <details class="bg-white border rounded-lg p-4">
         <summary class="cursor-pointer font-semibold">Tôi có cần thẻ tín dụng để dùng thử không?</summary>
-        <p class="text-slate-600 mt-2 text-sm">Không. Bạn đăng ký bằng email + đặt tên cửa hàng là dùng được ngay 7 ngày, không cần thanh toán gì.</p>
+        <p class="text-slate-600 mt-2 text-sm">Không. Bạn đăng ký bằng email + đặt tên cửa hàng là dùng được ngay 14 ngày, không cần thanh toán gì.</p>
       </details>
       <details class="bg-white border rounded-lg p-4">
         <summary class="cursor-pointer font-semibold">Khi hết hạn dùng thử mà chưa thanh toán thì sao?</summary>

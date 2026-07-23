@@ -151,7 +151,7 @@ $articleJson = json_encode([
   <!-- Mid CTA -->
   <div class="my-10 bg-indigo-50 border-l-4 border-indigo-500 p-5 rounded">
     <p class="font-semibold text-slate-900 mb-1">💡 Bạn đang tìm phần mềm quản lý bán hàng?</p>
-    <p class="text-slate-700 mb-3">Dùng thử <strong>Quản Lý Bán Hàng</strong> miễn phí 7 ngày — gọn nhẹ, rẻ, in bill K80 sẵn.</p>
+    <p class="text-slate-700 mb-3">Dùng thử <strong>Quản Lý Bán Hàng</strong> miễn phí 14 ngày — gọn nhẹ, rẻ, in bill K80 sẵn.</p>
     <a href="/landing/register.php" class="inline-block bg-indigo-600 text-white px-5 py-2.5 rounded-lg font-medium hover:bg-indigo-700">Dùng thử miễn phí →</a>
   </div>
 
@@ -172,7 +172,7 @@ $articleJson = json_encode([
   <!-- Final CTA -->
   <div class="bg-gradient-to-r from-amber-400 to-amber-300 rounded-2xl p-8 text-center">
     <h3 class="text-2xl font-bold text-slate-900 mb-2">Bắt đầu quản lý cửa hàng dễ hơn hôm nay</h3>
-    <p class="text-slate-800 mb-4">Dùng thử miễn phí 7 ngày — không cần thẻ.</p>
+    <p class="text-slate-800 mb-4">Dùng thử miễn phí 14 ngày — không cần thẻ.</p>
     <a href="/landing/register.php" class="inline-block bg-slate-900 text-white px-6 py-3 rounded-lg font-semibold hover:bg-slate-800">Dùng thử ngay</a>
   </div>
 

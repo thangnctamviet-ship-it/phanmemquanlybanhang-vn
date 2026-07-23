@@ -57,7 +57,7 @@ try {
 <h2>5. Quản Lý Bán Hàng (quanlybanhang.shop)</h2>
 <p>Đây là giải pháp mới hơn, định vị rõ ràng: <strong>RẺ + GỌN NHẸ</strong> cho chủ shop, chủ cửa hàng bán lẻ Việt Nam.</p>
 <ul>
-  <li><strong>Giá:</strong> Dùng thử 7 ngày miễn phí, bảng giá công khai tại <a href="/landing/pricing.php">/pricing</a>.</li>
+  <li><strong>Giá:</strong> Dùng thử 14 ngày miễn phí, bảng giá công khai tại <a href="/landing/pricing.php">/pricing</a>.</li>
   <li><strong>Ưu điểm:</strong> Đăng ký 1 phút có subdomain riêng, quản lý tồn kho rõ ràng, in bill K80 sẵn, xem doanh số theo chi nhánh, hỗ trợ tiếng Việt.</li>
   <li><strong>Nhược điểm:</strong> Hệ sinh thái app mở rộng chưa nhiều bằng KiotViet.</li>
 </ul>
@@ -72,7 +72,7 @@ try {
 <tr><td>Sapo</td><td>~199k/tháng</td><td>Bán đa kênh online + offline</td></tr>
 <tr><td>Haravan</td><td>~200k/tháng</td><td>Cửa hàng có website</td></tr>
 <tr><td>MISA</td><td>~180k/tháng</td><td>Cần xuất hoá đơn, đồng bộ kế toán</td></tr>
-<tr><td>Quản Lý Bán Hàng</td><td>Thử miễn phí 7 ngày</td><td>Shop nhỏ, cần rẻ + gọn nhẹ</td></tr>
+<tr><td>Quản Lý Bán Hàng</td><td>Thử miễn phí 14 ngày</td><td>Shop nhỏ, cần rẻ + gọn nhẹ</td></tr>
 </tbody>
 </table>
 
@@ -84,7 +84,7 @@ try {
   <li>Cần kế toán + hoá đơn → MISA.</li>
   <li>Cần hệ sinh thái lớn, nhiều add-on → KiotViet.</li>
 </ul>
-<p><a href="/landing/register.php">👉 Dùng thử miễn phí Quản Lý Bán Hàng 7 ngày</a> để cảm nhận tận tay trước khi quyết định.</p>
+<p><a href="/landing/register.php">👉 Dùng thử miễn phí Quản Lý Bán Hàng 14 ngày</a> để cảm nhận tận tay trước khi quyết định.</p>
 HTML
         ],
         [
@@ -133,7 +133,7 @@ HTML
 <h2>7. Phân tích vòng quay hàng tồn kho</h2>
 <p>Công thức: <em>Vòng quay = Giá vốn hàng bán / Tồn kho trung bình</em>. Vòng quay cao = quản kho khoẻ. Bán lẻ trung bình nên đạt 6-12 vòng/năm.</p>
 
-<blockquote>🛠 Công cụ gợi ý: <strong>Quản Lý Bán Hàng</strong> có sẵn báo cáo tồn kho theo chi nhánh, cảnh báo dưới mức tối thiểu, lịch sử nhập xuất rõ ràng. <a href="/landing/register.php">Dùng thử miễn phí 7 ngày</a>.</blockquote>
+<blockquote>🛠 Công cụ gợi ý: <strong>Quản Lý Bán Hàng</strong> có sẵn báo cáo tồn kho theo chi nhánh, cảnh báo dưới mức tối thiểu, lịch sử nhập xuất rõ ràng. <a href="/landing/register.php">Dùng thử miễn phí 14 ngày</a>.</blockquote>
 
 <h3>Tổng kết</h3>
 <p>Quản tốt tồn kho = giảm vốn chết + giảm thất thoát + tăng doanh thu. Bắt đầu từ những việc nhỏ: kiểm kê tuần, set safety stock, dùng phần mềm thay sổ tay. Sau 1 tháng bạn sẽ thấy khác biệt.</p>
@@ -183,7 +183,7 @@ HTML
 <h3>Kết luận</h3>
 <p>Nếu cửa hàng của bạn vẫn đang in bill bằng A4 hay viết tay, đầu tư 1 triệu cho máy in K80 + 1 phần mềm POS gọn nhẹ là quyết định bạn sẽ không hối tiếc. Nó vừa tiết kiệm chi phí lâu dài, vừa nâng cấp trải nghiệm khách hàng.</p>
 
-<p><a href="/landing/register.php">👉 Dùng thử miễn phí Quản Lý Bán Hàng 7 ngày</a> — đã hỗ trợ in K80 sẵn, không tốn 1 phút cấu hình.</p>
+<p><a href="/landing/register.php">👉 Dùng thử miễn phí Quản Lý Bán Hàng 14 ngày</a> — đã hỗ trợ in K80 sẵn, không tốn 1 phút cấu hình.</p>
 HTML
         ],
     ];
