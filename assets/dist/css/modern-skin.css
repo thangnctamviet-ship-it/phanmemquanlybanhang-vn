@@ -1020,6 +1020,8 @@ a {
     -webkit-tap-highlight-color: transparent;
   }
   .sidebar-open .app-sidebar-backdrop { opacity: 1; visibility: visible; }
+  /* Fix so le lưới 2 cột trên mobile (float-drop khi ô cao thấp khác nhau) */
+  .content-wrapper .row > .col-xs-6:nth-of-type(odd) { clear: left; }
   /* Thanh header không bị sidebar che nút toggle */
   .main-header .navbar { z-index: 1400; }
 }
