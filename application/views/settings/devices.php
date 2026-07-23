@@ -155,6 +155,43 @@ $on = function($k) use ($s) { return !empty($s[$k]) && $s[$k] != '0'; };
         </div>
       </div>
 
+      <div class="row">
+        <div class="col-md-12">
+          <div class="box box-success">
+            <div class="box-header with-border"><h3 class="box-title"><i class="fa fa-qrcode"></i> Tài khoản nhận chuyển khoản (QR VietQR ở POS)</h3></div>
+            <div class="box-body">
+              <p class="help-block">Nhập tài khoản ngân hàng của cửa hàng. Khi bán ở POS chọn <b>Chuyển khoản</b>, hệ thống hiện mã QR đúng số tiền để khách quét chuyển nhanh.</p>
+              <div class="row">
+                <div class="col-sm-4">
+                  <div class="form-group">
+                    <label>Ngân hàng</label>
+                    <?php $banks = array('Vietcombank','Techcombank','BIDV','MB Bank','TPBank','ACB','VPBank','Sacombank','VietinBank','CIMB Việt Nam'); $cur = $s['pos_bank_name'] ?? ''; ?>
+                    <select name="pos_bank_name" class="form-control">
+                      <option value="">— Chọn ngân hàng —</option>
+                      <?php foreach ($banks as $b): ?>
+                        <option value="<?= htmlspecialchars($b) ?>" <?= $cur===$b?'selected':'' ?>><?= htmlspecialchars($b) ?></option>
+                      <?php endforeach; ?>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <div class="form-group">
+                    <label>Số tài khoản</label>
+                    <input type="text" name="pos_bank_account" value="<?= $g('pos_bank_account') ?>" class="form-control" placeholder="Ví dụ: 0123456789">
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <div class="form-group">
+                    <label>Tên chủ tài khoản</label>
+                    <input type="text" name="pos_bank_holder" value="<?= $g('pos_bank_holder') ?>" class="form-control" placeholder="NGUYEN VAN A (không dấu)">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="text-center" style="margin:20px 0;">
         <button type="submit" class="btn btn-primary btn-lg"><i class="fa fa-save"></i> Lưu tất cả cấu hình</button>
       </div>

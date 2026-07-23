@@ -150,6 +150,14 @@
           <button type="button" class="pm-btn" data-method="bank">🏦 Chuyển khoản</button>
         </span>
       </div>
+      <div id="qrBox" style="display:none;text-align:center;padding:10px;background:#fff;border:1px solid #e2e8f0;border-radius:10px;margin:8px 0;">
+        <div style="font-size:12px;color:#64748b;margin-bottom:6px;">Khách quét QR để chuyển khoản đúng số tiền</div>
+        <img id="qrImg" src="" alt="QR chuyển khoản" style="width:200px;height:200px;object-fit:contain;">
+        <div id="qrInfo" style="font-size:12px;color:#334155;margin-top:6px;"></div>
+      </div>
+      <div id="qrNoBank" style="display:none;font-size:12px;color:#b45309;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px;margin:8px 0;">
+        Chưa cấu hình tài khoản ngân hàng. Vào <b>Cấu hình → Tài khoản nhận chuyển khoản</b> để hiện QR.
+      </div>
       <div class="row"><span>Tiền khách trả:</span> <input type="number" id="paidInput" value="0" min="0" placeholder="Để trống = trả đủ"></div>
       <div class="row"><span style="font-size:11px;color:#94a3b8;">(Để 0 nếu khách trả đủ. Chỉ nhập khi bán nợ.)</span></div>
       <div class="row"><span>Tiền thừa:</span> <span id="changeLabel">0đ</span></div>
@@ -356,6 +364,7 @@
     $gross.textContent = fmt(gross);
     $net.textContent = fmt(net);
     $change.textContent = fmt(change);
+    if (typeof updateQR === 'function') updateQR();
   }
   $discount.addEventListener('input', updateTotals);
   $paid.addEventListener('input', updateTotals);
@@ -401,13 +410,38 @@
 
   // Nguồn tiền (tiền mặt / chuyển khoản)
   var payMethod = 'cash';
+  var POS_BANK = <?= json_encode($pos_bank ?? array('bin'=>'','account'=>'','holder'=>'','name'=>''), JSON_UNESCAPED_UNICODE) ?>;
+  var SHOP_NAME = <?= json_encode(($company['company_name'] ?? 'Cua hang'), JSON_UNESCAPED_UNICODE) ?>;
   Array.prototype.forEach.call(document.querySelectorAll('.pm-btn'), function(b){
     b.addEventListener('click', function(){
       payMethod = b.getAttribute('data-method');
       Array.prototype.forEach.call(document.querySelectorAll('.pm-btn'), function(x){ x.classList.remove('active'); });
       b.classList.add('active');
+      updateQR();
     });
   });
+
+  // Bỏ dấu tiếng Việt cho nội dung chuyển khoản
+  function noAccent(s){ return (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D'); }
+  function updateQR(){
+    var box=document.getElementById('qrBox'), nobank=document.getElementById('qrNoBank');
+    if(payMethod!=='bank'){ box.style.display='none'; nobank.style.display='none'; return; }
+    if(!POS_BANK.bin || !POS_BANK.account){ box.style.display='none'; nobank.style.display='block'; return; }
+    nobank.style.display='none';
+    // tổng tiền hiện tại
+    var gross = cart.reduce(function(s,it){ return s + it.qty*it.price; }, 0);
+    var disc = parseFloat($discount.value)||0;
+    var net = Math.max(0, gross - disc);
+    if(net<=0){ box.style.display='none'; return; }
+    var info = noAccent(SHOP_NAME).substring(0,25);
+    var url = 'https://img.vietqr.io/image/'+POS_BANK.bin+'-'+encodeURIComponent(POS_BANK.account)+'-compact2.png'
+      + '?amount='+Math.round(net)
+      + '&addInfo='+encodeURIComponent(info)
+      + '&accountName='+encodeURIComponent(noAccent(POS_BANK.holder));
+    document.getElementById('qrImg').src=url;
+    document.getElementById('qrInfo').innerHTML='<b>'+POS_BANK.name+'</b> · '+POS_BANK.account+'<br>'+new Intl.NumberFormat('vi-VN').format(Math.round(net))+'đ';
+    box.style.display='block';
+  }
 
   // Pay
   document.getElementById('payBtn').addEventListener('click', checkout);

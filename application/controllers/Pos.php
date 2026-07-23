@@ -52,10 +52,29 @@ class Pos extends Admin_Controller
             redirect('dashboard', 'refresh');
         }
 
+        // TK ngân hàng của shop cho QR VietQR (đọc từ settings)
+        $bank = array('bin'=>'', 'account'=>'', 'holder'=>'', 'name'=>'');
+        if ($this->db->table_exists('settings')) {
+            $rows = $this->db->query("SELECT `key`,`value` FROM `settings` WHERE `key` IN ('pos_bank_name','pos_bank_account','pos_bank_holder')")->result_array();
+            $sset = array(); foreach ($rows as $r) $sset[$r['key']] = $r['value'];
+            $bank_bins = array(
+              'CIMB Việt Nam'=>'422589','Vietcombank'=>'970436','Techcombank'=>'970407',
+              'BIDV'=>'970418','MB Bank'=>'970422','TPBank'=>'970423','ACB'=>'970416',
+              'VPBank'=>'970432','Sacombank'=>'970403','VietinBank'=>'970415',
+            );
+            $bn = $sset['pos_bank_name'] ?? '';
+            $bank = array(
+              'name'    => $bn,
+              'bin'     => $bank_bins[$bn] ?? '',
+              'account' => $sset['pos_bank_account'] ?? '',
+              'holder'  => $sset['pos_bank_holder'] ?? '',
+            );
+        }
         $data = array(
             'page_title' => 'Bán hàng nhanh',
             'stores'     => $this->model_stores->getStoresData(),
             'company'    => $this->model_company->getCompanyData(1),
+            'pos_bank'   => $bank,
         );
         $this->load->view('pos/index', $data);
     }

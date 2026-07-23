@@ -52,6 +52,7 @@ class Settings extends Admin_Controller
             'enable_employee_shift',
             'print_bill_width', 'print_bill_open_method', 'print_auto',
             'barcode_prefix', 'barcode_check_digit',
+            'pos_bank_name', 'pos_bank_account', 'pos_bank_holder',
         );
         foreach ($keys as $k) {
             $v = $this->input->post($k);
